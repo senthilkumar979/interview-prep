@@ -5,8 +5,28 @@
     "difficulty": "beginner",
     "category": "hooks",
     "tags": ["hooks", "lifecycle"],
-    "answer": "useEffect runs side effects after render and can optionally clean up.",
-    "examples": ["example1.tsx", "example2.tsx"],
-    "tip": "Keep dependency arrays accurate to avoid stale closures."
+    "preview": "Run side effects after rendering and sync with external systems without blocking render.",
+    "answer": "## useEffect overview\n\n`useEffect` lets you run side effects after React commits UI updates.\n\n- Use it for subscriptions, network sync, timers, and DOM integrations.\n- Return a cleanup function to prevent leaks.\n- Keep dependencies complete to avoid stale values.",
+    "examples": [
+      {
+        "title": "Fetch profile after mount",
+        "language": "tsx",
+        "code": "useEffect(() => {\n  let isMounted = true;\n  fetch('/api/profile')\n    .then((response) => response.json())\n    .then((data) => {\n      if (isMounted) setProfile(data);\n    });\n  return () => {\n    isMounted = false;\n  };\n}, []);",
+        "explanation": "This pattern avoids setting state after unmount by using a cleanup flag."
+      },
+      {
+        "title": "Re-run on dependency changes",
+        "language": "tsx",
+        "code": "useEffect(() => {\n  document.title = `Count: ${count}`;\n}, [count]);",
+        "explanation": "The effect reruns only when `count` changes, keeping document title in sync."
+      }
+    ],
+    "tip": "If your effect derives values from state/props, all of them should usually be in the dependency list.",
+    "links": [
+      {
+        "label": "React docs: Synchronizing with Effects",
+        "href": "https://react.dev/learn/synchronizing-with-effects"
+      }
+    ]
   }
 ]

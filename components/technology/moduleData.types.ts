@@ -1,12 +1,26 @@
+export interface ExampleCode {
+  title: string;
+  language: string;
+  code: string;
+  explanation: string;
+}
+
+export interface QuestionLink {
+  label: string;
+  href: string;
+}
+
 export interface QuestionItem {
   id: string;
   question: string;
   difficulty: string;
   category: string;
   tags: string[];
+  preview: string;
   answer: string;
-  examples: string[];
+  examples: ExampleCode[];
   tip: string;
+  links?: QuestionLink[];
 }
 
 export interface KataItem {

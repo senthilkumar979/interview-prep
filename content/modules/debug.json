@@ -1,0 +1,17 @@
+[
+  {
+    "id": "debug-001",
+    "title": "Fix React rendering bug",
+    "difficulty": "intermediate",
+    "category": "rendering",
+    "file": "buggy.tsx",
+    "answers": [
+      {
+        "line": 12,
+        "title": "Missing dependency",
+        "explanation": "Effect reads a variable that is not in dependency list.",
+        "fix": "Include the variable in dependencies or memoize it."
+      }
+    ]
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "brand": {
+    "name": "Interview-Forge",
+    "tagline": "Engineering interview workspace"
+  },
+  "technologies": [
+    "React",
+    "TypeScript",
+    "Next.js",
+    "Tailwind CSS",
+    "TanStack Query",
+    "System Design"
+  ],
+  "questions": [
+    {
+      "id": "q-react-01",
+      "title": "Explain Server and Client Components in Next.js",
+      "description": "Describe rendering behavior, boundary rules, and when a component should remain on the server.",
+      "difficulty": "medium",
+      "category": "frontend",
+      "technology": "Next.js",
+      "snippet": "export default async function ProfilePage() {\n  const profile = await fetchProfile();\n  return <ProfileCard profile={profile} />;\n}\n"
+    },
+    {
+      "id": "q-react-02",
+      "title": "Optimize expensive rendering in React",
+      "description": "Walk through practical use of memoization, stable callbacks, and derived state to avoid unnecessary renders.",
+      "difficulty": "hard",
+      "category": "performance",
+      "technology": "React",
+      "snippet": "const filteredRows = useMemo(() => rows.filter(matchesQuery), [rows, matchesQuery]);\nconst onRowSelect = useCallback((id: string) => setSelectedId(id), []);\n"
+    },
+    {
+      "id": "q-ts-01",
+      "title": "Design a type-safe API response model",
+      "description": "Model success and failure responses using discriminated unions and narrowing.",
+      "difficulty": "easy",
+      "category": "language",
+      "technology": "TypeScript",
+      "snippet": "type ApiResult<T> = { ok: true; data: T } | { ok: false; error: string };\n\nfunction unwrap<T>(result: ApiResult<T>): T {\n  if (!result.ok) throw new Error(result.error);\n  return result.data;\n}\n"
+    }
+  ]
+}

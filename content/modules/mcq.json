@@ -1,0 +1,16 @@
+[
+  {
+    "id": "mcq-001",
+    "question": "Which hook is used for memoizing computed values?",
+    "difficulty": "beginner",
+    "category": "hooks",
+    "options": [
+      { "id": "A", "text": "useEffect" },
+      { "id": "B", "text": "useMemo" },
+      { "id": "C", "text": "useContext" },
+      { "id": "D", "text": "useRef" }
+    ],
+    "correctOptionId": "B",
+    "explanation": "useMemo memoizes expensive computations between renders."
+  }
+]

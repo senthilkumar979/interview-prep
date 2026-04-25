@@ -1,0 +1,12 @@
+[
+  {
+    "id": "react-001",
+    "question": "What is useEffect?",
+    "difficulty": "beginner",
+    "category": "hooks",
+    "tags": ["hooks", "lifecycle"],
+    "answer": "useEffect runs side effects after render and can optionally clean up.",
+    "examples": ["example1.tsx", "example2.tsx"],
+    "tip": "Keep dependency arrays accurate to avoid stale closures."
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "kata-001",
+    "title": "Build counter with hooks",
+    "difficulty": "beginner",
+    "category": "hooks",
+    "description": "Create a counter using useState and add reset/increment/decrement actions.",
+    "starterCode": "counter-start.tsx",
+    "solution": "counter-solution.tsx"
+  }
+]

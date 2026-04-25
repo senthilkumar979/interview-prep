@@ -1,0 +1,9 @@
+[
+  {
+    "id": "rapid-001",
+    "prompt": "What does React reconciliation do?",
+    "expectedAnswer": "It compares virtual DOM trees and updates only changed nodes in the real DOM.",
+    "category": "rendering",
+    "difficulty": "beginner"
+  }
+]

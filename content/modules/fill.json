@@ -1,0 +1,17 @@
+[
+  {
+    "id": "fill-001",
+    "title": "Complete useEffect",
+    "difficulty": "beginner",
+    "category": "hooks",
+    "file": "fill.tsx",
+    "answers": [
+      {
+        "line": 8,
+        "placeholder": "__DEPENDENCIES__",
+        "value": "[count]",
+        "explanation": "Effect should rerun when count changes."
+      }
+    ]
+  }
+]

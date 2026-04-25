@@ -1,0 +1,41 @@
+[
+  {
+    "slug": "react",
+    "icon": "react",
+    "title": "React",
+    "description": "Build modern UI systems with component architecture, hooks, rendering strategies, and performance tuning.",
+    "questionCount": 120,
+    "exerciseCount": 38,
+    "difficultyBreakdown": {
+      "easy": 38,
+      "medium": 54,
+      "hard": 28
+    }
+  },
+  {
+    "slug": "javascript",
+    "icon": "javascript",
+    "title": "JavaScript",
+    "description": "Master language fundamentals, async patterns, browser internals, and practical problem solving.",
+    "questionCount": 145,
+    "exerciseCount": 52,
+    "difficultyBreakdown": {
+      "easy": 50,
+      "medium": 67,
+      "hard": 28
+    }
+  },
+  {
+    "slug": "java",
+    "icon": "java",
+    "title": "Java",
+    "description": "Prepare for backend interviews with OOP, JVM concepts, collections, concurrency, and API design.",
+    "questionCount": 132,
+    "exerciseCount": 41,
+    "difficultyBreakdown": {
+      "easy": 36,
+      "medium": 63,
+      "hard": 33
+    }
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "sd-001",
+    "title": "Design a URL shortener",
+    "difficulty": "intermediate",
+    "category": "backend",
+    "problem": "Design a service to generate and resolve short URLs with analytics.",
+    "requirements": ["Short link generation", "Redirect with low latency", "Basic click analytics"],
+    "approach": "Use hash-based key generation, cache hot redirects, and persist mappings in a relational database."
+  }
+]

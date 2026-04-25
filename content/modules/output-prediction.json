@@ -1,0 +1,11 @@
+[
+  {
+    "id": "output-001",
+    "title": "Predict console output with closures",
+    "difficulty": "intermediate",
+    "category": "javascript",
+    "file": "closure-output.ts",
+    "expectedOutput": "0, 1, 2",
+    "explanation": "Using block-scoped variables preserves each loop value."
+  }
+]

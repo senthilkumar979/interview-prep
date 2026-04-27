@@ -5,6 +5,11 @@
     "difficulty": "beginner",
     "category": "hooks",
     "description": "Create a counter using useState and add reset/increment/decrement actions.",
+    "requirements": [
+      "Render initial count as 0",
+      "Add increment and decrement buttons",
+      "Add reset button to return count to 0"
+    ],
     "starterCode": "counter-start.tsx",
     "solution": "counter-solution.tsx"
   }

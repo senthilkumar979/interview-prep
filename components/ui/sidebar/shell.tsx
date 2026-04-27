@@ -25,7 +25,15 @@ function Sidebar({
 
   if (collapsible === "none") {
     return (
-      <div data-slot="sidebar" className={cn("flex h-full w-(--sidebar-width) flex-col bg-sidebar text-sidebar-foreground", className)} {...props}>
+      <div
+        data-slot="sidebar"
+        className={cn(
+          "relative flex h-full w-(--sidebar-width) flex-col overflow-hidden border-r border-border/40 bg-sidebar text-sidebar-foreground shadow-sm",
+          "before:pointer-events-none before:absolute before:top-0 before:bottom-0 before:left-0 before:z-10 before:w-px before:bg-primary/30",
+          className,
+        )}
+        {...props}
+      >
         {children}
       </div>
     )
@@ -39,7 +47,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+          className="w-(--sidebar-width) border-l border-border/40 bg-sidebar p-0 text-sidebar-foreground shadow-xl [&>button]:hidden"
           style={{ "--sidebar-width": SIDEBAR_WIDTH_MOBILE } as React.CSSProperties}
           side={side}
         >
@@ -47,7 +55,9 @@ function Sidebar({
             <SheetTitle>Sidebar</SheetTitle>
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <div className="relative flex h-full w-full flex-col before:pointer-events-none before:absolute before:top-0 before:bottom-0 before:left-0 before:z-10 before:w-px before:bg-primary/30">
+            {children}
+          </div>
         </SheetContent>
       </Sheet>
     )
@@ -76,7 +86,11 @@ function Sidebar({
         )}
         {...props}
       >
-        <div data-sidebar="sidebar" data-slot="sidebar-inner" className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border">
+        <div
+          data-sidebar="sidebar"
+          data-slot="sidebar-inner"
+          className="relative flex size-full flex-col overflow-hidden bg-sidebar text-sidebar-foreground before:pointer-events-none before:absolute before:top-0 before:bottom-0 before:left-0 before:z-10 before:w-px before:bg-primary/30 group-data-[variant=floating]:rounded-xl group-data-[variant=floating]:border group-data-[variant=floating]:border-border/50 group-data-[variant=floating]:shadow-md group-data-[variant=floating]:ring-0 group-data-[variant=inset]:rounded-xl group-data-[variant=inset]:border group-data-[variant=inset]:border-border/50 group-data-[variant=inset]:shadow-sm group-data-[variant=sidebar]:border-r group-data-[variant=sidebar]:border-border/40 group-data-[variant=sidebar]:shadow-sm"
+        >
           {children}
         </div>
       </div>
@@ -92,14 +106,14 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon-sm"
-      className={cn(className)}
+      className={cn("text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelLeftIcon className="shrink-0" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

@@ -29,6 +29,7 @@ export interface KataItem {
   difficulty: string;
   category: string;
   description: string;
+  requirements: string[];
   starterCode: string;
   solution: string;
 }

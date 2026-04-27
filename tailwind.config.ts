@@ -21,8 +21,9 @@ const config: Config = {
         "card-foreground": "var(--card-foreground)",
         popover: "var(--popover)",
         "popover-foreground": "var(--popover-foreground)",
-        primary: "var(--primary)",
-        "primary-foreground": "var(--primary-foreground)",
+        // HSL triplets in CSS so bg-primary/10, text-primary/50, etc. work
+        primary: "hsl(var(--primary) / <alpha-value>)",
+        "primary-foreground": "hsl(var(--primary-foreground) / <alpha-value>)",
         secondary: "var(--secondary)",
         "secondary-foreground": "var(--secondary-foreground)",
         muted: "var(--muted)",

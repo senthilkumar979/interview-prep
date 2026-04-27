@@ -5,7 +5,17 @@ import { QuestionItem } from '@/components/technology/moduleData.types'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChevronDown, ChevronUp, LinkIcon } from 'lucide-react'
+import {
+  BadgeQuestionMark,
+  Brain,
+  ChevronDown,
+  ChevronUp,
+  CodeIcon,
+  Lightbulb,
+  LinkIcon,
+  SignpostIcon,
+  SquareArrowOutUpRightIcon,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -16,23 +26,27 @@ interface QuestionCardProps {
 
 function getDifficultyBadgeClass(difficulty: string): string {
   const normalizedDifficulty = difficulty.toLowerCase()
-  if (normalizedDifficulty === 'beginner') return 'difficulty-beginner'
+  if (normalizedDifficulty === 'beginner') return 'difficulty-advanced'
   if (normalizedDifficulty === 'intermediate') return 'difficulty-intermediate'
   if (normalizedDifficulty === 'expert') return 'difficulty-expert'
   if (normalizedDifficulty === 'advanced') return 'difficulty-advanced'
-  return 'border-border bg-muted text-muted-foreground'
+  return 'border-border bg-muted text-muted-foreground rounded-lg'
 }
 
 function getCategoryBadgeClass(category: string): string {
   const normalizedCategory = category.toLowerCase()
-  if (normalizedCategory === 'hooks') return 'category-hooks'
-  if (normalizedCategory === 'state') return 'category-state'
-  if (normalizedCategory === 'lifecycle') return 'category-lifecycle'
-  if (normalizedCategory === 'performance') return 'category-performance'
-  if (normalizedCategory === 'rendering') return 'category-rendering'
-  if (normalizedCategory === 'architecture') return 'category-architecture'
-  if (normalizedCategory === 'testing') return 'category-testing'
-  return 'border-border bg-muted text-muted-foreground'
+  if (!normalizedCategory) return 'border-border bg-muted text-muted-foreground'
+  const categoryBadgeVariants = [
+    'border-primary/30 bg-primary/10 text-primary',
+    'border-indigo-500/30 bg-indigo-500/10 text-indigo-700',
+    'border-emerald-500/30 bg-emerald-500/10 text-emerald-700',
+    'border-amber-500/30 bg-amber-500/10 text-amber-700',
+    'border-fuchsia-500/30 bg-fuchsia-500/10 text-fuchsia-700',
+  ] as const
+  const hash = normalizedCategory
+    .split('')
+    .reduce((accumulator, char) => accumulator + char.charCodeAt(0), 0)
+  return categoryBadgeVariants[hash % categoryBadgeVariants.length]
 }
 
 export const QuestionCard = ({ item, number }: QuestionCardProps) => {
@@ -40,13 +54,16 @@ export const QuestionCard = ({ item, number }: QuestionCardProps) => {
 
   return (
     <div className="space-y-3">
-      <Card>
+      <Card className={isExpanded ? 'border-2' : 'border-none'}>
         <CardHeader
           className="space-y-1 cursor-pointer"
           onClick={() => setIsExpanded((current) => !current)}
         >
           <CardTitle className="text-lg flex items-center justify-between">
-            #{number}. {item.question}
+            <div className="flex items-center text-deep-space-blue gap-2">
+              <BadgeQuestionMark className="h-4 w-4" />#{number}.{' '}
+              {item.question}
+            </div>
             <Button type="button" variant="outline">
               {isExpanded ? (
                 <ChevronDown className="h-4 w-4" />
@@ -57,14 +74,14 @@ export const QuestionCard = ({ item, number }: QuestionCardProps) => {
           </CardTitle>
           <div className="flex flex-wrap gap-2">
             <Badge
-              className={`px-2 py-1 text-xs font-medium ${getDifficultyBadgeClass(
+              className={`px-2 capitalize tracking-wide py-1 text-xs font-medium rounded-lg ${getDifficultyBadgeClass(
                 item.difficulty,
               )}`}
             >
               {item.difficulty}
             </Badge>
             <Badge
-              className={`px-2 py-1 text-xs font-medium ${getCategoryBadgeClass(
+              className={`px-2 capitalize tracking-wide py-1 text-xs font-medium rounded-lg ${getCategoryBadgeClass(
                 item.category,
               )}`}
             >
@@ -74,20 +91,24 @@ export const QuestionCard = ({ item, number }: QuestionCardProps) => {
         </CardHeader>
         {isExpanded ? (
           <CardContent className="space-y-4 text-sm">
-            <Card>
+            <Card className="border-none bg-muted">
               <CardHeader>
-                <CardTitle className="text-base">Deep explanation</CardTitle>
+                <CardTitle className="text-base font-semibold uppercase tracking-wide ">
+                  <Brain className="h-4 w-4" />
+                  Explanation
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <MarkdownContent content={item.answer} />
               </CardContent>
             </Card>
 
-            <div className="flex flex-row items-start justify-between gap-4">
+            <div className="flex flex-col items-center justify-between gap-4 lg:flex-row lg:items-start">
               {item.examples.map((example, index) => (
                 <Card key={example.title}>
                   <CardHeader className="space-y-2">
-                    <CardTitle className="text-base">
+                    <CardTitle className="text-base uppercase tracking-wide">
+                      <CodeIcon className="h-4 w-4" />
                       Code example #{index + 1}
                     </CardTitle>
                     <p className="text-xs text-muted-foreground">
@@ -98,57 +119,58 @@ export const QuestionCard = ({ item, number }: QuestionCardProps) => {
                     <MarkdownContent
                       content={`\`\`\`${example.language}\n${example.code}\n\`\`\``}
                     />
-                    <div className="rounded-md border border-border/70 bg-muted/30 p-3 text-sm text-muted-foreground">
+                    <div className="p-3 text-sm text-muted-foreground">
                       {example.explanation}
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Tip</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p
-                  className="rounded-md border p-3 text-sm"
-                  style={{
-                    borderColor: '#8B5CF6',
-                    backgroundColor: '#2E1065',
-                    color: '#E9D5FF',
-                  }}
-                >
-                  {item.tip}
-                </p>
-              </CardContent>
-            </Card>
-
-            {item.links?.length ? (
-              <Card>
+            <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+              <Card className="border-none bg-muted">
                 <CardHeader>
-                  <CardTitle className="text-base">Links</CardTitle>
+                  <CardTitle className="text-base uppercase tracking-wide">
+                    <Lightbulb className="h-4 w-4" />
+                    Tip
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ul className="list-disc space-y-1 pl-5">
-                    {item.links.map((link) => (
-                      <li
-                        key={link.href}
-                        className="cursor-pointer list-none flex items-center gap-2"
-                      >
-                        <LinkIcon className="h-3 w-3 text-primary" />
-                        <Link
-                          className="text-primary underline-offset-2 hover:underline"
-                          href={link.href}
-                        >
-                          {link.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm flex items-start gap-2 pl-5">
+                    <SignpostIcon className="h-5 w-5" />
+                    <span>{item.tip}</span>
+                  </p>
                 </CardContent>
               </Card>
-            ) : null}
+
+              {item.links?.length ? (
+                <Card className="border-none bg-muted">
+                  <CardHeader>
+                    <CardTitle className="text-base uppercase tracking-wide">
+                      <LinkIcon className="h-4 w-4" />
+                      Links
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="list-disc space-y-1 pl-5">
+                      {item.links.map((link) => (
+                        <li
+                          key={link.href}
+                          className="cursor-pointer list-none flex items-center gap-2"
+                        >
+                          <SquareArrowOutUpRightIcon className="h-3 w-3" />
+                          <Link
+                            className="underline-offset-2 hover:underline"
+                            href={link.href}
+                          >
+                            {link.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              ) : null}
+            </div>
           </CardContent>
         ) : null}
       </Card>

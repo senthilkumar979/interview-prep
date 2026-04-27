@@ -1,0 +1,1176 @@
+[
+  {
+    "id": "js-001",
+    "question": "What are the possible ways to create objects in JavaScript",
+    "difficulty": "beginner",
+    "category": "objects",
+    "tags": ["objects", "constructor", "class", "prototype", "factory"],
+    "answer": "You can create objects in many ways in JavaScript.\n\n- Object literal: fastest and most common (`{}`)\n- `new Object()`: older style, same result as literal in most cases\n- Constructor function + `new`: good for creating many similar objects\n- `Object.create(proto)`: create an object with a specific prototype\n- ES6 class + `new`: cleaner syntax over constructor functions\n- Factory function: function returns object, no `new` required\n\nUse object literal for simple objects. Use class/constructor/factory when you need many reusable instances.",
+    "examples": [
+      {
+        "title": "Object literal and Object.create",
+        "language": "javascript",
+        "code": "const user = { name: 'Asha', role: 'admin' };\n\nconst base = { canLogin: true };\nconst member = Object.create(base);\nmember.name = 'Ravi';\n\nconsole.log(user.name); // Asha\nconsole.log(member.canLogin); // true (inherited from base)",
+        "explanation": "Object literal creates a direct object. `Object.create` builds an object that inherits from another object."
+      },
+      {
+        "title": "Factory function and class",
+        "language": "javascript",
+        "code": "function createCar(brand) {\n  return {\n    brand,\n    start() {\n      return `${brand} started`;\n    }\n  };\n}\n\nclass Book {\n  constructor(title) {\n    this.title = title;\n  }\n}\n\nconst car = createCar('Toyota');\nconst book = new Book('Clean Code');\n\nconsole.log(car.start());\nconsole.log(book.title);",
+        "explanation": "Factory functions avoid `new`. Classes are a modern, readable way to create many instances."
+      }
+    ],
+    "tip": "For interview answers, mention both syntax and use case: literals for quick data objects, class/factory for reusable instance creation.",
+    "links": [
+      {
+        "label": "MDN: Working with objects",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Working_with_objects"
+      }
+    ]
+  },
+  {
+    "id": "js-002",
+    "question": "What is a prototype chain",
+    "difficulty": "beginner",
+    "category": "objects",
+    "tags": ["prototype", "inheritance", "__proto__", "lookup"],
+    "answer": "A prototype chain is JavaScript's inheritance mechanism.\n\nWhen you read a property from an object:\n1. JavaScript checks the object itself.\n2. If not found, it checks the object's prototype.\n3. It keeps moving up until `null`.\n\nThis linked lookup path is called the prototype chain.\n\nIt lets objects share methods without copying them into every object.",
+    "examples": [
+      {
+        "title": "Property lookup across chain",
+        "language": "javascript",
+        "code": "const animal = { eats: true };\nconst dog = Object.create(animal);\ndog.barks = true;\n\nconsole.log(dog.barks); // true (own property)\nconsole.log(dog.eats);  // true (from prototype)\nconsole.log(dog.fly);   // undefined (not in chain)",
+        "explanation": "The lookup starts at `dog`, then moves to `animal`, then ends at `null`."
+      }
+    ],
+    "tip": "Prototype chain is dynamic lookup, not object copying.",
+    "links": [
+      {
+        "label": "MDN: Inheritance and the prototype chain",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Inheritance_and_the_prototype_chain"
+      }
+    ]
+  },
+  {
+    "id": "js-003",
+    "question": "What is the Difference Between call, apply, and bind",
+    "difficulty": "beginner",
+    "category": "functions",
+    "tags": ["this", "call", "apply", "bind"],
+    "answer": "`call`, `apply`, and `bind` control what `this` points to in a function.\n\n- `call(thisArg, a, b)`: calls immediately, arguments passed one by one.\n- `apply(thisArg, [a, b])`: calls immediately, arguments passed as array.\n- `bind(thisArg, a, b)`: does not call now; returns a new function with fixed `this` (and optional preset args).",
+    "examples": [
+      {
+        "title": "Immediate call vs delayed call",
+        "language": "javascript",
+        "code": "function greet(greeting, punctuation) {\n  return `${greeting}, ${this.name}${punctuation}`;\n}\n\nconst person = { name: 'Mina' };\n\nconsole.log(greet.call(person, 'Hello', '!')); // Hello, Mina!\nconsole.log(greet.apply(person, ['Hi', '.'])); // Hi, Mina.\n\nconst boundGreet = greet.bind(person, 'Welcome');\nconsole.log(boundGreet('!')); // Welcome, Mina!",
+        "explanation": "`call` and `apply` execute now. `bind` creates a reusable function for later execution."
+      }
+    ],
+    "tip": "Use `bind` for callbacks (like event handlers) where `this` is often lost.",
+    "links": [
+      {
+        "label": "MDN: Function.prototype.bind()",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"
+      }
+    ]
+  },
+  {
+    "id": "js-004",
+    "question": "What is JSON and its common operations",
+    "difficulty": "beginner",
+    "category": "data-formats",
+    "tags": ["json", "parse", "stringify"],
+    "answer": "JSON stands for JavaScript Object Notation. It is a text format used to exchange data.\n\nCommon operations:\n- Convert JSON text to object: `JSON.parse()`\n- Convert object to JSON text: `JSON.stringify()`\n- Pretty print JSON: `JSON.stringify(obj, null, 2)`\n\nImportant:\n- JSON keys must use double quotes.\n- JSON cannot store functions or `undefined` values.",
+    "examples": [
+      {
+        "title": "Parse and stringify",
+        "language": "javascript",
+        "code": "const raw = '{\"name\":\"Ana\",\"age\":25}';\nconst user = JSON.parse(raw);\n\nuser.isActive = true;\n\nconst serialized = JSON.stringify(user, null, 2);\nconsole.log(serialized);",
+        "explanation": "You parse incoming JSON from APIs and stringify data before sending or storing."
+      }
+    ],
+    "tip": "Wrap `JSON.parse` in `try/catch` for untrusted input.",
+    "links": [
+      {
+        "label": "MDN: JSON",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON"
+      }
+    ]
+  },
+  {
+    "id": "js-005",
+    "question": "What is the purpose of the array slice method",
+    "difficulty": "beginner",
+    "category": "arrays",
+    "tags": ["array", "slice", "immutable"],
+    "answer": "`slice` returns a shallow copy of part of an array.\n\n- Syntax: `arr.slice(start, end)`\n- `start` included, `end` excluded\n- Does not change original array\n\nIt is useful when you need a subset of data without mutating the source.",
+    "examples": [
+      {
+        "title": "Create a sub-array safely",
+        "language": "javascript",
+        "code": "const scores = [10, 20, 30, 40, 50];\nconst topThree = scores.slice(0, 3);\n\nconsole.log(topThree); // [10, 20, 30]\nconsole.log(scores);   // [10, 20, 30, 40, 50] (unchanged)",
+        "explanation": "The original array is untouched, which is ideal for predictable state updates."
+      }
+    ],
+    "tip": "`slice()` with no arguments creates a full shallow copy of the array.",
+    "links": [
+      {
+        "label": "MDN: Array.prototype.slice()",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice"
+      }
+    ]
+  },
+  {
+    "id": "js-006",
+    "question": "What is the purpose of the array splice method",
+    "difficulty": "beginner",
+    "category": "arrays",
+    "tags": ["array", "splice", "mutation"],
+    "answer": "`splice` changes an array in place.\n\n- Syntax: `arr.splice(start, deleteCount, ...items)`\n- Can remove items\n- Can insert items\n- Can replace items\n- Returns removed items\n\nUse it when mutation is acceptable and you need direct edits.",
+    "examples": [
+      {
+        "title": "Remove, insert, and replace",
+        "language": "javascript",
+        "code": "const items = ['a', 'b', 'c', 'd'];\n\nconst removed = items.splice(1, 2, 'x', 'y');\n\nconsole.log(removed); // ['b', 'c']\nconsole.log(items);   // ['a', 'x', 'y', 'd']",
+        "explanation": "Starting from index 1, two elements are removed and two new ones are inserted."
+      }
+    ],
+    "tip": "In React state, prefer non-mutating methods unless you clone first.",
+    "links": [
+      {
+        "label": "MDN: Array.prototype.splice()",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/splice"
+      }
+    ]
+  },
+  {
+    "id": "js-007",
+    "question": "What is the difference between slice and splice",
+    "difficulty": "beginner",
+    "category": "arrays",
+    "tags": ["slice", "splice", "difference"],
+    "answer": "Main difference is mutation.\n\n- `slice`: does not modify original array, returns copied section.\n- `splice`: modifies original array, can add/remove/replace elements.\n\nAlso:\n- `slice(start, end)`\n- `splice(start, deleteCount, ...items)`",
+    "examples": [
+      {
+        "title": "Side-by-side comparison",
+        "language": "javascript",
+        "code": "const arr1 = [1, 2, 3, 4];\nconst arr2 = [1, 2, 3, 4];\n\nconst s1 = arr1.slice(1, 3);\nconst s2 = arr2.splice(1, 2);\n\nconsole.log(s1, arr1); // [2, 3], [1, 2, 3, 4]\nconsole.log(s2, arr2); // [2, 3], [1, 4]",
+        "explanation": "`slice` copies, `splice` edits."
+      }
+    ],
+    "tip": "Think: `slice` = safe copy, `splice` = surgical change.",
+    "links": [
+      {
+        "label": "MDN: Array methods overview",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array"
+      }
+    ]
+  },
+  {
+    "id": "js-008",
+    "question": "How do you compare Object and Map",
+    "difficulty": "intermediate",
+    "category": "objects",
+    "tags": ["object", "map", "data-structures"],
+    "answer": "`Object` and `Map` both store key-value pairs, but they are designed for different needs.\n\n`Object`:\n- Keys are strings/symbols\n- Common for structured records (user, config)\n- Has prototype-related caveats\n\n`Map`:\n- Keys can be any type (objects, functions, primitives)\n- Preserves insertion order reliably\n- Easier size and iteration APIs (`size`, `set`, `get`, `has`)\n\nUse `Map` when keys are dynamic or non-string.",
+    "examples": [
+      {
+        "title": "Non-string key with Map",
+        "language": "javascript",
+        "code": "const keyObj = { id: 1 };\n\nconst map = new Map();\nmap.set(keyObj, 'value for object key');\n\nconst obj = {};\nobj[keyObj] = 'converted key';\n\nconsole.log(map.get(keyObj)); // value for object key\nconsole.log(obj[keyObj]);     // converted key (key became '[object Object]')",
+        "explanation": "Map keeps key identity. Object converts non-string keys to strings."
+      }
+    ],
+    "tip": "If you need frequent add/remove and iteration with many dynamic keys, `Map` is usually cleaner.",
+    "links": [
+      {
+        "label": "MDN: Map",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"
+      }
+    ]
+  },
+  {
+    "id": "js-009",
+    "question": "What is the difference between == and === operators",
+    "difficulty": "beginner",
+    "category": "operators",
+    "tags": ["equality", "type-coercion", "strict-equality"],
+    "answer": "Both compare values, but behavior differs.\n\n- `==` (loose equality): converts types before comparing.\n- `===` (strict equality): compares value and type without conversion.\n\nExamples:\n- `5 == '5'` is `true`\n- `5 === '5'` is `false`\n\nUse `===` by default to avoid surprising bugs.",
+    "examples": [
+      {
+        "title": "Coercion pitfalls",
+        "language": "javascript",
+        "code": "console.log(0 == false);   // true\nconsole.log(0 === false);  // false\nconsole.log(null == undefined);  // true\nconsole.log(null === undefined); // false",
+        "explanation": "Loose equality can hide bugs due to implicit type conversion."
+      }
+    ],
+    "tip": "Use `===` and `!==` unless you have a very specific reason not to.",
+    "links": [
+      {
+        "label": "MDN: Equality comparisons and sameness",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness"
+      }
+    ]
+  },
+  {
+    "id": "js-010",
+    "question": "What are lambda expressions or arrow functions",
+    "difficulty": "beginner",
+    "category": "functions",
+    "tags": ["arrow-function", "lambda", "this"],
+    "answer": "In JavaScript, lambda expressions are called arrow functions.\n\n- Short syntax for writing functions\n- Do not have their own `this`\n- Great for callbacks and functional code\n\nSyntax examples:\n- `(a, b) => a + b`\n- `x => x * 2`\n- `() => { /* block */ }`",
+    "examples": [
+      {
+        "title": "Simple and lexical this usage",
+        "language": "javascript",
+        "code": "const nums = [1, 2, 3];\nconst doubled = nums.map((n) => n * 2);\n\nconst counter = {\n  value: 0,\n  start() {\n    setInterval(() => {\n      this.value += 1;\n      console.log(this.value);\n    }, 1000);\n  }\n};",
+        "explanation": "Arrow functions are concise and capture `this` from the outer scope."
+      }
+    ],
+    "tip": "Do not use arrow functions as object methods when you need method-level `this`.",
+    "links": [
+      {
+        "label": "MDN: Arrow function expressions",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions"
+      }
+    ]
+  },
+  {
+    "id": "js-011",
+    "question": "What is a first class function",
+    "difficulty": "beginner",
+    "category": "functions",
+    "tags": ["first-class", "functions"],
+    "answer": "A language has first-class functions when functions are treated like normal values.\n\nIn JavaScript, functions can:\n- Be assigned to variables\n- Be passed as arguments\n- Be returned from other functions\n- Be stored in arrays/objects\n\nThis is why JavaScript supports powerful patterns like callbacks and higher-order functions.",
+    "examples": [
+      {
+        "title": "Functions as values",
+        "language": "javascript",
+        "code": "function sayHi(name) {\n  return `Hi ${name}`;\n}\n\nconst fn = sayHi;\nconst result = fn('Tara');\n\nfunction execute(action, value) {\n  return action(value);\n}\n\nconsole.log(result);\nconsole.log(execute((x) => x * 3, 4));",
+        "explanation": "The function is stored, passed, and called like any other value."
+      }
+    ],
+    "tip": "First-class functions are the base for functional programming in JavaScript.",
+    "links": [
+      {
+        "label": "MDN: Functions",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
+      }
+    ]
+  },
+  {
+    "id": "js-012",
+    "question": "What is a first order function",
+    "difficulty": "intermediate",
+    "category": "functions",
+    "tags": ["first-order", "higher-order"],
+    "answer": "A first-order function is a function that does not accept another function as an argument and does not return a function.\n\nIt works directly with normal values only.",
+    "examples": [
+      {
+        "title": "First-order function example",
+        "language": "javascript",
+        "code": "function add(a, b) {\n  return a + b;\n}\n\nconsole.log(add(2, 3)); // 5",
+        "explanation": "`add` only works with values and returns a value, not a function."
+      }
+    ],
+    "tip": "Most simple utility functions like formatters, validators, and math helpers are first-order.",
+    "links": [
+      {
+        "label": "MDN: Functions overview",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
+      }
+    ]
+  },
+  {
+    "id": "js-013",
+    "question": "What is a higher order function",
+    "difficulty": "intermediate",
+    "category": "functions",
+    "tags": ["higher-order", "callback", "functional"],
+    "answer": "A higher-order function is a function that either:\n- Takes another function as an argument, or\n- Returns a function\n\nExamples: `map`, `filter`, `reduce`, custom wrappers like debounce.",
+    "examples": [
+      {
+        "title": "Array map as higher-order function",
+        "language": "javascript",
+        "code": "const prices = [100, 200, 300];\nconst withTax = prices.map((p) => p * 1.18);\n\nconsole.log(withTax);",
+        "explanation": "`map` takes a callback function, so it is higher-order."
+      },
+      {
+        "title": "Function returning function",
+        "language": "javascript",
+        "code": "function multiplyBy(factor) {\n  return function (value) {\n    return value * factor;\n  };\n}\n\nconst double = multiplyBy(2);\nconsole.log(double(10)); // 20",
+        "explanation": "Returning a function also makes `multiplyBy` a higher-order function."
+      }
+    ],
+    "tip": "If functions are data in your design, you are likely using higher-order functions.",
+    "links": [
+      {
+        "label": "MDN: Array.prototype.map()",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map"
+      }
+    ]
+  },
+  {
+    "id": "js-014",
+    "question": "What is a unary function",
+    "difficulty": "intermediate",
+    "category": "functions",
+    "tags": ["unary", "arity"],
+    "answer": "A unary function takes exactly one argument.\n\nArity means how many arguments a function expects.\n- Unary: 1\n- Binary: 2\n- Ternary: 3",
+    "examples": [
+      {
+        "title": "Unary function in array map",
+        "language": "javascript",
+        "code": "function square(x) {\n  return x * x;\n}\n\nconsole.log([1, 2, 3].map(square)); // [1, 4, 9]",
+        "explanation": "`square` accepts one value, so it is unary."
+      }
+    ],
+    "tip": "Unary functions are easier to compose in functional pipelines.",
+    "links": [
+      {
+        "label": "MDN: Function.length",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/length"
+      }
+    ]
+  },
+  {
+    "id": "js-015",
+    "question": "What is the currying function",
+    "difficulty": "intermediate",
+    "category": "functions",
+    "tags": ["currying", "functional", "partial-application"],
+    "answer": "Currying transforms a function with many arguments into nested unary functions.\n\nInstead of `f(a, b, c)`, curried form is `f(a)(b)(c)`.\n\nWhy useful:\n- Reuse partially applied logic\n- Create readable function pipelines\n- Configure functions step by step",
+    "examples": [
+      {
+        "title": "Simple curried add",
+        "language": "javascript",
+        "code": "const add = (a) => (b) => a + b;\n\nconst add10 = add(10);\nconsole.log(add10(5)); // 15\nconsole.log(add(2)(3)); // 5",
+        "explanation": "First function captures `a`, second receives `b`."
+      },
+      {
+        "title": "Practical formatter",
+        "language": "javascript",
+        "code": "const formatCurrency = (currency) => (amount) =>\n  new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount);\n\nconst inr = formatCurrency('INR');\nconsole.log(inr(1499));",
+        "explanation": "Currying helps create reusable pre-configured functions."
+      }
+    ],
+    "tip": "Currying is most helpful when many calls share the same first argument(s).",
+    "links": [
+      {
+        "label": "JavaScript.info: Currying",
+        "href": "https://javascript.info/currying-partials"
+      }
+    ]
+  },
+  {
+    "id": "js-016",
+    "question": "What is a pure function",
+    "difficulty": "intermediate",
+    "category": "functions",
+    "tags": ["pure-function", "side-effects"],
+    "answer": "A pure function has two key rules:\n\n1. Same input always gives same output.\n2. No side effects (it does not modify external state, DOM, network, file, etc.).\n\nPure functions are predictable and easy to test.",
+    "examples": [
+      {
+        "title": "Pure vs impure",
+        "language": "javascript",
+        "code": "function pureTotal(price, taxRate) {\n  return price + price * taxRate;\n}\n\nlet totalCalls = 0;\nfunction impureTotal(price, taxRate) {\n  totalCalls += 1; // side effect\n  return price + price * taxRate;\n}",
+        "explanation": "`pureTotal` only depends on inputs. `impureTotal` touches outer state."
+      }
+    ],
+    "tip": "Move side effects to outer layers (UI/services), keep core logic pure.",
+    "links": [
+      {
+        "label": "MDN: Functions",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
+      }
+    ]
+  },
+  {
+    "id": "js-017",
+    "question": "What are the benefits of pure functions",
+    "difficulty": "intermediate",
+    "category": "functions",
+    "tags": ["pure-function", "testing", "maintainability"],
+    "answer": "Benefits of pure functions:\n\n- Predictable behavior: easy to reason about\n- Easy testing: no mocks for external state needed\n- Safe refactoring: less hidden coupling\n- Better reuse: same logic works anywhere\n- Memoization-friendly: same input -> same output\n\nPure functions reduce bugs in complex codebases.",
+    "examples": [
+      {
+        "title": "Easy unit testing",
+        "language": "javascript",
+        "code": "function discount(price, percent) {\n  return price - (price * percent) / 100;\n}\n\n// deterministic test cases\nconsole.log(discount(100, 10) === 90);\nconsole.log(discount(200, 25) === 150);",
+        "explanation": "No setup for APIs, DOM, or shared state is needed to test pure logic."
+      }
+    ],
+    "tip": "When a bug appears, pure functions narrow the search area quickly.",
+    "links": [
+      {
+        "label": "MDN: Functions guide",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
+      }
+    ]
+  },
+  {
+    "id": "js-018",
+    "question": "What is the purpose of the let keyword",
+    "difficulty": "beginner",
+    "category": "variables-and-scope",
+    "tags": ["let", "block-scope", "variables"],
+    "answer": "`let` declares block-scoped variables.\n\nPurpose:\n- Limit variable scope to `{}` block\n- Avoid many `var`-related bugs\n- Allow reassignment while preventing same-scope redeclaration\n\nUse `let` when value changes over time. Use `const` when it should not be reassigned.",
+    "examples": [
+      {
+        "title": "Block scope with let",
+        "language": "javascript",
+        "code": "if (true) {\n  let message = 'inside block';\n  console.log(message); // works\n}\n\n// console.log(message); // ReferenceError",
+        "explanation": "`let` variable only exists inside that block."
+      }
+    ],
+    "tip": "Default to `const`, then switch to `let` only when reassignment is required.",
+    "links": [
+      {
+        "label": "MDN: let",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let"
+      }
+    ]
+  },
+  {
+    "id": "js-019",
+    "question": "What is the difference between let and var",
+    "difficulty": "beginner",
+    "category": "variables-and-scope",
+    "tags": ["let", "var", "scope", "hoisting"],
+    "answer": "Key differences:\n\n- Scope: `var` is function-scoped, `let` is block-scoped\n- Redeclaration: `var` allows redeclare in same scope, `let` does not\n- Hoisting behavior: both are hoisted, but `let` is in Temporal Dead Zone before declaration\n- Global object: top-level `var` may become `window` property in browsers; `let` does not\n\nModern code should avoid `var` in most cases.",
+    "examples": [
+      {
+        "title": "Block behavior difference",
+        "language": "javascript",
+        "code": "if (true) {\n  var x = 1;\n  let y = 2;\n}\n\nconsole.log(x); // 1\n// console.log(y); // ReferenceError",
+        "explanation": "`var` escapes block, `let` stays inside block."
+      }
+    ],
+    "tip": "Use ESLint rule `no-var` in team projects to enforce modern style.",
+    "links": [
+      {
+        "label": "MDN: var",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/var"
+      }
+    ]
+  },
+  {
+    "id": "js-020",
+    "question": "What is the reason to choose the name let as a keyword",
+    "difficulty": "intermediate",
+    "category": "variables-and-scope",
+    "tags": ["let", "history", "language-design"],
+    "answer": "The keyword name `let` comes from older programming language traditions and mathematics, where `let` means \"let this value be ...\".\n\nJavaScript adopted it in ES6 to introduce safer variable declarations with block scope.\n\nSo the reason is both semantic clarity and alignment with existing language concepts.",
+    "examples": [
+      {
+        "title": "Readable declaration intent",
+        "language": "javascript",
+        "code": "let total = 0;\nfor (let i = 0; i < 3; i += 1) {\n  total += i;\n}\nconsole.log(total);",
+        "explanation": "The code reads naturally as \"let total be 0\" and \"let i be local to loop\"."
+      }
+    ],
+    "tip": "In interviews, focus on block-scope safety as the practical value, not only naming history.",
+    "links": [
+      {
+        "label": "ECMAScript 2015 language overview",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let#specifications"
+      }
+    ]
+  },
+  {
+    "id": "js-021",
+    "question": "How do you redeclare variables in a switch block without an error",
+    "difficulty": "intermediate",
+    "category": "variables-and-scope",
+    "tags": ["switch", "let", "block-scope"],
+    "answer": "All `case` clauses share the same switch block scope unless you wrap each case in its own braces.\n\nTo redeclare `let`/`const` safely, use block braces in each case.",
+    "examples": [
+      {
+        "title": "Use braces per case",
+        "language": "javascript",
+        "code": "switch (role) {\n  case 'admin': {\n    const label = 'Administrator';\n    console.log(label);\n    break;\n  }\n  case 'user': {\n    const label = 'User';\n    console.log(label);\n    break;\n  }\n  default: {\n    const label = 'Guest';\n    console.log(label);\n  }\n}",
+        "explanation": "Each `{}` makes a new scope, so `label` can be declared in multiple cases."
+      }
+    ],
+    "tip": "Always use braces in `switch` cases when declaring `let` or `const`.",
+    "links": [
+      {
+        "label": "MDN: switch",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch"
+      }
+    ]
+  },
+  {
+    "id": "js-022",
+    "question": "What is the Temporal Dead Zone",
+    "difficulty": "intermediate",
+    "category": "variables-and-scope",
+    "tags": ["tdz", "let", "const", "hoisting"],
+    "answer": "Temporal Dead Zone (TDZ) is the time between entering a block and the actual declaration of a `let` or `const` variable.\n\nDuring TDZ, accessing the variable throws `ReferenceError`.\n\nThis helps catch mistakes early.",
+    "examples": [
+      {
+        "title": "TDZ in action",
+        "language": "javascript",
+        "code": "{\n  // console.log(count); // ReferenceError (TDZ)\n  let count = 5;\n  console.log(count); // 5\n}",
+        "explanation": "The variable exists logically but cannot be used before declaration line runs."
+      }
+    ],
+    "tip": "Declare variables at top of block to avoid TDZ confusion.",
+    "links": [
+      {
+        "label": "MDN: let - Temporal dead zone",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let#temporal_dead_zone_tdz"
+      }
+    ]
+  },
+  {
+    "id": "js-023",
+    "question": "What is an IIFE (Immediately Invoked Function Expression)",
+    "difficulty": "beginner",
+    "category": "functions",
+    "tags": ["iife", "scope", "function-expression"],
+    "answer": "IIFE means a function expression that runs immediately after it is defined.\n\nPattern:\n- `(function () { ... })();`\n- `(() => { ... })();`\n\nWhy used:\n- Create private scope\n- Avoid polluting global variables\n- Run setup code once",
+    "examples": [
+      {
+        "title": "Private setup with IIFE",
+        "language": "javascript",
+        "code": "const appConfig = (() => {\n  const apiKey = 'internal-key';\n  return {\n    env: 'production',\n    hasKey: Boolean(apiKey)\n  };\n})();\n\nconsole.log(appConfig.env);",
+        "explanation": "`apiKey` stays private inside the IIFE scope."
+      }
+    ],
+    "tip": "Modules often replace many old IIFE use cases, but concept is still important for interviews.",
+    "links": [
+      {
+        "label": "MDN: Function expression",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/function"
+      }
+    ]
+  },
+  {
+    "id": "js-024",
+    "question": "How do you decode or encode a URL in JavaScript?",
+    "difficulty": "beginner",
+    "category": "web-apis",
+    "tags": ["url", "encodeURIComponent", "decodeURIComponent"],
+    "answer": "Use built-in URL encoding/decoding functions.\n\n- `encodeURI(url)`: encode full URL (keeps URL structure characters)\n- `encodeURIComponent(value)`: encode a query value or path segment\n- `decodeURI(...)` and `decodeURIComponent(...)` for reverse\n\nMost query parameter cases should use `encodeURIComponent`.",
+    "examples": [
+      {
+        "title": "Encode query safely",
+        "language": "javascript",
+        "code": "const search = 'react hooks & state';\nconst url = `/search?q=${encodeURIComponent(search)}`;\n\nconsole.log(url); // /search?q=react%20hooks%20%26%20state\nconsole.log(decodeURIComponent(url.split('=')[1])); // react hooks & state",
+        "explanation": "Encoding prevents special characters from breaking query strings."
+      }
+    ],
+    "tip": "When building query strings, always encode each value, not the whole query expression at once.",
+    "links": [
+      {
+        "label": "MDN: encodeURIComponent()",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent"
+      }
+    ]
+  },
+  {
+    "id": "js-025",
+    "question": "What is memoization",
+    "difficulty": "intermediate",
+    "category": "performance",
+    "tags": ["memoization", "cache", "optimization"],
+    "answer": "Memoization is an optimization technique where function results are cached by input.\n\nIf the same input comes again, return cached result instead of recomputing.\n\nWorks best for:\n- Expensive calculations\n- Pure functions\n- Repeated calls with same input",
+    "examples": [
+      {
+        "title": "Simple memoize wrapper",
+        "language": "javascript",
+        "code": "function memoize(fn) {\n  const cache = new Map();\n  return function (...args) {\n    const key = JSON.stringify(args);\n    if (cache.has(key)) return cache.get(key);\n    const result = fn(...args);\n    cache.set(key, result);\n    return result;\n  };\n}\n\nconst slowSquare = (n) => {\n  for (let i = 0; i < 1e7; i += 1) {}\n  return n * n;\n};\n\nconst fastSquare = memoize(slowSquare);\nconsole.log(fastSquare(12));\nconsole.log(fastSquare(12)); // served from cache",
+        "explanation": "Second call is fast because result for same input is already cached."
+      }
+    ],
+    "tip": "Memoize only where profiling shows repeated expensive work; avoid premature optimization.",
+    "links": [
+      {
+        "label": "MDN: Map",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"
+      }
+    ]
+  },
+  {
+    "id": "js-026",
+    "question": "What is Hoisting",
+    "difficulty": "beginner",
+    "category": "variables-and-scope",
+    "tags": ["hoisting", "var", "function", "let", "const"],
+    "answer": "Hoisting means JavaScript processes declarations before executing code.\n\n- Function declarations are hoisted with full function body.\n- `var` declarations are hoisted and initialized as `undefined`.\n- `let` and `const` declarations are hoisted but inaccessible before declaration (TDZ).\n\nSo \"hoisted\" does not always mean \"safe to use before line\".",
+    "examples": [
+      {
+        "title": "Different hoisting behavior",
+        "language": "javascript",
+        "code": "console.log(a); // undefined\nvar a = 10;\n\ngreet(); // works\nfunction greet() {\n  console.log('hello');\n}\n\n// console.log(b); // ReferenceError (TDZ)\nlet b = 20;",
+        "explanation": "All declarations are prepared early, but access rules differ by keyword type."
+      }
+    ],
+    "tip": "Declare before use for readability, even if hoisting allows some patterns.",
+    "links": [
+      {
+        "label": "MDN: Hoisting (Glossary)",
+        "href": "https://developer.mozilla.org/en-US/docs/Glossary/Hoisting"
+      }
+    ]
+  },
+  {
+    "id": "js-027",
+    "question": "What are classes in ES6",
+    "difficulty": "beginner",
+    "category": "objects",
+    "tags": ["class", "constructor", "inheritance", "es6"],
+    "answer": "ES6 classes are a cleaner syntax to create objects and inheritance.\n\n- `class` defines blueprint\n- `constructor` initializes instance data\n- Methods are placed on prototype\n- `extends` supports inheritance\n\nImportant: classes are syntactic sugar over prototype-based system.",
+    "examples": [
+      {
+        "title": "Class with inheritance",
+        "language": "javascript",
+        "code": "class Animal {\n  constructor(name) {\n    this.name = name;\n  }\n  speak() {\n    return `${this.name} makes a sound`;\n  }\n}\n\nclass Dog extends Animal {\n  speak() {\n    return `${this.name} barks`;\n  }\n}\n\nconst d = new Dog('Rex');\nconsole.log(d.speak());",
+        "explanation": "`Dog` inherits from `Animal` and overrides `speak`."
+      }
+    ],
+    "tip": "Remember: class methods are not copied into each instance; they are shared via prototype.",
+    "links": [
+      {
+        "label": "MDN: Classes",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes"
+      }
+    ]
+  },
+  {
+    "id": "js-028",
+    "question": "What are closures",
+    "difficulty": "intermediate",
+    "category": "functions",
+    "tags": ["closure", "lexical-scope", "state"],
+    "answer": "A closure is when a function remembers variables from its outer lexical scope even after outer function has finished.\n\nThis enables:\n- Private data\n- Function factories\n- Persistent state without global variables",
+    "examples": [
+      {
+        "title": "Private counter using closure",
+        "language": "javascript",
+        "code": "function createCounter() {\n  let count = 0;\n  return function () {\n    count += 1;\n    return count;\n  };\n}\n\nconst counter = createCounter();\nconsole.log(counter()); // 1\nconsole.log(counter()); // 2",
+        "explanation": "Inner function keeps access to `count` between calls."
+      }
+    ],
+    "tip": "Closures are powerful, but avoid accidentally retaining large objects in long-lived closures.",
+    "links": [
+      {
+        "label": "MDN: Closures",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures"
+      }
+    ]
+  },
+  {
+    "id": "js-029",
+    "question": "What are modules",
+    "difficulty": "beginner",
+    "category": "modules",
+    "tags": ["modules", "import", "export", "esm"],
+    "answer": "Modules are separate files with their own scope that can export and import code.\n\nThey help split code into reusable units.\n\nES module keywords:\n- `export` / `export default`\n- `import { x } from './file.js'`\n\nModern JavaScript uses ES Modules in browsers and Node.js.",
+    "examples": [
+      {
+        "title": "Export and import",
+        "language": "javascript",
+        "code": "// math.js\nexport function add(a, b) {\n  return a + b;\n}\n\n// app.js\nimport { add } from './math.js';\nconsole.log(add(2, 3));",
+        "explanation": "The `add` function is defined once and reused from another file."
+      }
+    ],
+    "tip": "Prefer named exports for better discoverability and refactoring safety.",
+    "links": [
+      {
+        "label": "MDN: JavaScript modules",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
+      }
+    ]
+  },
+  {
+    "id": "js-030",
+    "question": "Why do you need modules",
+    "difficulty": "beginner",
+    "category": "modules",
+    "tags": ["modules", "maintainability", "scalability"],
+    "answer": "You need modules to build maintainable and scalable applications.\n\nBenefits:\n- Better organization (split by feature)\n- Reusability across files/apps\n- Private scope by default (fewer global conflicts)\n- Easier testing and debugging\n- Better tooling support (tree shaking, bundling)\n\nWithout modules, large apps become hard to manage.",
+    "examples": [
+      {
+        "title": "Feature-based separation",
+        "language": "javascript",
+        "code": "// api/userApi.js\nexport async function fetchUser(id) {\n  const response = await fetch(`/api/users/${id}`);\n  return response.json();\n}\n\n// components/profile.js\nimport { fetchUser } from '../api/userApi.js';",
+        "explanation": "API logic and UI logic stay decoupled and easier to update independently."
+      }
+    ],
+    "tip": "A module boundary is also a design boundary. Keep each module focused on one responsibility.",
+    "links": [
+      {
+        "label": "MDN: Modules - benefits",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules#benefits_of_modules"
+      }
+    ]
+  },
+  {
+    "id": "js-031",
+    "question": "What is scope in javascript",
+    "difficulty": "beginner",
+    "category": "variables-and-scope",
+    "tags": ["scope", "global", "function", "block", "lexical"],
+    "answer": "Scope defines where a variable can be accessed.\n\nMain types:\n- Global scope: available everywhere\n- Function scope: available only inside function (`var`)\n- Block scope: available only inside `{}` (`let`, `const`)\n- Lexical scope: inner scopes can access outer scope variables\n\nUnderstanding scope helps prevent name conflicts and bugs.",
+    "examples": [
+      {
+        "title": "Lexical scope example",
+        "language": "javascript",
+        "code": "const appName = 'Interview Forge';\n\nfunction outer() {\n  const section = 'JavaScript';\n  function inner() {\n    console.log(appName, section);\n  }\n  inner();\n}\n\nouter();",
+        "explanation": "`inner` can read outer variables due to lexical scoping."
+      }
+    ],
+    "tip": "Keep variable scope as small as possible to reduce accidental side effects.",
+    "links": [
+      {
+        "label": "MDN: Scope",
+        "href": "https://developer.mozilla.org/en-US/docs/Glossary/Scope"
+      }
+    ]
+  },
+  {
+    "id": "js-032",
+    "question": "What is a service worker",
+    "difficulty": "intermediate",
+    "category": "service-workers",
+    "tags": ["service-worker", "offline", "pwa", "cache"],
+    "answer": "A service worker is a background script that runs separately from web pages.\n\nIt can:\n- Intercept network requests\n- Cache assets for offline support\n- Enable background sync and push notifications\n\nIt is event-driven and has no direct access to DOM.",
+    "examples": [
+      {
+        "title": "Basic registration",
+        "language": "javascript",
+        "code": "if ('serviceWorker' in navigator) {\n  navigator.serviceWorker\n    .register('/service-worker.js')\n    .then(() => console.log('Service worker registered'))\n    .catch((error) => console.error('Registration failed', error));\n}",
+        "explanation": "Registration happens from page context; worker file runs in worker context."
+      }
+    ],
+    "tip": "Service workers require HTTPS (or localhost during development).",
+    "links": [
+      {
+        "label": "MDN: Service Worker API",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API"
+      }
+    ]
+  },
+  {
+    "id": "js-033",
+    "question": "How do you manipulate DOM using a service worker",
+    "difficulty": "intermediate",
+    "category": "service-workers",
+    "tags": ["service-worker", "dom", "message-passing"],
+    "answer": "You cannot manipulate DOM directly from a service worker.\n\nReason:\n- Service worker runs in a separate worker context with no `window` or `document`.\n\nCorrect approach:\n1. Service worker sends message to page.\n2. Page script receives message.\n3. Page script updates DOM.",
+    "examples": [
+      {
+        "title": "Send message from service worker to page",
+        "language": "javascript",
+        "code": "// service-worker.js\nself.addEventListener('fetch', (event) => {\n  event.waitUntil(\n    self.clients.matchAll().then((clients) => {\n      clients.forEach((client) => {\n        client.postMessage({ type: 'NETWORK_EVENT', text: 'Request intercepted' });\n      });\n    })\n  );\n});\n\n// page.js\nnavigator.serviceWorker.addEventListener('message', (event) => {\n  if (event.data.type === 'NETWORK_EVENT') {\n    document.getElementById('status').textContent = event.data.text;\n  }\n});",
+        "explanation": "DOM change happens in page script, not inside service worker."
+      }
+    ],
+    "tip": "Interview-safe sentence: \"Service worker cannot touch DOM directly; use postMessage bridge.\"",
+    "links": [
+      {
+        "label": "MDN: Client.postMessage()",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Client/postMessage"
+      }
+    ]
+  },
+  {
+    "id": "js-034",
+    "question": "How do you reuse information across service worker restarts",
+    "difficulty": "intermediate",
+    "category": "service-workers",
+    "tags": ["service-worker", "indexeddb", "cache-storage", "persistence"],
+    "answer": "Service workers can be stopped and restarted by browser anytime.\n\nSo in-memory variables are not reliable for long-term state.\n\nTo persist and reuse data across restarts:\n- Use Cache Storage for request/response caching\n- Use IndexedDB for structured persistent data\n- Rebuild transient state during activation/start events",
+    "examples": [
+      {
+        "title": "Store API response in Cache Storage",
+        "language": "javascript",
+        "code": "self.addEventListener('fetch', (event) => {\n  event.respondWith(\n    caches.open('app-v1').then(async (cache) => {\n      const cached = await cache.match(event.request);\n      if (cached) return cached;\n\n      const response = await fetch(event.request);\n      cache.put(event.request, response.clone());\n      return response;\n    })\n  );\n});",
+        "explanation": "Cached data survives service worker process restarts."
+      }
+    ],
+    "tip": "Treat service worker memory as temporary and storage APIs as source of truth.",
+    "links": [
+      {
+        "label": "MDN: CacheStorage",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/CacheStorage"
+      }
+    ]
+  },
+  {
+    "id": "js-035",
+    "question": "What is IndexedDB",
+    "difficulty": "intermediate",
+    "category": "web-storage",
+    "tags": ["indexeddb", "offline", "database", "browser-storage"],
+    "answer": "IndexedDB is a low-level browser database for storing large structured data.\n\nFeatures:\n- Stores objects, files, key-value data\n- Supports indexes for fast lookup\n- Async, transactional API\n- Works offline\n\nUse it for larger or complex client data beyond localStorage limits.",
+    "examples": [
+      {
+        "title": "Open a database",
+        "language": "javascript",
+        "code": "const request = indexedDB.open('appDB', 1);\n\nrequest.onupgradeneeded = () => {\n  const db = request.result;\n  db.createObjectStore('users', { keyPath: 'id' });\n};\n\nrequest.onsuccess = () => {\n  const db = request.result;\n  console.log('DB opened', db.name);\n};",
+        "explanation": "You define stores during upgrade, then read/write in transactions."
+      }
+    ],
+    "tip": "Use a small wrapper library in real apps because raw IndexedDB API is verbose.",
+    "links": [
+      {
+        "label": "MDN: IndexedDB API",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API"
+      }
+    ]
+  },
+  {
+    "id": "js-036",
+    "question": "What is web storage",
+    "difficulty": "beginner",
+    "category": "web-storage",
+    "tags": ["web-storage", "localStorage", "sessionStorage"],
+    "answer": "Web Storage is a browser API for simple key-value storage.\n\nTwo parts:\n- `localStorage`: persists until manually cleared\n- `sessionStorage`: lasts for one tab session\n\nIt is synchronous and string-based, so you often use `JSON.stringify` / `JSON.parse`.",
+    "examples": [
+      {
+        "title": "Store and read object",
+        "language": "javascript",
+        "code": "const settings = { theme: 'dark', fontSize: 16 };\nlocalStorage.setItem('settings', JSON.stringify(settings));\n\nconst saved = localStorage.getItem('settings');\nconst parsed = saved ? JSON.parse(saved) : null;\nconsole.log(parsed);",
+        "explanation": "Objects must be converted to string before storing."
+      }
+    ],
+    "tip": "Do not store sensitive secrets in Web Storage.",
+    "links": [
+      {
+        "label": "MDN: Web Storage API",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+      }
+    ]
+  },
+  {
+    "id": "js-037",
+    "question": "What is a post message",
+    "difficulty": "intermediate",
+    "category": "web-apis",
+    "tags": ["postMessage", "cross-origin", "messaging"],
+    "answer": "`postMessage` is a safe messaging API used to communicate between different execution contexts, such as:\n- Window and iframe\n- Main thread and worker\n- Service worker and client pages\n\nIt helps send structured data without direct shared memory.",
+    "examples": [
+      {
+        "title": "Window to iframe message",
+        "language": "javascript",
+        "code": "// parent window\niframe.contentWindow.postMessage({ type: 'PING' }, 'https://example.com');\n\n// inside iframe window\nwindow.addEventListener('message', (event) => {\n  if (event.origin !== 'https://your-parent-domain.com') return;\n  console.log(event.data);\n});",
+        "explanation": "Always validate `origin` to prevent security issues."
+      }
+    ],
+    "tip": "Never use `*` as target origin in production unless absolutely required and safe.",
+    "links": [
+      {
+        "label": "MDN: Window.postMessage()",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage"
+      }
+    ]
+  },
+  {
+    "id": "js-038",
+    "question": "What is a Cookie",
+    "difficulty": "beginner",
+    "category": "cookies",
+    "tags": ["cookie", "http", "browser-storage"],
+    "answer": "A cookie is small text data stored by browser and sent with HTTP requests to matching domain/path.\n\nCommon uses:\n- Session management\n- Remembering user preferences\n- Tracking identifiers\n\nCookies can be set by server (`Set-Cookie`) or JavaScript (`document.cookie`, limited by flags).",
+    "examples": [
+      {
+        "title": "Set and read a basic cookie",
+        "language": "javascript",
+        "code": "document.cookie = 'theme=dark; path=/; max-age=86400';\nconsole.log(document.cookie);",
+        "explanation": "Cookie string contains semicolon-separated cookie entries."
+      }
+    ],
+    "tip": "Use `HttpOnly` for auth cookies so JavaScript cannot read them.",
+    "links": [
+      {
+        "label": "MDN: HTTP cookies",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies"
+      }
+    ]
+  },
+  {
+    "id": "js-039",
+    "question": "Why do you need a Cookie",
+    "difficulty": "beginner",
+    "category": "cookies",
+    "tags": ["cookie", "session", "authentication"],
+    "answer": "Cookies are needed when browser and server must share small state automatically with every request.\n\nTypical reasons:\n- Keep user logged in (session cookie)\n- Persist user language/theme preferences\n- Store identifiers for analytics or personalization\n\nUnlike localStorage, cookies are automatically included in HTTP requests.",
+    "examples": [
+      {
+        "title": "Session cookie use case",
+        "language": "javascript",
+        "code": "// Server sets: Set-Cookie: sessionId=abc123; HttpOnly; Secure; SameSite=Lax\n// Browser now includes it on next matching requests automatically",
+        "explanation": "This automatic request inclusion is why cookies are key for server-side sessions."
+      }
+    ],
+    "tip": "For sensitive session data, store only a session identifier, not full user data.",
+    "links": [
+      {
+        "label": "MDN: Set-Cookie",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie"
+      }
+    ]
+  },
+  {
+    "id": "js-040",
+    "question": "What are the options in a cookie",
+    "difficulty": "intermediate",
+    "category": "cookies",
+    "tags": ["cookie-attributes", "secure", "httponly", "samesite"],
+    "answer": "Common cookie options (attributes):\n\n- `Expires`: exact expiry date/time\n- `Max-Age`: expiry in seconds\n- `Domain`: which domain can receive cookie\n- `Path`: URL path scope\n- `Secure`: send only over HTTPS\n- `HttpOnly`: inaccessible from JavaScript\n- `SameSite`: controls cross-site sending (`Strict`, `Lax`, `None`)\n\nSecurity-focused apps should set these carefully.",
+    "examples": [
+      {
+        "title": "Secure session cookie attributes",
+        "language": "javascript",
+        "code": "Set-Cookie: sessionId=abc123; Max-Age=3600; Path=/; Secure; HttpOnly; SameSite=Lax",
+        "explanation": "This combination reduces XSS/CSRF risks and limits cookie lifetime."
+      }
+    ],
+    "tip": "If `SameSite=None` is used, `Secure` must also be set.",
+    "links": [
+      {
+        "label": "MDN: Set-Cookie attribute reference",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#attributes"
+      }
+    ]
+  },
+  {
+    "id": "js-041",
+    "question": "How do you delete a cookie",
+    "difficulty": "beginner",
+    "category": "cookies",
+    "tags": ["cookie", "delete", "expires", "max-age"],
+    "answer": "To delete a cookie, set the same cookie name (and matching path/domain) with an expired date or `Max-Age=0`.\n\nIf path/domain do not match original cookie, deletion may fail.",
+    "examples": [
+      {
+        "title": "Delete by Max-Age",
+        "language": "javascript",
+        "code": "document.cookie = 'theme=; path=/; max-age=0';",
+        "explanation": "Setting max-age to zero tells browser to remove it immediately."
+      },
+      {
+        "title": "Delete by Expires",
+        "language": "javascript",
+        "code": "document.cookie = 'theme=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';",
+        "explanation": "A past date also invalidates cookie."
+      }
+    ],
+    "tip": "Match `Path` and `Domain` exactly to remove the intended cookie.",
+    "links": [
+      {
+        "label": "MDN: Document.cookie",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie"
+      }
+    ]
+  },
+  {
+    "id": "js-042",
+    "question": "What are the differences between cookie, local storage and session storage",
+    "difficulty": "intermediate",
+    "category": "web-storage",
+    "tags": ["cookie", "localStorage", "sessionStorage", "comparison"],
+    "answer": "Key differences:\n\n- Cookie:\n  - Sent automatically with HTTP requests\n  - Small size (~4KB per cookie)\n  - Has security attributes (`HttpOnly`, `Secure`, `SameSite`)\n\n- localStorage:\n  - Not sent with requests\n  - Persists until cleared\n  - Larger size than cookies\n  - Accessible via JavaScript only\n\n- sessionStorage:\n  - Not sent with requests\n  - Exists only for current tab session\n  - Cleared when tab/window closes\n\nChoose based on lifecycle and whether server needs data automatically.",
+    "examples": [
+      {
+        "title": "Typical usage mapping",
+        "language": "javascript",
+        "code": "// Cookie: session id (set by server)\n// localStorage: UI preferences\nlocalStorage.setItem('theme', 'dark');\n\n// sessionStorage: temporary wizard step in current tab\nsessionStorage.setItem('step', '2');",
+        "explanation": "Each storage type is useful for different persistence and transport needs."
+      }
+    ],
+    "tip": "Never store auth tokens in localStorage without understanding XSS risks.",
+    "links": [
+      {
+        "label": "MDN: Web Storage API",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+      }
+    ]
+  },
+  {
+    "id": "js-043",
+    "question": "What is the main difference between localStorage and sessionStorage",
+    "difficulty": "beginner",
+    "category": "web-storage",
+    "tags": ["localStorage", "sessionStorage", "lifetime"],
+    "answer": "Main difference is lifetime and tab scope.\n\n- `localStorage`: persists across browser restarts until cleared.\n- `sessionStorage`: cleared when tab/session ends, and is isolated per tab.\n\nBoth store only string key-value pairs and use similar methods.",
+    "examples": [
+      {
+        "title": "Lifecycle difference",
+        "language": "javascript",
+        "code": "localStorage.setItem('language', 'en');\nsessionStorage.setItem('draft', 'temporary text');",
+        "explanation": "After closing tab, `draft` disappears but `language` remains."
+      }
+    ],
+    "tip": "Use `sessionStorage` for temporary flows like multi-step forms in one tab.",
+    "links": [
+      {
+        "label": "MDN: Window.sessionStorage",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage"
+      }
+    ]
+  },
+  {
+    "id": "js-044",
+    "question": "How do you access web storage",
+    "difficulty": "beginner",
+    "category": "web-storage",
+    "tags": ["web-storage", "localStorage", "sessionStorage", "api"],
+    "answer": "Access web storage through `window.localStorage` and `window.sessionStorage`.\n\nCommon methods:\n- `setItem(key, value)`\n- `getItem(key)`\n- `removeItem(key)`\n- `clear()`\n- `key(index)` and `length`",
+    "examples": [
+      {
+        "title": "Read/write localStorage",
+        "language": "javascript",
+        "code": "localStorage.setItem('token', 'abc');\nconst token = localStorage.getItem('token');\nconsole.log(token);\n\nlocalStorage.removeItem('token');",
+        "explanation": "All values are stored as strings."
+      }
+    ],
+    "tip": "Always null-check `getItem` result before parsing.",
+    "links": [
+      {
+        "label": "MDN: Window.localStorage",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
+      }
+    ]
+  },
+  {
+    "id": "js-045",
+    "question": "What are the methods available on session storage",
+    "difficulty": "beginner",
+    "category": "web-storage",
+    "tags": ["sessionStorage", "methods"],
+    "answer": "`sessionStorage` supports the same Storage API methods:\n\n- `setItem(key, value)`\n- `getItem(key)`\n- `removeItem(key)`\n- `clear()`\n- `key(index)`\n- `length` property",
+    "examples": [
+      {
+        "title": "Session storage methods usage",
+        "language": "javascript",
+        "code": "sessionStorage.setItem('step', '1');\nconsole.log(sessionStorage.getItem('step')); // '1'\n\nconsole.log(sessionStorage.length);\nconsole.log(sessionStorage.key(0));\n\nsessionStorage.removeItem('step');\nsessionStorage.clear();",
+        "explanation": "Method names and behavior are identical to localStorage except lifecycle."
+      }
+    ],
+    "tip": "Treat storage values as strings; convert to/from JSON for objects.",
+    "links": [
+      {
+        "label": "MDN: Storage interface",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Storage"
+      }
+    ]
+  },
+  {
+    "id": "js-046",
+    "question": "What is a storage event and its event handler",
+    "difficulty": "intermediate",
+    "category": "web-storage",
+    "tags": ["storage-event", "localStorage", "synchronization"],
+    "answer": "`storage` event fires in other same-origin documents when web storage changes.\n\nImportant behavior:\n- Fires for `localStorage` and (in limited scope) `sessionStorage`\n- Does not fire in the same tab that performed the change\n\nEvent handler can read:\n- `event.key`\n- `event.oldValue`\n- `event.newValue`\n- `event.storageArea`\n- `event.url`",
+    "examples": [
+      {
+        "title": "Listen for localStorage changes across tabs",
+        "language": "javascript",
+        "code": "window.addEventListener('storage', (event) => {\n  if (event.key === 'theme') {\n    console.log('Old:', event.oldValue, 'New:', event.newValue);\n    document.body.dataset.theme = event.newValue || 'light';\n  }\n});",
+        "explanation": "Useful for syncing state like theme/logout between multiple tabs."
+      }
+    ],
+    "tip": "If you need same-tab reaction too, call your update function directly after `setItem`.",
+    "links": [
+      {
+        "label": "MDN: Window: storage event",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event"
+      }
+    ]
+  },
+  {
+    "id": "js-047",
+    "question": "Why do you need web storage",
+    "difficulty": "beginner",
+    "category": "web-storage",
+    "tags": ["web-storage", "offline", "persistence"],
+    "answer": "Web storage is needed to keep lightweight client data across page reloads without server round trips.\n\nCommon use cases:\n- Theme and language preferences\n- Draft form data\n- Cached UI state\n- Session tab-specific temporary flow data\n\nIt improves user experience and reduces unnecessary API calls.",
+    "examples": [
+      {
+        "title": "Remember user theme",
+        "language": "javascript",
+        "code": "const savedTheme = localStorage.getItem('theme') || 'light';\ndocument.body.dataset.theme = savedTheme;\n\nfunction setTheme(theme) {\n  localStorage.setItem('theme', theme);\n  document.body.dataset.theme = theme;\n}",
+        "explanation": "User preference survives refreshes and browser restarts."
+      }
+    ],
+    "tip": "Keep only non-sensitive, small data in web storage and validate before using it.",
+    "links": [
+      {
+        "label": "MDN: Using the Web Storage API",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API"
+      }
+    ]
+  },
+  {
+    "id": "js-048",
+    "question": "How do you check web storage browser support",
+    "difficulty": "beginner",
+    "category": "web-storage",
+    "tags": ["feature-detection", "web-storage", "browser-support"],
+    "answer": "Use feature detection by checking `localStorage` existence and write/remove test in `try/catch`.\n\nJust checking property may not be enough in privacy modes or strict environments.",
+    "examples": [
+      {
+        "title": "Reliable support check",
+        "language": "javascript",
+        "code": "function isLocalStorageAvailable() {\n  try {\n    const key = '__test__';\n    localStorage.setItem(key, key);\n    localStorage.removeItem(key);\n    return true;\n  } catch {\n    return false;\n  }\n}\n\nconsole.log(isLocalStorageAvailable());",
+        "explanation": "Write-read-delete test confirms real usability, not just API presence."
+      }
+    ],
+    "tip": "Always provide fallback behavior when storage is unavailable.",
+    "links": [
+      {
+        "label": "MDN: Using the Web Storage API - feature-detecting",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API#feature-detecting_localstorage"
+      }
+    ]
+  },
+  {
+    "id": "js-049",
+    "question": "How do you check web workers browser support",
+    "difficulty": "beginner",
+    "category": "web-workers",
+    "tags": ["web-worker", "feature-detection", "browser-support"],
+    "answer": "Check if `Worker` exists in global scope.\n\nSimple check:\n- `if (typeof Worker !== 'undefined') { ... }`\n\nIf unsupported, run fallback logic on main thread.",
+    "examples": [
+      {
+        "title": "Worker support detection",
+        "language": "javascript",
+        "code": "if (typeof Worker !== 'undefined') {\n  console.log('Web Worker supported');\n} else {\n  console.log('No Web Worker support. Use fallback.');\n}",
+        "explanation": "Feature detection ensures app handles older or restricted environments safely."
+      }
+    ],
+    "tip": "Even with support, consider worker creation failure handling with try/catch.",
+    "links": [
+      {
+        "label": "MDN: Using Web Workers",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers"
+      }
+    ]
+  },
+  {
+    "id": "js-050",
+    "question": "Give an example of a web worker",
+    "difficulty": "intermediate",
+    "category": "web-workers",
+    "tags": ["web-worker", "background-thread", "postMessage"],
+    "answer": "A web worker runs heavy tasks in background thread so UI stays responsive.\n\nBasic flow:\n1. Main thread creates worker.\n2. Main thread sends data using `postMessage`.\n3. Worker processes and responds.\n4. Main thread receives result.",
+    "examples": [
+      {
+        "title": "Main script and worker script",
+        "language": "javascript",
+        "code": "// main.js\nconst worker = new Worker('worker.js');\n\nworker.postMessage({ limit: 5000000 });\n\nworker.onmessage = (event) => {\n  console.log('Worker result:', event.data.total);\n};\n\n// worker.js\nself.onmessage = (event) => {\n  const { limit } = event.data;\n  let total = 0;\n  for (let i = 0; i < limit; i += 1) {\n    total += i;\n  }\n  self.postMessage({ total });\n};",
+        "explanation": "The expensive loop runs in worker thread, so page interactions stay smooth."
+      }
+    ],
+    "tip": "Workers cannot access DOM; use messages to pass data between worker and main thread.",
+    "links": [
+      {
+        "label": "MDN: Web Workers API",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API"
+      }
+    ]
+  }
+]

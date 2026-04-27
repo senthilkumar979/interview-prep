@@ -19,6 +19,7 @@ import {
 import { TechnologyModule } from "@/components/technology/technologyModules";
 import debugItems from "@/content/modules/debug.json";
 import fillItems from "@/content/modules/fill.json";
+import javascriptQuestionItems from "@/content/modules/javascript/questions.json";
 import kataItems from "@/content/modules/kata.json";
 import mcqItems from "@/content/modules/mcq.json";
 import outputPredictionItems from "@/content/modules/output-prediction.json";
@@ -28,10 +29,15 @@ import systemDesignItems from "@/content/modules/system-design.json";
 
 interface TechnologyModuleRendererProps {
   module: TechnologyModule;
+  technologySlug: "react" | "javascript" | "java";
 }
 
-export const TechnologyModuleRenderer = ({ module }: TechnologyModuleRendererProps) => {
-  if (module === "Interview Questions") return <QuestionModuleSection items={questionItems as QuestionItem[]} />;
+export const TechnologyModuleRenderer = ({ module, technologySlug }: TechnologyModuleRendererProps) => {
+  if (module === "Interview Questions") {
+    const interviewQuestions =
+      technologySlug === "javascript" ? (javascriptQuestionItems as QuestionItem[]) : (questionItems as QuestionItem[]);
+    return <QuestionModuleSection items={interviewQuestions} />;
+  }
   if (module === "Coding Exercises") return <KataModuleSection items={kataItems as KataItem[]} />;
   if (module === "Debugging") return <DebugModuleSection items={debugItems as DebugItem[]} />;
   if (module === "Fill in blanks") return <FillModuleSection items={fillItems as FillItem[]} />;

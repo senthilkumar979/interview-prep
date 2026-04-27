@@ -160,6 +160,7 @@
     --blue-bell: #3e92cc;
     --deep-space-blue: #13293d;
     --baltic-blue: #2a628f;
+    --tech-blue: #275dad;
   }
 
   .dark {
@@ -222,7 +223,7 @@
 h2,
 ul li,
 p {
-  margin-bottom: 0.5rem !important;
+  margin-bottom: 0.5rem;
 }
 
 h2 {

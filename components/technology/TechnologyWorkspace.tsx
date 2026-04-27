@@ -4,7 +4,10 @@ import { TechnologyCategory } from '@/components/home/technology.types'
 import { AppBreadcrumbs } from '@/components/shared/AppBreadcrumbs'
 import { TechnologyModuleNavList } from '@/components/technology/TechnologyModuleNavList'
 import { TechnologyModuleRenderer } from '@/components/technology/TechnologyModuleRenderer'
-import { TechnologyModule } from '@/components/technology/technologyModules'
+import {
+  TechnologyModule,
+  technologyModules,
+} from '@/components/technology/technologyModules'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -15,7 +18,7 @@ import {
   ChevronRight,
   FolderTree,
 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface TechnologyWorkspaceProps {
   technology: TechnologyCategory
@@ -26,20 +29,33 @@ export const TechnologyWorkspace = ({
 }: TechnologyWorkspaceProps) => {
   const [isDesktopMenuCollapsed, setIsDesktopMenuCollapsed] = useState(false)
   const [isMobileModuleNavOpen, setIsMobileModuleNavOpen] = useState(false)
-  const [selectedModule, setSelectedModule] = useState<TechnologyModule>(
-    'Interview Questions',
+  const [selectedModule, setSelectedModule] = useState<TechnologyModule | null>(
+    null,
   )
+  const [isModuleReady, setIsModuleReady] = useState(false)
 
-  const moduleSummary = useMemo(
-    () =>
-      `${technology.title} · ${selectedModule} · ${technology.questionCount} questions · ${technology.exerciseCount} exercises`,
-    [
-      selectedModule,
-      technology.exerciseCount,
-      technology.questionCount,
-      technology.title,
-    ],
-  )
+  useEffect(() => {
+    const queryModule = new URLSearchParams(window.location.search).get(
+      'module',
+    )
+    if (technologyModules.includes(queryModule as TechnologyModule)) {
+      setSelectedModule(queryModule as TechnologyModule)
+      setIsModuleReady(true)
+      return
+    }
+    setSelectedModule('Interview Questions')
+    setIsModuleReady(true)
+  }, [])
+
+  const onSelectModule = (module: TechnologyModule) => {
+    setSelectedModule(module)
+    const nextUrl = new URL(window.location.href)
+    const nextParams = new URLSearchParams(nextUrl.search)
+    nextParams.set('module', module)
+    nextUrl.search = nextParams.toString()
+    window.history.replaceState({}, '', nextUrl.toString())
+    setIsMobileModuleNavOpen(false)
+  }
 
   return (
     <main className="min-h-svh min-h-[100dvh] bg-background pb-[env(safe-area-inset-bottom,0px)]">
@@ -87,22 +103,21 @@ export const TechnologyWorkspace = ({
               >
                 <FolderTree className="h-4 w-4 shrink-0" aria-hidden />
                 <span className="min-w-0 flex-1 truncate text-left text-sm font-medium">
-                  {selectedModule}
+                  {selectedModule ?? 'Select module'}
                 </span>
                 <ChevronDown className="h-4 w-4 shrink-0 opacity-70" />
               </Button>
             </div>
           )}
 
-          <TechnologyModuleNavList
-            isDesktopMenuCollapsed={isDesktopMenuCollapsed}
-            isMobileModuleNavOpen={isMobileModuleNavOpen}
-            onSelectModule={(module) => {
-              setSelectedModule(module)
-              setIsMobileModuleNavOpen(false)
-            }}
-            selectedModule={selectedModule}
-          />
+          {isModuleReady && selectedModule ? (
+            <TechnologyModuleNavList
+              isDesktopMenuCollapsed={isDesktopMenuCollapsed}
+              isMobileModuleNavOpen={isMobileModuleNavOpen}
+              onSelectModule={onSelectModule}
+              selectedModule={selectedModule}
+            />
+          ) : null}
         </aside>
 
         <section className="min-w-0 flex-1 overflow-x-hidden px-3 py-4 sm:px-4 lg:p-6">
@@ -112,7 +127,7 @@ export const TechnologyWorkspace = ({
                 items={[
                   { label: 'Technologies', href: '/' },
                   { label: technology.title, href: `/${technology.slug}` },
-                  { label: selectedModule },
+                  { label: selectedModule ?? 'Loading module...' },
                 ]}
               />
             </div>
@@ -121,7 +136,7 @@ export const TechnologyWorkspace = ({
           <Card className="min-w-0 max-w-full border-none">
             <CardHeader className="space-y-2 sm:space-y-3">
               <CardTitle className="break-words text-xl sm:text-2xl">
-                {selectedModule}
+                {selectedModule ?? 'Loading module...'}
               </CardTitle>
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 <Badge
@@ -136,11 +151,22 @@ export const TechnologyWorkspace = ({
                 >
                   Questions: {technology.questionCount}
                 </Badge>
+                <Badge
+                  variant="secondary"
+                  className="max-w-full truncate rounded-lg"
+                >
+                  Exercises: {technology.exerciseCount}
+                </Badge>
               </div>
             </CardHeader>
             <CardContent className="min-w-0 space-y-4">
               <div className="min-w-0 max-w-full overflow-x-hidden">
-                <TechnologyModuleRenderer module={selectedModule} />
+                {isModuleReady && selectedModule ? (
+                  <TechnologyModuleRenderer
+                    module={selectedModule}
+                    technologySlug={technology.slug}
+                  />
+                ) : null}
               </div>
             </CardContent>
           </Card>

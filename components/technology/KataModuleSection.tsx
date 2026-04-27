@@ -1,14 +1,18 @@
-import { KataItem } from "@/components/technology/moduleData.types";
-import { KataChallengeCard } from "@/components/technology/KataChallengeCard";
+import { KataChallengeCard } from '@/components/technology/KataChallengeCard'
+import { KataItem } from '@/components/technology/moduleData.types'
 
 interface KataModuleSectionProps {
-  items: KataItem[];
+  items: KataItem[]
 }
 
 export const KataModuleSection = ({ items }: KataModuleSectionProps) => (
   <div className="space-y-4">
-    {items.map((item) => (
-      <KataChallengeCard key={item.id} item={item} />
+    {items.map((item, index) => (
+      <KataChallengeCard
+        key={item.id}
+        item={item}
+        number={index + 1}
+      />
     ))}
   </div>
-);
+)

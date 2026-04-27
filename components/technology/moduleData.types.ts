@@ -16,7 +16,7 @@ export interface QuestionItem {
   difficulty: string;
   category: string;
   tags: string[];
-  preview: string;
+  preview?: string;
   answer: string;
   examples: ExampleCode[];
   tip: string;

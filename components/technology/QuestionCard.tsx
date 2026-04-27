@@ -8,9 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   BadgeQuestionMark,
   Brain,
+  Check,
   ChevronDown,
   ChevronUp,
   CodeIcon,
+  Copy,
   Lightbulb,
   LinkIcon,
   SignpostIcon,
@@ -51,6 +53,17 @@ function getCategoryBadgeClass(category: string): string {
 
 export const QuestionCard = ({ item, number }: QuestionCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [copiedExampleTitle, setCopiedExampleTitle] = useState<string | null>(null)
+
+  const onCopyExampleCode = async (code: string, title: string) => {
+    await navigator.clipboard.writeText(code)
+    setCopiedExampleTitle(title)
+    window.setTimeout(() => {
+      setCopiedExampleTitle((currentTitle) =>
+        currentTitle === title ? null : currentTitle,
+      )
+    }, 1600)
+  }
 
   return (
     <div className="space-y-3">
@@ -105,20 +118,45 @@ export const QuestionCard = ({ item, number }: QuestionCardProps) => {
 
             <div className="flex flex-col items-center justify-between gap-4 lg:flex-row lg:items-start">
               {item.examples.map((example, index) => (
-                <Card key={example.title}>
+                <Card key={example.title} className="w-full min-w-0">
                   <CardHeader className="space-y-2">
-                    <CardTitle className="text-base uppercase tracking-wide">
-                      <CodeIcon className="h-4 w-4" />
-                      Code example #{index + 1}
-                    </CardTitle>
+                    <div className="flex items-center justify-between gap-2">
+                      <CardTitle className="text-base uppercase tracking-wide">
+                        <CodeIcon className="h-4 w-4" />
+                        Code example #{index + 1}
+                      </CardTitle>
+                      <Button
+                        aria-label={`Copy code for ${example.title}`}
+                        className="shrink-0 border-none rounded-lg"
+                        onClick={() => onCopyExampleCode(example.code, example.title)}
+                        size="sm"
+                        type="button"
+                        variant="outline"
+                      >
+                        {copiedExampleTitle === example.title ? (
+                          <>
+                            <Check className="h-4 w-4" />
+                            Copied
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-4 w-4" />
+                            Copy
+                          </>
+                        )}
+                      </Button>
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       {example.title}
                     </p>
                   </CardHeader>
-                  <CardContent className="space-y-3">
-                    <MarkdownContent
-                      content={`\`\`\`${example.language}\n${example.code}\n\`\`\``}
-                    />
+                  <CardContent className="min-w-0 space-y-3">
+                    <div className="w-full min-w-0 overflow-x-auto">
+                      <MarkdownContent
+                        className="min-w-0"
+                        content={`\`\`\`${example.language}\n${example.code}\n\`\`\``}
+                      />
+                    </div>
                     <div className="p-3 text-sm text-muted-foreground">
                       {example.explanation}
                     </div>
@@ -161,6 +199,7 @@ export const QuestionCard = ({ item, number }: QuestionCardProps) => {
                           <Link
                             className="underline-offset-2 hover:underline"
                             href={link.href}
+                            target="_blank"
                           >
                             {link.label}
                           </Link>

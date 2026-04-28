@@ -1,0 +1,123 @@
+import json
+from pathlib import Path
+
+L = lambda label, href: [{"label": label, "href": href}]
+E = lambda title, code, exp, lang="tsx": {"title": title, "language": lang, "code": code, "explanation": exp}
+ROOT = Path(__file__).resolve().parent
+
+ITEMS: list[dict] = [
+    {
+        "id": "react-041",
+        "question": "What is `useEffect` used for?",
+        "difficulty": "beginner",
+        "category": "hooks",
+        "tags": ["useEffect", "side-effects", "sync"],
+        "answer": "`useEffect` runs **side effects** after your component **renders and commits to the screen**: talking to the network, **subscriptions**, timers, **DOM** measurements that are not read during render, or syncing document title. It is the modern replacement for many “after paint” `componentDidMount` / `componentDidUpdate` / `componentWillUnmount` patterns.\n\n**Not for:** **deriving** values from state during render (use the render body, `useMemo` rarely), and **not** for **blocking** user input layout reads that must happen before paint (that is more `useLayoutEffect`).\n",
+        "examples": [E("Subscribe in an effect", "import { useEffect, useState } from 'react';\n\nexport function Online() {\n  const [on, setOn] = useState(true);\n  useEffect(() => {\n    const id = setInterval(() => setOn((o) => !o), 5000);\n    return () => clearInterval(id);\n  }, []);\n  return <span>{on ? 'up' : 'flaky'}</span>;\n}\n", "Return a **cleanup** to clear the interval on unmount or before re-running if dependencies change.", "tsx")],
+        "tip": "The **dependency array** is your contract: empty `[]` is mount/unmount, `[id]` re-runs when `id` changes, **omit the array** only when you know why (React docs warn about this in strict mode in dev).",
+        "links": L("React: Synchronizing with Effects", "https://react.dev/learn/synchronizing-with-effects"),
+    },
+    {
+        "id": "react-042",
+        "question": "What is the difference between `useEffect` and `useLayoutEffect`?",
+        "difficulty": "intermediate",
+        "category": "hooks",
+        "tags": ["useLayoutEffect", "dom", "paint"],
+        "answer": "**`useLayoutEffect`** runs **synchronously** after all DOM **mutations** in the current commit, but **before** the browser **paints** the new pixels. **`useEffect`** is scheduled to run **after** paint, which keeps the main thread more available for the user in many cases.\n\n**`useLayoutEffect`:** when you must **read layout** and then **synchronously** adjust DOM or state in the same frame to avoid a **flicker** (for example, positioning a popover from measured width). **Default to `useEffect`** for fetches, subscriptions, and work that is fine to run a tick later.\n\n**SSR:** `useLayoutEffect` triggers a warning in server output—prefer **`useEffect`** for isomorphic code or a client-only child.\n",
+        "examples": [E("When layout runs matter", "useLayoutEffect(() => {\n  const h = el.getBoundingClientRect().height;\n  setHeight(h);\n}, [el]);\n", "Height read and state update happen before paint, reducing visual jump; measure carefully to avoid layout thrash.", "tsx")],
+        "tip": "If you are not sure, start with `useEffect`; only switch to `useLayoutEffect` when you can point to a **visible** timing bug.",
+        "links": L("React: useLayoutEffect", "https://react.dev/reference/react/useLayoutEffect"),
+    },
+    {
+        "id": "react-043",
+        "question": "What is the React Context API?",
+        "difficulty": "beginner",
+        "category": "data-flow",
+        "tags": ["context", "provider", "consumer"],
+        "answer": "Context lets a **parent** wrap children with a **`<Context.Provider value={...}>`** so **any** nested component can **`useContext(MyContext)`** and read the current value without threading props through every intermediate component.\n\n**Good for:** **theme, locale, auth session, router params** from your framework. **Caution:** **high-churn** values in context cause **broad re-renders** because every `useContext` consumer updates when the value changes. Consider **splitting** contexts or more **granular** state stores for hot paths.\n",
+        "examples": [E("Theme provider sketch", "const Theme = createContext('light');\n\nfunction App() {\n  return (\n    <Theme.Provider value=\"dark\">\n      <Header />\n    </Theme.Provider>\n  );\n}\n", "Deep trees under `App` can read the theme with `useContext(Theme)` without extra props on every level.", "tsx")],
+        "tip": "Do not put a **new object** in `value` every render by accident—**memo** the value or store stable references.",
+        "links": L("React: Passing data deeply with context", "https://react.dev/learn/passing-data-deeply-with-context"),
+    },
+    {
+        "id": "react-044",
+        "question": "What is `forwardRef` for?",
+        "difficulty": "intermediate",
+        "category": "components",
+        "tags": ["ref", "dom", "libraries"],
+        "answer": "By default, **ref** is not a normal prop to function components. **`forwardRef`** returns a component that **accepts a ref** and **forwards** it—usually to a **DOM** node inside a **button**, **input**, or other leaf you control, so the parent can call **`ref.current.focus()`** for accessibility or to integrate a third-party form library.\n",
+        "examples": [E("forwardRef to input", "import { forwardRef } from 'react';\n\ntype P = { label: string };\nexport const Field = forwardRef<HTMLInputElement, P>(({ label }, ref) => (\n  <label>\n    {label}\n    <input ref={ref} />\n  </label>\n));\n", "The parent that renders `<Field ref={r} />` receives a ref to the real `<input>`.", "tsx")],
+        "tip": "Pair with `useImperativeHandle` only when you need a **small** custom surface instead of the whole DOM node.",
+        "links": L("React: forwardRef", "https://react.dev/reference/react/forwardRef"),
+    },
+    {
+        "id": "react-045",
+        "question": "What does a production build change for React apps?",
+        "difficulty": "intermediate",
+        "category": "tooling",
+        "tags": ["production", "minify", "performance"],
+        "answer": "A **production** build (Vite, Webpack, or your host’s pipeline) **minifies** JavaScript, and sets **`NODE_ENV` to `production`** so the **React** build you import uses a **faster, smaller** implementation path with many **invariant** messages stripped.\n\n**What changes vs dev:** the bundle is **smaller**; **React StrictMode**-only behaviors like **double-invoking** some effects in development **do not** run the same way in production; and you should see **Error Overlay**-style tooling only in dev.\n",
+        "examples": [E("Vite build", "npm run build\n", "A typical Vite/CRA script produces hashed assets under `dist/` ready for a static host or a Node server.", "bash")],
+        "tip": "Profile **after** a production build or `vite build -- --mode production`; dev mode timings mislead for memoization decisions.",
+        "links": L("Vite: Building for production", "https://vitejs.dev/guide/build.html"),
+    },
+    {
+        "id": "react-046",
+        "question": "What is `propTypes` in React? Is it still used?",
+        "difficulty": "intermediate",
+        "category": "static-typing",
+        "tags": ["proptypes", "validation", "runtime"],
+        "answer": "The community **`prop-types`** package lets you declare **expected** types and shapes for component props. In **development**, mismatches can **warn in the console**; they are **not** a replacement for static types.\n\n**Today:** new **app** code often uses **TypeScript** and keeps **PropTypes** for **untyped** packages, public component libraries, or **gradual** migration. React **does not** ship `PropTypes` in core; you add the `prop-types` dependency.\n",
+        "examples": [E("Defining (legacy-style)", "import PropTypes from 'prop-types';\n\nGreet.propTypes = { name: PropTypes.string.isRequired };\n", "At runtime, wrong props log in dev. Prefer TS interfaces in modern `.tsx` files for API safety at compile time.", "tsx")],
+        "tip": "If you have both, **TypeScript** is the first line; **PropTypes** can still guard **dynamically** built props in rare cases.",
+        "links": L("PropTypes: facebook/prop-types", "https://github.com/facebook/prop-types"),
+    },
+    {
+        "id": "react-047",
+        "question": "Why can spreading unknown props onto a DOM element be a problem?",
+        "difficulty": "intermediate",
+        "category": "security",
+        "tags": ["spread", "dom", "xss"],
+        "answer": "Object spread is useful to forward **styling and ARIA** props, but a plain `div` will accept **any** string keys you pass through. A caller (or tainted data) that supplies **`style` with `url(javascript:...)`**, a **`srcDoc`**, or **`dangerouslySetInnerHTML`**, can reintroduce **XSS** or unsafe navigation in ways your component did not intend.\n\n**Mitigation:** build an **allowlist** of safe attribute names, split **user-defined** `className` from **arbitrary** rest props, and never pass **raw user JSON** to `{...obj}` for DOM without validation.\n",
+        "examples": [E("Narrow the spread", "const { onClick, className, ...rest } = props;\nreturn <div className={className} onClick={onClick} />;\n", "Drops everything else; adjust which keys you keep based on a strict type or allowlist pattern.", "tsx")],
+        "tip": "When wrapping **Radix** or **MUI** components, re-read their prop tables—some props are **not** for the DOM and must be consumed by the **library**, not `...rest` to a `div`.\n",
+        "links": L("OWASP: XSS", "https://owasp.org/www-community/attacks/xss/"),
+    },
+    {
+        "id": "react-048",
+        "question": "What is `useId` and why was it added?",
+        "difficulty": "intermediate",
+        "category": "a11y",
+        "tags": ["useId", "ssr", "a11y"],
+        "answer": "`useId` returns a **stable, unique** string for attribute values such as `id=...` in **form controls** and **ARIA** relationships (`aria-labelledby`, `htmlFor` ↔ `id`). The important extra property: on the **server** and on the **first client render**, the **same** id is generated for the same hook order so **hydration** does not mismatch, something `Math.random()` cannot guarantee in SSR.\n",
+        "examples": [E("Label + field", "const id = useId();\nreturn (\n  <>\n    <label htmlFor={id}>Name</label>\n    <input id={id} />\n  </>\n);\n", "`id` is unique in the page and lines up in SSR and client.", "tsx")],
+        "tip": "For multiple ids in one component, you can build derived strings: `${id}-label` and `${id}-hint`, still stable per `useId` call.",
+        "links": L("React: useId", "https://react.dev/reference/react/useId"),
+    },
+    {
+        "id": "react-049",
+        "question": "What is `useImperativeHandle` and when is it used?",
+        "difficulty": "intermediate",
+        "category": "hooks",
+        "tags": ["imperative", "ref", "escape-hatch"],
+        "answer": "Used with **`forwardRef`**, `useImperativeHandle` lets a child **define what `ref` exposes** to parents: a **small** object of methods (for example `focus()` and `reset()`) instead of exposing the full **internal** DOM tree, so the parent does not couple to your **markup**.\n\n**Prefer** props and events for public APIs. **Use** the hook for tight **imperative** integrations (media, rich text) where a clean declarative model is not practical yet.\n",
+        "examples": [E("Expose focus only", "useImperativeHandle(ref, () => ({ focus: () => { inner.current?.focus(); } }));\n", "The parent can call `ref.current.focus()` without reaching into your internal `input` ref.", "tsx")],
+        "tip": "In TypeScript, type the ref handle as a small **interface** so consumers know the supported surface.\n",
+        "links": L("React: useImperativeHandle", "https://react.dev/reference/react/useImperativeHandle"),
+    },
+    {
+        "id": "react-050",
+        "question": "What is `flushSync` in `react-dom`?",
+        "difficulty": "intermediate",
+        "category": "react-dom",
+        "tags": ["flushSync", "synchronous", "edge-cases"],
+        "answer": "`flushSync` from `react-dom` runs the passed callback, then **applies** any resulting React updates to the **DOM** **synchronously** before the call returns, bypassing some **batching** you would normally get. Use it when a **non-React** system (a chart, `document.execCommand` legacy) must see the **updated** DOM **immediately** in the same turn.\n\n**Cost:** you can **starve** the main thread and work against **concurrent** features if you call it in hot paths. **Treat it as a last resort** and profile if you add it.\n",
+        "examples": [E("Not common in app code", "import { flushSync } from 'react-dom';\n\nflushSync(() => setOpen(true));\n// read layout in the same synchronous tick\n", "The DOM reflects `setOpen` before the function continues—only when you can justify the sync cost.", "tsx")],
+        "tip": "Read `flushSync` console warnings in React 18+ when used with `startTransition`—it exists because mixing sync and concurrent patterns is **sharp**.\n",
+        "links": L("React: flushSync", "https://react.dev/reference/react-dom/flushSync"),
+    },
+]
+
+if __name__ == "__main__":
+    Path(ROOT / "seed_41_50.json").write_text(json.dumps(ITEMS, indent=2) + "\n", encoding="utf-8")
+    print("wrote", len(ITEMS))

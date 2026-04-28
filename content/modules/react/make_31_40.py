@@ -1,0 +1,123 @@
+import json
+from pathlib import Path
+
+L = lambda label, href: [{"label": label, "href": href}]
+E = lambda title, code, exp, lang="tsx": {"title": title, "language": lang, "code": code, "explanation": exp}
+ROOT = Path(__file__).resolve().parent
+
+ITEMS: list[dict] = [
+    {
+        "id": "react-031",
+        "question": "What is `React.memo`?",
+        "difficulty": "intermediate",
+        "category": "performance",
+        "tags": ["memo", "re-render", "props"],
+        "answer": "`memo` is a **higher-order component** that **wraps a function component** and **skips re-rendering** when its **props are shallowly equal** to the last render (with the default comparison). You use it when a child is **expensive** to render and often receives the **same** props from a parent that re-renders for other reasons.\n\nIt is **not** a magic fix: if the parent passes **new object or function references** every time (inline objects, inline callbacks), `memo` helps **less** until you stabilize those with `useCallback` / `useMemo` or lift the data—**profile first**.\n",
+        "examples": [E("Wrap a pure presentational child", "import { memo } from 'react';\n\nconst Row = memo(function Row({ label }: { label: string }) {\n  return <tr><td>{label}</td></tr>;\n});\n", "If `label` is unchanged, React can bail out of re-rendering `Row` when the parent updates other state.", "tsx")],
+        "tip": "`memo` compares **props** only; **state** and **context** changes inside the wrapped component still re-render it.",
+        "links": L("React: memo", "https://react.dev/reference/react/memo"),
+    },
+    {
+        "id": "react-032",
+        "question": "What is the difference between `react` and `react-dom`?",
+        "difficulty": "beginner",
+        "category": "ecosystem",
+        "tags": ["react", "react-dom", "renderer"],
+        "answer": "**`react`** is the **core** package: elements, components, hooks, and the rules of **reconciliation**. It does not know how to attach to a real **browser** tree by itself.\n\n**`react-dom`** is the **DOM renderer** for the web: `createRoot`, `hydrateRoot`, `flushSync` in the right places, and DOM-specific APIs like **`createPortal`**. Other renderers exist (**`react-native`**, **`@react-three/fiber`**, etc.) that reuse the same `react` core with a different **host**.\n",
+        "examples": [E("Typical imports", "import { useState } from 'react';\nimport { createRoot } from 'react-dom/client';\n\ncreateRoot(document.getElementById('root')!).render(<App />);\n", "`react` for component logic; `react-dom/client` to mount into a real DOM container.", "tsx")],
+        "tip": "In tests, you may use `react-dom/test-utils` or Testing Library, which still builds on the same split between **core** and **host**.",
+        "links": L("React: react-dom package", "https://react.dev/reference/react-dom"),
+    },
+    {
+        "id": "react-033",
+        "question": "What is `ReactDOMServer` and when is it used?",
+        "difficulty": "intermediate",
+        "category": "ssr",
+        "tags": ["ssr", "renderToString", "stream"],
+        "answer": "**`react-dom/server`** exports helpers like **`renderToString`**, **`renderToPipeableStream`**, and **`renderToReadableStream`** that turn your React tree into **HTML** as a string or **stream** on the **server**—**no** browser DOM.\n\n**Use cases:** **SSR/SSG** for faster first paint and SEO, **emails** from React, or **tests** that snapshot HTML. The browser build then **hydrates** that markup with `hydrateRoot` so the UI becomes **interactive**; Next.js, Remix, and others wrap this pipeline for you.\n\n**Hydration** must see **matching** markup: mismatches produce warnings and can cause **bugs**.\n",
+        "examples": [E("String render (conceptual)", "import { renderToString } from 'react-dom/server';\nimport App from './App';\n\nconst html = renderToString(<App url=\"/\" />);\n", "The server emits HTML for the response; the client hydrates the same `App` so events work. For large pages, prefer streaming APIs from the same package.", "tsx")],
+        "tip": "Never call browser-only APIs (`window`, `document` layout) in modules that run both on server and client without guards or **lazy client-only** boundaries.",
+        "links": L("React: renderToString", "https://react.dev/reference/react-dom/server/renderToString"),
+    },
+    {
+        "id": "react-034",
+        "question": "Why treat props and state as immutable in React?",
+        "difficulty": "beginner",
+        "category": "state-and-props",
+        "tags": ["immutability", "rerender", "batching"],
+        "answer": "React **schedules** updates from `setState` / `useState` when you pass a **new** value. If you **mutate** an array or object that is already in state, React may **not** see a change (reference is the same), so the UI **stalls**.\n\nImmutability also keeps **time-travel debugging**, **memo**, and **context** consumers predictable: a new reference means “something might have changed,” a shared mutated object does not.\n",
+        "examples": [E("Update a list immutably", "setItems((prev) => [...prev, newItem]);\n", "Spreading `prev` builds a **new** array reference so React can re-render safely.", "tsx")],
+        "tip": "For large structures, **structural sharing** libraries (Immer) help you write “mutating” style while still producing **immutable** snapshots.",
+        "links": L("React: Updating objects in state", "https://react.dev/learn/updating-objects-in-state"),
+    },
+    {
+        "id": "react-035",
+        "question": "What is `dangerouslySetInnerHTML`?",
+        "difficulty": "intermediate",
+        "category": "security",
+        "tags": ["xss", "html", "cms"],
+        "answer": "It is the **escape hatch** to set an element’s **`innerHTML`** from React: `dangerouslySetInnerHTML={{ __html: string }}`. The name is intentional: if the string **escapes your trust boundary**, you risk **cross-site scripting (XSS)**.\n\n**Reasonable uses:** HTML from a **CMS** you **sanitize** on write or read, or static snippets you **vetted**. **Never** pipe **raw user input** into `__html` without a **vetted** sanitizer and **CSP** as defense in depth.\n",
+        "examples": [E("CMS block (still sanitize server-side)", "<article dangerouslySetInnerHTML={{ __html: body }} />\n", "`body` must be clean **before** it reaches the client; treat this like any other untrusted rich text pipeline.", "tsx")],
+        "tip": "Prefer **Markdown → components** renderers you control over free-form HTML when possible—smaller attack surface.",
+        "links": L("React: dangerouslySetInnerHTML", "https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html"),
+    },
+    {
+        "id": "react-036",
+        "question": "When is it a bad idea to use the array index as a `key`?",
+        "difficulty": "intermediate",
+        "category": "reconciliation",
+        "tags": ["key", "lists", "identity"],
+        "answer": "Using the **index** as `key` is risky when the list’s **order** or **length** changes: insert, delete, sort, or drag-and-drop. React **pairs** children by `key`; if the key is the index, the **same** key can refer to a **different row** after a reorder, so **state and focus** attached to a child can **stick to the wrong** item.\n\n**Index is OK** for small, **static** lists that are **append-only** and never reorder—still prefer a real **id** when you have one.\n",
+        "examples": [E("Bad: reorder with index keys", "// before: [A,B] keys 0,1 — after swap: [B,A] still keys 0,1\n// React may reuse internal state in a way that surprises you for inputs\n", "With stable `id` keys, each row’s identity survives moves.", "tsx")],
+        "tip": "If you only have text, **index** is less dangerous; if rows have **inputs** or **expanded** state, **never** use index keys for reorderable data.",
+        "links": L("React: Keys in lists", "https://react.dev/learn/rendering-lists#keeping-list-items-in-order-with-key"),
+    },
+    {
+        "id": "react-037",
+        "question": "How does React’s `onClick` differ from `addEventListener('click', …)`?",
+        "difficulty": "intermediate",
+        "category": "events",
+        "tags": ["events", "synthetic", "delegation"],
+        "answer": "In React you set **`onClick={handler}`** in JSX. The handler runs with a **synthetic** event object that **normalizes** some differences between browsers, and the wiring is **declarative** with your component’s lifetime: when the node unmounts, React’s internal bookkeeping removes the right subscription.\n\n**Plain DOM:** `addEventListener` is **imperative**; you must **remove** listeners yourself and you work with **native** events directly. **Propagation** and **throttle** needs work the same ideas, but the **integration** with React’s batching and **StrictMode**-double-invocation in dev differs from hand-rolled code.\n",
+        "examples": [E("React prop vs DOM API", "function X() {\n  return <button onClick={() => console.log('click')}>go</button>;\n}\n", "The JSX prop registers the kind of handler React expects for that element.", "tsx")],
+        "tip": "To attach a **non-React** widget, `useRef` + `addEventListener` in an effect (with **cleanup**) is the usual escape hatch—keep those listeners out of the React handler path when you need raw DOM semantics.",
+        "links": L("React: Responding to events", "https://react.dev/learn/responding-to-events"),
+    },
+    {
+        "id": "react-038",
+        "question": "What are pointer events in React (`onPointerDown`, etc.)?",
+        "difficulty": "intermediate",
+        "category": "events",
+        "tags": ["pointer", "touch", "mouse", "a11y"],
+        "answer": "The **Pointer Events** API in the browser unifies **mouse, touch, and pen** input. In React, you listen with **`onPointerDown`**, **`onPointerMove`**, **`onPointerUp`**, `onPointerCancel`, and related props, each receiving a **synthetic** event that wraps the native **PointerEvent**.\n\n**Why use them:** one code path for **drags, sliders, and drawing** on desktop and mobile without always duplicating separate `mouse` and `touch` listeners. You still add **keyboard** and **screen reader** affordances for anything that is not a pure freehand gesture.\n",
+        "examples": [E("Handle drag start", "function Handle() {\n  return (\n    <div\n      onPointerDown={(e) => e.currentTarget.setPointerCapture(e.pointerId)}\n    />\n  );\n}\n", "`setPointerCapture` is a browser API; pointer events pair well with it for smooth dragging.", "tsx")],
+        "tip": "If you need only simple taps, a **button** with `onClick` is often more accessible by default than a `div` with pointer handlers.",
+        "links": L("MDN: Pointer events", "https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events"),
+    },
+    {
+        "id": "react-039",
+        "question": "Why must custom React component names be capitalized in JSX?",
+        "difficulty": "beginner",
+        "category": "jsx",
+        "tags": ["jsx", "components", "intrinsics"],
+        "answer": "JSX uses **capitalization** to decide: **lowercase** names (`div`, `span`) are **host** (built-in) element tags in the web renderer, while **PascalCase** names refer to **your** (or a library) **function or class** component. The **compiler** then emits `createElement` with a **string** type for host tags, or a **component reference** for custom types.\n\nIf you accidentally name a component in **lowercase**, `<mything />` is treated as an **unknown** intrinsic tag; use **`MyThing`** so React calls your function instead of looking for a DOM element with that name.\n",
+        "examples": [E("Host vs component", "function Row() {\n  return <span>ok</span>;\n}\n// <row /> would be wrong — use <Row /> for the component.\n", "`span` is intrinsic; `Row` must be capitalized to invoke your component.", "tsx")],
+        "tip": "ESLint rules like **react/jsx-pascal-case** help catch file names and components that drift from the convention.",
+        "links": L("React: Your first component", "https://react.dev/learn/your-first-component"),
+    },
+    {
+        "id": "react-040",
+        "question": "How do you merge or override `style` objects in React?",
+        "difficulty": "beginner",
+        "category": "styling",
+        "tags": ["style", "inline", "css"],
+        "answer": "The `style` prop is a **JavaScript object** of **camelCased** CSS properties. **Later** properties in a spread **override** earlier ones for the same key: `style={{ ...base, color: 'red' }}` replaces `color` from `base`.\n\n**Do not mutate** a shared `base` in place; build a **new** object so React and `memo` can detect updates. For **static** or **reusable** looks, `className` and external CSS (or a CSS-in-JS system) usually **scale** better than long inline object literals.\n",
+        "examples": [E("Layer theme + override", "const base = { padding: 8, fontSize: 14 };\n<div style={{ ...base, fontWeight: 700 }} />\n", "`fontWeight` adds to `base`; later keys can override a spread field if you place them to the right.", "tsx")],
+        "tip": "Inline `style` is good for **one-off** dynamic values; for **hover** and **media queries** you need **classes** (or a CSS-in-JS that injects them).",
+        "links": L("React: Styling with CSS (overview)", "https://react.dev/learn#adding-styles"),
+    },
+]
+
+if __name__ == "__main__":
+    Path(ROOT / "seed_31_40.json").write_text(json.dumps(ITEMS, indent=2) + "\n", encoding="utf-8")
+    print("wrote", len(ITEMS))

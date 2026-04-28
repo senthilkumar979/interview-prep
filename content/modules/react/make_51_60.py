@@ -1,0 +1,123 @@
+import json
+from pathlib import Path
+
+L = lambda label, href: [{"label": label, "href": href}]
+E = lambda title, code, exp, lang="tsx": {"title": title, "language": lang, "code": code, "explanation": exp}
+ROOT = Path(__file__).resolve().parent
+
+ITEMS: list[dict] = [
+    {
+        "id": "react-051",
+        "question": "When would you choose `useReducer` over `useState`?",
+        "difficulty": "intermediate",
+        "category": "hooks",
+        "tags": ["useReducer", "useState", "state-machine"],
+        "answer": "`useState` fits **simple** values and a few independent fields. **`useReducer`** fits when updates are **named events** (`dispatch({ type: 'add' })`), several fields must change **together**, or the next state is easier to read as **`(state, action) => nextState`** than many `setX` calls.\n\nReducers also make **logic** easier to **unit test** without mounting components.\n",
+        "examples": [E("Reducer sketch", "function r(state: { n: number }, a: { type: 'inc' | 'dec' }) {\n  switch (a.type) {\n    case 'inc': return { n: state.n + 1 };\n    case 'dec': return { n: state.n - 1 };\n  }\n}\n", "One `dispatch` keeps related updates in one place.", "tsx")],
+        "tip": "For very large machines, dedicated **state machine** libraries can sit **beside** React; `useReducer` covers many form and wizard flows.",
+        "links": L("React: useReducer", "https://react.dev/reference/react/useReducer"),
+    },
+    {
+        "id": "react-052",
+        "question": "What is `useCallback` for?",
+        "difficulty": "intermediate",
+        "category": "hooks",
+        "tags": ["useCallback", "memo", "dependencies"],
+        "answer": "`useCallback(fn, deps)` **memoizes** a **function** between renders: when `deps` are unchanged, the **reference** to `fn` is stable. That matters when a **memorized child** compares props with **shallow** equality, or when a **function** is listed in a **`useEffect` dependency** array and you do not want the effect to fire every parent render.\n\nAvoid wrapping **every** inline handler by default; **stabilize** when profiling shows **avoidable** child work or effect churn.\n",
+        "examples": [E("Stable handler for memo child", "const onSave = useCallback(() => { send(data); }, [data]);\nreturn <Row onSave={onSave} />;\n", "If `Row` is wrapped in `memo`, a stable `onSave` avoids re-rendering `Row` when parent re-renders for other reasons and `data` is unchanged (subject to your equality story).", "tsx")],
+        "tip": "If the only consumer is a DOM `button`, a new function each render is usually fine—**measure** first.",
+        "links": L("React: useCallback", "https://react.dev/reference/react/useCallback"),
+    },
+    {
+        "id": "react-053",
+        "question": "What is `useMemo` for?",
+        "difficulty": "intermediate",
+        "category": "hooks",
+        "tags": ["useMemo", "expensive", "deps"],
+        "answer": "`useMemo(() => value, deps)` **caches the computed value** between renders when `deps` are unchanged. It helps with **CPU-heavy** pure derivations (sorting, grouping) and with keeping **object identity** stable when a downstream hook or `memo` child depends on **reference** equality.\n\nIt is **not** a cache for **async** fetches; use a **data** library, **effect** + state, or **Suspense**-aware APIs instead.\n",
+        "examples": [E("Expensive list sort", "const sorted = useMemo(\n  () => items.slice().sort((a, b) => a.t - b.t),\n  [items]\n);\n", "Re-sort only when `items` changes reference or content, depending on how you pass `items` through props.", "tsx")],
+        "tip": "Overusing `useMemo` adds mental overhead; **profile** to confirm the work you skip is real.",
+        "links": L("React: useMemo", "https://react.dev/reference/react/useMemo"),
+    },
+    {
+        "id": "react-054",
+        "question": "What is `startTransition`?",
+        "difficulty": "intermediate",
+        "category": "concurrent",
+        "tags": ["startTransition", "concurrent", "ux"],
+        "answer": "From `react`, `startTransition` marks updates inside the callback as **non-urgent** so **urgent** updates (keystrokes) can stay **responsive** while React prepares a **heavier** re-render. It pairs with **concurrent** features in modern React to improve **perceived** performance for large UIs.\n",
+        "examples": [E("Search + heavy list", "startTransition(() => { setQuery(q); });\n", "Typical: keep `q` in an urgent field, push large derived state in a transition—patterns vary; read the docs for your data shape.", "tsx")],
+        "tip": "Combine with **good** `key` and **list** virtualization for **very** large data sets; transitions do not remove algorithmic cost.",
+        "links": L("React: useTransition / startTransition", "https://react.dev/reference/react/startTransition"),
+    },
+    {
+        "id": "react-055",
+        "question": "What is `useDeferredValue`?",
+        "difficulty": "intermediate",
+        "category": "concurrent",
+        "tags": ["deferred", "lag", "lists"],
+        "answer": "`useDeferredValue(liveValue)` returns a version that can **lag behind** when React is busy, so a **fast** input can update immediately while a **expensive** child reads the **deferred** value to render a large result **slightly** later. It is **framework-aware** and avoids a fixed `setTimeout` debounce for every use case.\n",
+        "examples": [E("Pair with memoized child", "const slow = useDeferredValue(fastQuery);\nreturn <BigList q={slow} />;\n", "`BigList` re-renders on `slow` which may trail `fastQuery` when the system is under load.", "tsx")],
+        "tip": "Show a subtle **stale** indicator in UX when the deferred value lags a visible search, if your design needs honesty about freshness.",
+        "links": L("React: useDeferredValue", "https://react.dev/reference/react/useDeferredValue"),
+    },
+    {
+        "id": "react-056",
+        "question": "What does `<StrictMode>` do in development?",
+        "difficulty": "intermediate",
+        "category": "tooling",
+        "tags": ["strict-mode", "dev", "effects"],
+        "answer": "In **development** (and only there), `StrictMode` **invokes** some lifecycles and effects an **extra** time to help you find **impure** render logic and **missing** cleanups. It also warns about some **deprecated** patterns depending on the React version you run.\n\n**Production** bundles do not apply the same double-invocation behavior for performance; the goal is to **train** you to write idempotent effect bodies with proper **cleanup** and **ref** use.\n",
+        "examples": [E("Wrap the tree", "import { StrictMode } from 'react';\n\ncreateRoot(root).render(\n  <StrictMode>\n    <App />\n  </StrictMode>\n);\n", "Usually enabled in `main` for dev; some teams keep it in prod for future warnings, but the heavy checks are **dev**-leaning.", "tsx")],
+        "tip": "If a third-party effect **fails** in StrictMode, the bug is often **missing cleanup**; patch upstream or **isolate** in a small boundary if you must.",
+        "links": L("React: StrictMode", "https://react.dev/reference/react/StrictMode"),
+    },
+    {
+        "id": "react-057",
+        "question": "How does React Testing Library differ from testing implementation details?",
+        "difficulty": "intermediate",
+        "category": "testing",
+        "tags": ["rtl", "testing", "a11y"],
+        "answer": "**React Testing Library** guides you to **query** elements by **role**, **name**, and **text** so tests resemble **user** behavior. That tends to **survive** refactors that rename internal state or split components, unlike tests that assert on **method** names or `state` fields.\n\n**Trade-off:** you still need a few **escape hatches** (`data-testid`) for elements without a **stable** role; use them **sparingly**.\n",
+        "examples": [E("Query by role", "screen.getByRole('button', { name: /save/i }).click();\n", "Clicks the save button a sighted user would also recognize by accessible name.", "tsx")],
+        "tip": "Pair with **jest-dom** assertions (`toBeInTheDocument`) and **fake timers** for `useEffect` with delays.",
+        "links": L("Testing Library: Guiding principles", "https://testing-library.com/docs/guiding-principles"),
+    },
+    {
+        "id": "react-058",
+        "question": "What role does React Router play in a React app?",
+        "difficulty": "beginner",
+        "category": "ecosystem",
+        "tags": ["router", "spa", "history"],
+        "answer": "**React Router** maps **URLs** to **UI** in client-rendered single-page apps: which **outlets** render, **nested** routes, **data loaders** in newer versions, and **query** parameters. Browsers can **Back**-navigate, **deep-link**, and **bookmark** views because the **address bar** is the state many teams care about for navigation.\n\n**Framework** stacks like **Remix** and **Next.js** have **their** own routing; plain CRA/Vite often pair with **react-router** when you are not on a file-router framework.\n",
+        "examples": [E("Conceptual (v6 style)", "<Routes>\n  <Route path=\"/\" element={<Home />} />\n  <Route path=\"/u/:id\" element={<User />} />\n</Routes>\n", "The router picks which element to render from the current URL; consult the React Router version you use for the exact `Route` / data APIs.", "tsx")],
+        "tip": "For **server-first** projects, you may not install **react-router** at all; follow your framework’s **file-based** system.",
+        "links": L("React Router: home", "https://reactrouter.com/"),
+    },
+    {
+        "id": "react-059",
+        "question": "How do ES modules (`import` / `export`) work with React components?",
+        "difficulty": "beginner",
+        "category": "tooling",
+        "tags": ["esm", "tree-shaking", "vite"],
+        "answer": "ES modules are the **static** unit React files compile to: `import { useState } from 'react'` and `export function Card() { ... }`. The bundler can **tree-shake** unused exports, **code-split** with dynamic `import()` for `React.lazy`, and keep **HMR** boundaries around modules during dev.\n\n**TypeScript** `import type` can strip types entirely from the **emit**, keeping **runtime** imports minimal.\n",
+        "examples": [E("Dynamic import for split", "const Page = lazy(() => import('./Page'));\n", "Vite/Webpack build a **separate** chunk the browser loads on demand.", "tsx")],
+        "tip": "Use **named exports** in design systems to improve **refactor** tooling and on-call diffs, unless the file is a true **default** `page` entry.",
+        "links": L("MDN: import", "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import"),
+    },
+    {
+        "id": "react-060",
+        "question": "What are CSS Modules and how are they used in React?",
+        "difficulty": "intermediate",
+        "category": "styling",
+        "tags": ["css-modules", "scope", "vite"],
+        "answer": "A **CSS Module** is a `*.module.css` file you **import** as an object: each **local** class in the file becomes a **key** on the import object, and the **build** rewrites selectors to **unique** class strings so `Button` and `Input` can both use `.root` in different files without a global name clash at **runtime**.\n\nVite, Webpack, and other bundlers enable this; you can combine **plain** `className` strings with **composes** in advanced setups.\n",
+        "examples": [E("Module + component", "import s from './Card.module.css';\n\nexport function Card() {\n  return <div className={s.panel}>…</div>;\n}\n", "`s.panel` is a scoped string produced at build time.", "tsx")],
+        "tip": "If you also use **Tailwind**, pick one **system** for a given component to avoid `class` soup—many teams use modules for **layout** shells and **utility** classes for small tweaks.",
+        "links": L("Vite: CSS modules", "https://vitejs.dev/guide/features.html#css-modules"),
+    },
+]
+
+if __name__ == "__main__":
+    Path(ROOT / "seed_51_60.json").write_text(json.dumps(ITEMS, indent=2) + "\n", encoding="utf-8")
+    print("wrote", len(ITEMS))

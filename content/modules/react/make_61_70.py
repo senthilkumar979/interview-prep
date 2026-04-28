@@ -1,0 +1,123 @@
+import json
+from pathlib import Path
+
+L = lambda label, href: [{"label": label, "href": href}]
+E = lambda title, code, exp, lang="tsx": {"title": title, "language": lang, "code": code, "explanation": exp}
+ROOT = Path(__file__).resolve().parent
+
+ITEMS: list[dict] = [
+    {
+        "id": "react-061",
+        "question": "How do you run `async` work in a React function component?",
+        "difficulty": "intermediate",
+        "category": "hooks",
+        "tags": ["async", "useEffect", "data-fetching"],
+        "answer": "You **do not** make the component function `async`—you must return **elements** (or `null`), not a `Promise`.\n\n**Patterns:** (1) **`useEffect`** with an **inner** `async` function; **setState** in `try`/`catch`; **ignore** the effect on **abort** for fetch with **`AbortController`**. (2) **Event handlers** can be `async` (`onClick={async (e) => { ... }}`) because they are not the render return. (3) **Data libraries** (TanStack Query) wrap the above with **caching** and **deduplication**.\n",
+        "examples": [E("Fetch in effect", "useEffect(() => {\n  let go = true;\n  (async () => {\n    const d = await fetch('/api').then((r) => r.json());\n    if (go) setData(d);\n  })();\n  return () => { go = false; };\n}, []);\n", "The cleanup sets `go` so a slow response after unmount does not call `setData`. Prefer `AbortController` for real fetches.", "tsx")],
+        "tip": "Handle **empty**, **error**, and **loading** states; never leave `await` results without a try/catch at the user boundary.",
+        "links": L("React: Synchronizing with Effects", "https://react.dev/learn/synchronizing-with-effects"),
+    },
+    {
+        "id": "react-062",
+        "question": "What is a common folder structure for a React app?",
+        "difficulty": "beginner",
+        "category": "tooling",
+        "tags": ["structure", "features", "scale"],
+        "answer": "Typical **feature-first** layout groups **one user journey** in a folder: **components**, **hooks**, **api**, and **tests** together. A **`shared`/`ui` layer** holds **primitives** (buttons, inputs). **Route** files often live in **`app/`** (Next) or a **`pages/`** tree you choose, while **`lib/utils`** is for cross-feature helpers.\n\n**Monorepos** split design tokens and types into **`packages`**. The winning rule: **enforced** boundaries (ESLint `no-restricted-imports` or **TS** path maps) so features do not form a **spaghetti** graph.\n",
+        "examples": [E("Sketch", "features/\n  auth/\n    ui/LoginForm.tsx\n    model/useSession.ts\n  billing/\n    ...\n", "Each feature can evolve mostly on its own; `shared` holds true generic UI.", "text")],
+        "tip": "Name folders after **user capabilities** (checkout, account) more often than only **technical** layers when the app grows past a dozen screens.\n",
+        "links": L("Feature-Sliced Design (community)", "https://feature-sliced.design/"),
+    },
+    {
+        "id": "react-063",
+        "question": "What animation options pair well with React?",
+        "difficulty": "beginner",
+        "category": "ecosystem",
+        "tags": ["animation", "framer", "css"],
+        "answer": "At the **lowest** level, **CSS transitions** and **`@keyframes`** with plain `className` changes (often via **state**) are enough for many UIs. **Framer Motion** and **react-spring** are popular for **gesture**-driven, **layout**, and **spring** physics. For **orchestrated** timelines, some teams use **GSAP** in **`useLayoutEffect`**, especially when **tweening** values **outside** React’s render to avoid re-render storms.\n\n**Rule:** drive complex animation from **state** and **ref**-level reads when you need **frame-perfect** sync; avoid **setState 60 times per second** in hot paths without measuring.\n",
+        "examples": [E("CSS class toggle", "<div className={on ? s.open : s.closed} />\n", "State toggles a class; the CSS engine handles the interpolation.", "tsx")],
+        "tip": "Prefer **transform/opacity** for smooth frames; `layout` thrash from `width` changes is a common jank source.",
+        "links": L("Framer Motion", "https://www.framer.com/motion/"),
+    },
+    {
+        "id": "react-064",
+        "question": "What is a typical ESLint stack for React in 2024+?",
+        "difficulty": "intermediate",
+        "category": "tooling",
+        "tags": ["eslint", "hooks", "a11y"],
+        "answer": "Most teams use **ESLint** with **TypeScript** (`@typescript-eslint`), **`eslint-plugin-react`**, and **`eslint-plugin-react-hooks`** (the **Rules of Hooks** and exhaustive-deps warnings). For accessibility, **`eslint-plugin-jsx-a11y`** adds static checks for **ARIA** and **form** patterns.\n\n**Flat config** (`eslint.config.js` in new setups) or **`.eslintrc`** in older repos—your template decides. The goal is: **fast feedback** in the editor, not a **rule** count race.\n",
+        "examples": [E("Hook rules in CI", "npm run lint\n", "Failing the build on `react-hooks/exhaustive-deps` saves production bugs at review time for many teams.", "bash")],
+        "tip": "Tune **`exhaustive-deps`**: sometimes you **intentionally** omit a stable prop; document with an **eslint comment** and a **test** for the contract.",
+        "links": L("NPM: eslint-plugin-react-hooks", "https://github.com/facebook/react/tree/main/packages/eslint-plugin-react-hooks"),
+    },
+    {
+        "id": "react-065",
+        "question": "How can you read the React version at runtime?",
+        "difficulty": "beginner",
+        "category": "ecosystem",
+        "tags": ["version", "debug", "package"],
+        "answer": "In the browser, **`React.version`** is a string like **`'18.3.1'`** you can read from the **`react` module** in dev tools or a small debug panel. \n**More precise** source of truth is **`package.json`** / **lockfile** in your app because **federated** or **duplicated** React copies in a bad MFE graph can desync the **runtime** `version` and the version you *think* you shipped.\n",
+        "examples": [E("Log in dev", "if (import.meta.env.DEV) console.log(React.version);\n", "Vite’s `import.meta.env.DEV` gates the log; adjust for your bundler’s dev flag.", "tsx")],
+        "tip": "If hooks throw **invalid** errors, `npm ls react` and your bundler’s **resolve** `alias` to force a **single** React in **Module Federation** graphs.\n",
+        "links": L("React: version", "https://react.dev/reference/react#react"),
+    },
+    {
+        "id": "react-066",
+        "question": "How do you focus an input on mount in React?",
+        "difficulty": "beginner",
+        "category": "a11y",
+        "tags": ["focus", "ref", "useEffect"],
+        "answer": "Create a **ref** with **`useRef<HTMLInputElement>(null)`**, attach it to the **input**, and in **`useLayoutEffect` or `useEffect`**, call **`ref.current?.focus()`** on mount. Pick **`useLayoutEffect`** if you need focus **before** paint to avoid a **flash** of the wrong control.\n\nFor **modals** and **dialogs**, also look at the **WAI-ARIA** **dialog** pattern: **move focus in**, **trap** it, and **return** on close.\n",
+        "examples": [E("Auto-focus", "import { useEffect, useRef } from 'react';\n\nexport function FirstField() {\n  const r = useRef<HTMLInputElement>(null);\n  useEffect(() => {\n    r.current?.focus();\n  }, []);\n  return <input ref={r} />;\n}\n", "Runs once after first paint (effect), not before—swap to `useLayoutEffect` if you see flicker in your UX.", "tsx")],
+        "tip": "Only **steal** focus on mount when the UX expects it; screen reader users are disrupted if every screen **snatches** focus unexpectedly.\n",
+        "links": L("MDN: HTMLElement.focus", "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus"),
+    },
+    {
+        "id": "react-067",
+        "question": "How do you associate a `<label>` with a control in React?",
+        "difficulty": "beginner",
+        "category": "a11y",
+        "tags": ["label", "htmlFor", "a11y"],
+        "answer": "Use **`htmlFor` on the label** to match the **`id` on the input** (`<label htmlFor={id}>` + `<input id={id}>`), or **nest** the `input` **inside** the `label` so the browser association is automatic. The JSX prop is **`htmlFor`**, not `for`, because `for` is reserved in JavaScript.\n\n`useId` helps generate **stable, unique** ids, especially in **SSR**.\n",
+        "examples": [E("Pair with useId", "const id = useId();\nreturn (\n  <>\n    <label htmlFor={id}>Email</label>\n    <input id={id} type=\"email\" />\n  </>\n);\n", "Clicks on the label move focus to the field for mouse and **assistive** users.", "tsx")],
+        "tip": "Never use a `div` with an `onClick` **instead** of a `label` for basic forms—`label` is the platform primitive for this link.",
+        "links": L("MDN: label element", "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"),
+    },
+    {
+        "id": "react-068",
+        "question": "Can you reassign a component’s `props` object?",
+        "difficulty": "beginner",
+        "category": "state-and-props",
+        "tags": ["props", "immutability", "patterns"],
+        "answer": "In idiomatic React you **treat** the `props` object as **read-only**. **Mutating** it (`(props as any).x = 1` or similar) is **undefined**-friendly behavior, breaks expectations for **pure** render logic, and can confuse **`memo` comparisons** when you accidentally share references.\n\nTo **derive** data, use **const** locals in the render body, **`useMemo`**, or local **`useState`** for editable copies.\n",
+        "examples": [E("Derive, don’t mutate", "const total = items.reduce((a, i) => a + i.price, 0);\n", "A new `total` per render; no in-place `props` edits.", "tsx")],
+        "tip": "TypeScript `readonly` props in strict component typings help your team keep this contract explicit.\n",
+        "links": L("React: Component props (mental model)", "https://react.dev/learn/passing-props-to-a-component"),
+    },
+    {
+        "id": "react-069",
+        "question": "How do SPAs using React Router work with page analytics (e.g. Google Analytics)?",
+        "difficulty": "intermediate",
+        "category": "ecosystem",
+        "tags": ["analytics", "router", "ga4"],
+        "answer": "Classic tag snippets assume a **full** page load. In a **SPA**, each **in-app** navigation updates the **URL** without a reload, so you must **emit** a virtual **page view** (or a GA4 **`page_view` event** with the new path) when the **router** reports a new location.\n\n**How:** a layout effect (or a small `Analytics` child) that reads **`useLocation().pathname`** and calls your **`gtag`**, **`dataLayer.push`**, or other vendor API with the **new** path and title.\n",
+        "examples": [E("useLocation (sketch)", "const loc = useLocation();\nuseEffect(() => { trackPage(loc.pathname); }, [loc]);\n", "Re-run when the path changes; debounce or guard if your `track` is expensive.", "tsx")],
+        "tip": "Also send a **user engagement** on **first** paint and watch **duplicate** events if both layout and a child call `track`—centralize the subscription.\n",
+        "links": L("GA4: Web (Google)", "https://developers.google.com/analytics/devguides/collection/ga4/web"),
+    },
+    {
+        "id": "react-070",
+        "question": "How do CSS vendor prefixes work with React inline `style` objects?",
+        "difficulty": "intermediate",
+        "category": "styling",
+        "tags": ["style", "prefix", "autoprefixer"],
+        "answer": "In a **`style={{ ... }}` object**, you can set **camelCased** longhand properties, including a few that still use **`Webkit` prefixes** in the object key when you need a **rare** inline case. For **broad** browser support, teams prefer **Autoprefixer** on **CSS files** (or a CSS-in-JS layer that can emit prefixes) instead of hand-maintaining every prefix in JavaScript for large surfaces.\n",
+        "examples": [E("Rare inline", "const s = { WebkitLineClamp: 3 as const } as React.CSSProperties;\n", "Often still prefer a **class** with Autoprefixer; inline is for a **dynamic** value only.", "tsx")],
+        "tip": "Check **MDN** `browser-compat` data before you **cargo-cult** old `-webkit-` in React style objects; evergreen browsers move fast.",
+        "links": L("Autoprefixer", "https://github.com/postcss/autoprefixer"),
+    },
+]
+
+if __name__ == "__main__":
+    Path(ROOT / "seed_61_70.json").write_text(json.dumps(ITEMS, indent=2) + "\n", encoding="utf-8")
+    print("wrote", len(ITEMS))

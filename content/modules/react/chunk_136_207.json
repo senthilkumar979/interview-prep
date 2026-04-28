@@ -1,0 +1,1966 @@
+[
+  {
+    "id": "react-136",
+    "question": "Can Redux only be used with React?",
+    "difficulty": "beginner",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "ecosystem",
+      "agnostic"
+    ],
+    "answer": "**No.** **Redux** is a small pattern and library for **predictable state**; it is **not** tied to one UI framework. You can use it with **React**, but also with **Vanilla JavaScript**, **Angular**, **Vue** (less common in modern Vue), and other stacks. The official `@reduxjs/react-redux` package connects Redux to **React** most often in interviews, yet the same store shape works elsewhere.\n\nIn practice, many teams use **Redux + React** because React does not ship a global data solution. Choose Redux when you need a **single** global store, **time travel** debugging, and a strong **unidirectional** flow.",
+    "examples": [
+      {
+        "title": "React + store provider",
+        "language": "tsx",
+        "code": "import { createStore } from 'redux';\nimport { Provider } from 'react-redux';\nimport { rootReducer } from './reducer';\n\nconst store = createStore(rootReducer);\n\nexport function App() {\n  return (\n    <Provider store={store}>\n      <Page />\n    </Provider>\n  );\n}\n",
+        "explanation": "`Provider` is the React piece; the store itself is plain JavaScript and could be read outside React in theory."
+      },
+      {
+        "title": "Store without any UI (vanilla idea)",
+        "language": "ts",
+        "code": "import { createStore } from 'redux';\n\nconst store = createStore((s = 0) => s + 1);\nstore.dispatch({ type: 'INCREMENT' });\nconsole.log(store.getState());\n",
+        "explanation": "This shows the core idea: Redux is a store API; React is optional."
+      }
+    ],
+    "tip": "Mention the **@reduxjs/toolkit** style today, but the interview point is: **Redux is a JS library, not a React sub-library**.",
+    "links": [
+      {
+        "label": "Redux: Getting Started",
+        "href": "https://redux.js.org/introduction/getting-started"
+      }
+    ]
+  },
+  {
+    "id": "react-137",
+    "question": "Do you need a specific build tool to use Redux?",
+    "difficulty": "beginner",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "build",
+      "tooling"
+    ],
+    "answer": "**No** special build tool is **required** for **Redux** itself. `redux` is a plain JavaScript package you can use with any bundler or even without one for learning.\n\n**React-Redux** in a modern app almost always needs **a bundler** and **JSX** compilation for components, so teams pick **Vite**, **webpack**, **RSPack**, or a framework. That requirement comes from the **UI layer**, not from Redux. With **TypeScript** you also run `tsc` or rely on the bundler for type checking in CI.",
+    "examples": [
+      {
+        "title": "Redux in package.json (agnostic)",
+        "language": "json",
+        "code": "{\n  \"dependencies\": {\n    \"@reduxjs/toolkit\": \"^2.0.0\",\n    \"react-redux\": \"^9.0.0\",\n    \"redux\": \"^5.0.0\"\n  }\n}\n",
+        "explanation": "These are normal npm dependencies; the build tool (Vite, and so on) is separate."
+      }
+    ],
+    "tip": "Clarify: **Redux** needs **npm and a bundler for React apps in practice**; the store code itself has no Vite- or webpack-specific feature.",
+    "links": [
+      {
+        "label": "Redux: Installation",
+        "href": "https://redux.js.org/introduction/installation"
+      }
+    ]
+  },
+  {
+    "id": "react-138",
+    "question": "How do Redux Form initial values get updated from state?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "redux-form",
+      "state",
+      "initialvalues"
+    ],
+    "answer": "**Redux Form** (older library) can reflect server or parent state with the **`initialValues` prop** on `reduxForm(...)`-wrapped fields. If props change, you need to understand the library you use.\n\nIn classic usage, you often re-run **`change` actions** for fields, or you **reinitialize** the form when a key identity changes, because **`initialValues` alone** may not repopulate every field after the first mount. Many teams today prefer **Formik** or **React Hook Form** instead, because the Redux-Form project is in maintenance mode.\n\nA modern answer: for dynamic editing, you usually set **`enableReinitialize: true`** (in older Redux-Form) or, with newer tools, reset the form when the entity id from the server changes so you do not show stale data.",
+    "examples": [
+      {
+        "title": "Concept: pass server user into a form",
+        "language": "tsx",
+        "code": "type User = { id: string; name: string };\n\n// Sketch: re-init when the selected user id changes (pattern)\n// key={user.id} on the form remounts children so defaults refresh.\nfunction Editor({ user }: { user: User }) {\n  return (\n    <form key={user.id} defaultValue={undefined}>\n      <input name=\"name\" defaultValue={user.name} />\n    </form>\n  );\n}\n",
+        "explanation": "In interviews, the idea is: change **identity** (key) or use library `reset` so initial data tracks async loads."
+      }
+    ],
+    "tip": "Name **enableReinitialize** and **re-mounting with `key`** as two real patterns; mention **React Hook Form** as the modern default for new work.",
+    "links": [
+      {
+        "label": "Redux Form: Initializing (archive)",
+        "href": "https://redux.js.org/introduction/getting-started"
+      }
+    ]
+  },
+  {
+    "id": "react-139",
+    "question": "How do React PropTypes allow different types for one prop?",
+    "difficulty": "intermediate",
+    "category": "types",
+    "tags": [
+      "proptypes",
+      "union",
+      "validation"
+    ],
+    "answer": "**PropTypes** (from the `prop-types` package) models **a union of shapes** for one prop. Use **`oneOf`**, **`oneOfType`**, and **`arrayOf` / `objectOf` helpers** to express allowed options.\n\n- **`oneOfType([PropTypes.string, PropTypes.number])`**: the prop can be a **string** or a **number**.\n- **`oneOf(['sm','md','lg'])`**: the prop is one of a few **literal string** values in development.\n\n**TypeScript** is usually a better long-term check at compile time; `PropTypes` is a **runtime** check that helps in JavaScript or mixed codebases. React 19+ and modern apps often rely on TypeScript and skip PropTypes in many internal components.",
+    "examples": [
+      {
+        "title": "oneOfType",
+        "language": "tsx",
+        "code": "import PropTypes from 'prop-types';\n\nconst Row = (props: { size: string | number }) => <div data-size={props.size} />;\n\nRow.propTypes = {\n  size: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,\n};\n",
+        "explanation": "In development, invalid types log a clear warning in the console."
+      }
+    ],
+    "tip": "Mention you would usually express this as **string | number in TypeScript** for faster feedback, and keep `PropTypes` for shared JS libraries or legacy apps.",
+    "links": [
+      {
+        "label": "prop-types: oneOfType",
+        "href": "https://github.com/facebook/prop-types"
+      }
+    ]
+  },
+  {
+    "id": "react-140",
+    "question": "Can you import an SVG file as a React component?",
+    "difficulty": "beginner",
+    "category": "build",
+    "tags": [
+      "svg",
+      "vite",
+      "import"
+    ],
+    "answer": "**Yes, with tooling configured.** In **Vite**, you can import an SVG and treat it as a **React** component with a plugin (for example **`vite-plugin-svgr`**) or a similar SVGR setup. The bundler compiles the SVG to a function component you can use like any icon.\n\nIf you have no special plugin, you often import the SVG as a **URL** string and put it in `<img src={url} alt=\"...\" />` or you paste **inline** JSX for full style control. Choose **import-as-component** when you need the same color props and tree semantics as a component, and use **url import** for large static art.",
+    "examples": [
+      {
+        "title": "Vite: SVGR style usage (typical after plugin)",
+        "language": "tsx",
+        "code": "import Logo from './logo.svg?react';\n\nexport function Header() {\n  return <Logo aria-label=\"Home\" className=\"h-6 w-6 text-blue-600\" />;\n}\n",
+        "explanation": "The exact `?react` or plugin flag depends on your Vite config, but the idea is: SVG becomes a component."
+      },
+      {
+        "title": "No plugin: public URL",
+        "language": "tsx",
+        "code": "export function Hero() {\n  return <img src=\"/hero.svg\" alt=\"Hero graphic\" width={480} height={240} />;\n}\n",
+        "explanation": "This path works in any app without a compiler feature because it is a normal asset request."
+      }
+    ],
+    "tip": "In interviews, say: **it depends on the bundler plugin**, not a core React feature.",
+    "links": [
+      {
+        "label": "Vite: Static asset imports",
+        "href": "https://vitejs.dev/guide/assets"
+      }
+    ]
+  },
+  {
+    "id": "react-141",
+    "question": "What is render hijacking in React?",
+    "difficulty": "advanced",
+    "category": "patterns",
+    "tags": [
+      "hocs",
+      "composition",
+      "legacy"
+    ],
+    "answer": "**Render hijacking** (historical phrasing) means a **higher order component (HOC)** or wrapper **takes over part of the render path** to inject props, add logging, or change behavior while still rendering a wrapped child. The outer function decides when and how the inner function runs.\n\n**Example pattern:** a HOC returns a new component that adds side effects, measures layout, or shows a feature flag, then renders `WrappedComponent` with new props. **Caution:** HOCs can be hard to type and to debug, so most modern code uses **custom hooks** and **context** instead, which read more directly.\n\nMention the **React team guidance**: prefer **composition and hooks** over deep HOC chains when you can.",
+    "examples": [
+      {
+        "title": "HOC that injects a prop (conceptual)",
+        "language": "tsx",
+        "code": "import { ComponentType } from 'react';\n\nfunction withTheme<T extends object>(C: ComponentType<T & { theme: 'light' | 'dark' }>) {\n  return function Themed(props: T) {\n    const theme: 'light' | 'dark' = 'light';\n    return <C {...props} theme={theme} />;\n  };\n}\n",
+        "explanation": "The wrapper controls extra props; it hijacks the render in the sense of wrapping the original component function."
+      }
+    ],
+    "tip": "Tie the term to **HOCs**; then say you would not start new features that way in 2025 without a **strong** reason.",
+    "links": [
+      {
+        "label": "React: Higher-order components (legacy but documented)",
+        "href": "https://react.dev/reference/react/legacy"
+      }
+    ]
+  },
+  {
+    "id": "react-142",
+    "question": "How do you pass numbers to a React component?",
+    "difficulty": "beginner",
+    "category": "props",
+    "tags": [
+      "props",
+      "types",
+      "jsx"
+    ],
+    "answer": "**Pass a number in JSX** by putting a JavaScript value inside **curly braces**.\n\n- **`<Item count={3} />`**: the prop is the **number 3**.\n- **`<Item count={\"3\"} />`**: the prop is a **string** five; only use that if the API is string-based (HTML attributes, query strings, and the like).\n\nYou can also pass **expressions** like `{items.length}` or `{Math.max(0, n)}` because anything inside braces is JavaScript. If you set an attribute in HTML to a bare `count=\"3\"`, the DOM often coerces, but in React, **string vs number** is explicit in props, which helps TypeScript and logic.",
+    "examples": [
+      {
+        "title": "Number vs string prop",
+        "language": "tsx",
+        "code": "function Item({ n }: { n: number }) {\n  return <span>{n + 1}</span>;\n}\n\n// Good: n is a number, math works.\n<Item n={2} />;\n\n// Often wrong for math: n becomes string in many cases if you do not coerce.\n<Item n={Number('2')} />;\n",
+        "explanation": "Use `{number}` in JSX so the component receives a real number type, not a string that looks like a number."
+      }
+    ],
+    "tip": "Highlight **curly braces = JavaScript**; mention **TypeScript** to catch `string` vs `number` at build time.",
+    "links": [
+      {
+        "label": "Passing props",
+        "href": "https://react.dev/learn/passing-props-to-a-component"
+      }
+    ]
+  },
+  {
+    "id": "react-143",
+    "question": "Do you need to keep all state in Redux? Should you ever use React's internal state?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "local-state",
+      "architecture"
+    ],
+    "answer": "**No**, you do **not** need all state in **Redux**. A healthy app **mixes** **local React state** for UI that only one subtree cares about, and **global** store state for data many screens share or for complex async flows you want in one place.\n\n**Use local** `useState` / `useReducer` for: **input focus**, **open menu**, **form draft** before submit, and **animation** toggles. **Use Redux (or a server cache library)** for: **session**, **server-backed entities** many views edit, and **undo** rules that span routes.\n\n**Redux Toolkit** and **RTK Query** are common, but the rule is: **primum non nocere**\u2014do not pay global-boilerplate cost for **leaf** state.",
+    "examples": [
+      {
+        "title": "Local UI state (modal)",
+        "language": "tsx",
+        "code": "import { useState } from 'react';\n\nexport function Help() {\n  const [open, setOpen] = useState(false);\n  return (\n    <>\n      <button type=\"button\" onClick={() => setOpen(true)}>Help</button>\n      {open && <dialog open>\u2026</dialog>}\n    </>\n  );\n}\n",
+        "explanation": "This state rarely belongs in a global store; it is local interaction detail."
+      }
+    ],
+    "tip": "Quote the **React** docs mindset: colocate state as close as possible; lift only when you must.",
+    "links": [
+      {
+        "label": "Choosing the state structure",
+        "href": "https://react.dev/learn/managing-state"
+      }
+    ]
+  },
+  {
+    "id": "react-144",
+    "question": "What is the purpose of registerServiceWorker in React?",
+    "difficulty": "intermediate",
+    "category": "pwa",
+    "tags": [
+      "service-worker",
+      "cra",
+      "offline"
+    ],
+    "answer": "**`registerServiceWorker`** came from the **old Create React App (CRA) template** as a small helper to **opt in to a PWA** service worker in production, so the browser can **cache the built assets** and support **offline** or faster repeat loads, depending on the service worker you ship.\n\n**Important:** this is a **Create React App** convention, **not a core React API**. In **Vite** or a modern framework, you wire **Workbox** or a plugin instead. The exact API name may be `serviceWorker.register(...)` in most plain apps.\n\n**Security note:** service workers are powerful; only register them in **https** in production, and be careful with aggressive caching and updates.",
+    "examples": [
+      {
+        "title": "Generic service worker register (sketch)",
+        "language": "ts",
+        "code": "if ('serviceWorker' in navigator && import.meta.env.PROD) {\n  window.addEventListener('load', () => {\n    void navigator.serviceWorker.register('/sw.js');\n  });\n}\n",
+        "explanation": "The pattern: register a script after the page loads, usually only in production."
+      }
+    ],
+    "tip": "Mention many teams **turn off** service workers in early apps, then add a clear **update** banner when a new build goes live.",
+    "links": [
+      {
+        "label": "MDN: Service Worker API",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API"
+      }
+    ]
+  },
+  {
+    "id": "react-145",
+    "question": "What is the React.memo function?",
+    "difficulty": "intermediate",
+    "category": "performance",
+    "tags": [
+      "memo",
+      "pure",
+      "re-render"
+    ],
+    "answer": "**`React.memo`** is a **higher order component** for **function components** that **skips a re-render** if **props** are **shallow equal** to the last render, similar in spirit to `PureComponent` for classes.\n\n**Use it** when a parent re-renders often but a child is **expensive** or deep, and when prop stability makes shallow compare a win. **Do not** wrap everything by default: memoization has a small cost and can hide real prop churn.\n\nIf props include **new object or function** identities each render, `memo` will not help until you also stabilize with **`useCallback` / `useMemo`** (where appropriate) or restructure the tree.",
+    "examples": [
+      {
+        "title": "Memoized row",
+        "language": "tsx",
+        "code": "import { memo } from 'react';\n\nconst Row = memo(function Row({ id, title }: { id: string; title: string }) {\n  return <li id={id}>{title}</li>;\n});\n",
+        "explanation": "If the parent re-renders with the same `id` and `title` references, `Row` can bail out."
+      }
+    ],
+    "tip": "Name **shallow compare** and the classic pitfall: **inline objects in props** that defeat memo every time.",
+    "links": [
+      {
+        "label": "react.memo",
+        "href": "https://react.dev/reference/react/memo"
+      }
+    ]
+  },
+  {
+    "id": "react-146",
+    "question": "What is the React.lazy function?",
+    "difficulty": "intermediate",
+    "category": "suspense",
+    "tags": [
+      "lazy",
+      "code-splitting",
+      "suspense"
+    ],
+    "answer": "**`React.lazy`** is a function that **loads a component module the first time you render** it, instead of in the first bundle. It returns a **lazy component** you render inside a tree that has a **`<Suspense>`** boundary, which shows a **fallback** while the chunk downloads.\n\n**Typical use:** split large routes, heavy editors, and maps so the main shell stays small. The dynamic import is **relative to your bundler**; Vite and webpack know how to create async chunks for `import(`...`)`.\n\n`lazy` is **for client components** in normal SPA setups. Server-first frameworks (Next.js) use their own data and component loading patterns.",
+    "examples": [
+      {
+        "title": "Route chunk",
+        "language": "tsx",
+        "code": "import { lazy, Suspense } from 'react';\n\nconst Reports = lazy(() => import('./routes/Reports'));\n\nexport function App() {\n  return (\n    <Suspense fallback={<p>Loading\u2026</p>}>\n      <Reports />\n    </Suspense>\n  );\n}\n",
+        "explanation": "Until `Reports` is fetched, the fallback page shows, then the real UI appears."
+      }
+    ],
+    "tip": "Mention you still need a **suspense boundary** for `lazy` to have a good UX.",
+    "links": [
+      {
+        "label": "lazy",
+        "href": "https://react.dev/reference/react/lazy"
+      }
+    ]
+  },
+  {
+    "id": "react-147",
+    "question": "How do you prevent unnecessary updates using setState?",
+    "difficulty": "intermediate",
+    "category": "class-components",
+    "tags": [
+      "setstate",
+      "class",
+      "shouldcomponentupdate"
+    ],
+    "answer": "**In class components,** `setState` schedules a new render, but you can still **avoid work** in three main ways: **(1)** only call `setState` when data actually changes; **(2)** use **`shouldComponentUpdate`**, `PureComponent`, or **`React.memo`** (for children); **(3)** do not create **new object identity** in render when you can reuse stable data.\n\n**`setState` with a function** is useful to avoid **stale closure** from batching, and you can also skip updates in advanced patterns by **returning `null` in some lifecycle** hooks (less common) or by moving expensive children behind memoization.\n\n**Modern code** uses `useState` in functions, where the same ideas apply, plus **`useMemo` / `useCallback` / `memo`** in small doses.",
+    "examples": [
+      {
+        "title": "Functional setState to avoid race",
+        "language": "tsx",
+        "code": "this.setState((prev) => ({\n  count: prev.count + 1,\n}));\n",
+        "explanation": "The updater function sees the latest previous state, which is safer under batching in large apps."
+      }
+    ],
+    "tip": "If the interviewer is modern, pivot to: **we mostly use `useState` and memo today**, and we profile before tuning.",
+    "links": [
+      {
+        "label": "setState in classes (legacy doc)",
+        "href": "https://react.dev/reference/react/Component#setstate"
+      }
+    ]
+  },
+  {
+    "id": "react-148",
+    "question": "How do you render arrays, strings, and numbers in React v16?",
+    "difficulty": "beginner",
+    "category": "rendering",
+    "tags": [
+      "lists",
+      "children",
+      "jsx"
+    ],
+    "answer": "**Strings and numbers** render to **text nodes** in place: `{'hi'}`, `{3}`, and `{1 + 1}` all show text inside an element. **Falsy** values with caveats: `0` renders, but `false`, `null`, and `undefined` often render as **nothing** when used directly, which is a common gotcha (see your falsy-JSX question for detail).\n\n**Arrays of elements** (usually from `map`) are fine as long as **list items** have **stable `key` props** for dynamic lists. **Strings in arrays** work as fragments of text when you return an array of nodes from a child component.\n\n**React 16+** is fully **fiber**-based, but the **array rendering rules** you quote in an interview are still: **keyed lists**, and **one root** per return until fragments (`<>...</>`) made multiple siblings easy in one component output.",
+    "examples": [
+      {
+        "title": "Map with keys",
+        "language": "tsx",
+        "code": "const ids = ['a', 'b'];\n\nexport function List() {\n  return (\n    <ul>\n      {ids.map((id) => (\n        <li key={id}>{id.toUpperCase()}</li>\n      ))}\n    </ul>\n  );\n}\n",
+        "explanation": "Each li is a string render inside the list item; the array of elements is the map output."
+      }
+    ],
+    "tip": "Mention that **v16+** is not special today: **the same basic JSX rules** hold in React 18+.",
+    "links": [
+      {
+        "label": "Rendering lists",
+        "href": "https://react.dev/learn/rendering-lists"
+      }
+    ]
+  },
+  {
+    "id": "react-149",
+    "question": "What are Hooks?",
+    "difficulty": "beginner",
+    "category": "hooks",
+    "tags": [
+      "hooks",
+      "functions",
+      "state"
+    ],
+    "answer": "**Hooks** are **functions** whose names start with **`use`**, and they let **function components** add **state**, **side effects**, **context**, **memoized values**, and more. The classic hooks are `useState`, `useEffect`, and `useContext`.\n\n**Why they matter:** you can colocate stateful logic in small components **without** class boilerplate, and you can extract reusable logic in **custom hooks** (functions that also call `use*`).\n\nHooks are **not** opt-in in new projects; the community standard is now **all functions and hooks** for new components, even if a legacy class still lives in a corner of a repo.",
+    "examples": [
+      {
+        "title": "State hook",
+        "language": "tsx",
+        "code": "import { useState } from 'react';\n\nexport function Toggle() {\n  const [on, setOn] = useState(false);\n  return <button onClick={() => setOn((v) => !v)}>{on ? 'on' : 'off'}</button>;\n}\n",
+        "explanation": "`useState` returns a value and a setter; the component re-runs on updates."
+      }
+    ],
+    "tip": "Mention the **Rules of Hooks** in the very next beat (top-level, React functions only) so the interview flow feels complete.",
+    "links": [
+      {
+        "label": "Hooks intro",
+        "href": "https://react.dev/reference/react"
+      }
+    ]
+  },
+  {
+    "id": "react-150",
+    "question": "What rules must be followed for Hooks?",
+    "difficulty": "beginner",
+    "category": "hooks",
+    "tags": [
+      "rules-of-hooks",
+      "eslint",
+      "order"
+    ],
+    "answer": "1) **Only call hooks at the top level** of a React function component or a **custom hook**\u2014**not** inside conditions, **not** in loops, and **not** after an early return that can skip a hook. This keeps the **order** of hook calls stable on every render.\n\n2) **Only call hooks** from **React** functions, not from random helpers or class `render` to avoid contract confusion.\n\n3) (Implicit but important) **Name custom hooks** with **`useSomething`** and keep them as thin coordination layers over the core `use*`.",
+    "examples": [
+      {
+        "title": "Bad: hook in a branch (do not do this)",
+        "language": "tsx",
+        "code": "function Bad({ x }: { x: boolean }) {\n  if (x) {\n    // const [n] = useState(0); // breaks rules / order\n  }\n  return <div />;\n}\n",
+        "explanation": "The linter flags this, because a branch can change how many hook calls run between renders."
+      }
+    ],
+    "tip": "Say that **the linter** (`eslint-plugin-react-hooks`) is part of the standard tool chain.",
+    "links": [
+      {
+        "label": "Rules of Hooks",
+        "href": "https://react.dev/reference/rules/rules-of-hooks"
+      }
+    ]
+  },
+  {
+    "id": "react-151",
+    "question": "How do you ensure Hooks follow the rules in your project?",
+    "difficulty": "intermediate",
+    "category": "tooling",
+    "tags": [
+      "eslint",
+      "ci",
+      "hooks"
+    ],
+    "answer": "1) **Enable the official `eslint-plugin-react-hooks` rules** (`rules-of-hooks` and `exhaustive-deps` or your chosen variant) in the repo **ESLint** config, including for TypeScript. 2) Run **ESLint in CI** on every pull request so a branch cannot merge a hook-order bug. 3) In **TypeScript** strict mode, many prop mistakes also fail fast before runtime.\n\n4) In code review, watch for **custom hooks** that call other hooks only at top level, and for **`useEffect` dependencies** that are wrong even when they pass the linter (human judgment).",
+    "examples": [
+      {
+        "title": "ESLint (flat config sketch)",
+        "language": "json",
+        "code": "{\n  \"plugins\": [\"react-hooks\"],\n  \"rules\": {\n    \"react-hooks/rules-of-hooks\": \"error\",\n    \"react-hooks/exhaustive-deps\": \"warn\"\n  }\n}\n",
+        "explanation": "The plugin pair is the default guard in Create React App, Vite templates, and Next.js scaffolds."
+      }
+    ],
+    "tip": "Mention you treat **`exhaustive-deps` warnings** as technical debt, not as noise, in serious apps.",
+    "links": [
+      {
+        "label": "eslint-plugin-react-hooks",
+        "href": "https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/README.md"
+      }
+    ]
+  },
+  {
+    "id": "react-152",
+    "question": "What are the differences between Flux and Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "flux",
+      "redux",
+      "architecture"
+    ],
+    "answer": "**Flux** (original Facebook talk pattern) is a **family of ideas**: **unidirectional** data flow, **dispatcher**, **stores**, and **actions**.\n\n**Redux** is a **concrete, smaller** library. It has **one** global store, **plain objects** for actions, and a **reducer** function that is **pure** and **synchronous** by default, which makes it easy to log and to test. Flux implementations often have **more than one** store, while Redux **encourages a single** state tree and often uses **RTK** today.\n\n**Net:** all Redux apps follow a **Flux spirit**, but the **reducer and single store** make Redux a **specific** take on the pattern.",
+    "examples": [
+      {
+        "title": "Redux action and reducer (tiny)",
+        "language": "ts",
+        "code": "type A = { type: 'setUser'; name: string };\n\ntype S = { name: string };\n\nfunction app(s: S, a: A): S {\n  if (a.type === 'setUser') return { name: a.name };\n  return s;\n}\n",
+        "explanation": "A pure function steps state forward, which is the Redux core, while Flux is broader."
+      }
+    ],
+    "tip": "Mention many teams now add **side effects in middleware (Redux-Thunk, Redux-Saga, RTK async thunks)**, not in reducers.",
+    "links": [
+      {
+        "label": "Redux: Three principles",
+        "href": "https://redux.js.org/understanding/thinking-in-redux/three-principles"
+      }
+    ]
+  },
+  {
+    "id": "react-153",
+    "question": "What are the benefits of React Router v4?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "react-router",
+      "v4",
+      "history"
+    ],
+    "answer": "**React Router v4** moved to **dynamic, declarative** routing: routes are just **components**, which matches the React model and makes **nested** UIs and **code splitting** easier to think about. It focuses on a **location** in **history** (browser or memory) and renders the tree that matches **that** location.\n\n**Benefits** in interviews: **nested routes** with layout routes, a clear split between **web** (`react-router-dom`) and core (`react-router`), and patterns that work well in **client SPAs** before the framework era. **New projects** use **v6+** (data APIs, `RouterProvider`); the v4 talk is mostly **history** and the shift to **component routes** from static route tables in older versions.\n",
+    "examples": [
+      {
+        "title": "Nested routes (v4 idea)",
+        "language": "tsx",
+        "code": "import { Switch, Route } from 'react-router-dom';\n\nexport function App() {\n  return (\n    <Switch>\n      <Route path=\"/inbox\" component={Inbox} />\n      <Route path=\"/settings\" component={Settings} />\n    </Switch>\n  );\n}\n",
+        "explanation": "v4+ treats routes as part of the component tree, which reads well to React devs. v6+ uses `Routes`/`Route` and different default matching rules, but the idea remains."
+      }
+    ],
+    "tip": "Mention the **v4-to-v5-to-v6** line quickly, and say for **new work** you follow **v6+ docs** today.",
+    "links": [
+      {
+        "label": "React Router",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-154",
+    "question": "Can you describe the componentDidCatch lifecycle method signature?",
+    "difficulty": "intermediate",
+    "category": "error-boundaries",
+    "tags": [
+      "class",
+      "error-boundary",
+      "lifecycle"
+    ],
+    "answer": "`componentDidCatch(error, errorInfo)` is a **class** lifecycle on an **error boundary** component. It runs **after** a child throws during **render** or in **lifecycle methods of children**, but **not** in async code without extra wiring.\n\n- **`error`**: the thrown value (usually an `Error`).\n- **`errorInfo`**: an object with a **`componentStack` string** and related metadata so you can log **which subtree** failed.\n\n**Modern note:** the ecosystem also has **react-error-boundary** and React 19 error reporting improvements; the interview answer still maps to **class** `getDerivedStateFromError` (update UI) and **`componentDidCatch` (log side effect)** in pairs.",
+    "examples": [
+      {
+        "title": "Classic pair",
+        "language": "tsx",
+        "code": "import { Component, type ErrorInfo, type ReactNode } from 'react';\n\ntype Props = { children: ReactNode };\n\ntype State = { hasError: boolean };\n\nexport class ErrorBoundary extends Component<Props, State> {\n  state: State = { hasError: false };\n\n  static getDerivedStateFromError() {\n    return { hasError: true };\n  }\n\n  componentDidCatch(error: Error, errorInfo: ErrorInfo) {\n    console.error(error, errorInfo.componentStack);\n  }\n\n  render() {\n    return this.state.hasError ? <p>Sorry.</p> : this.props.children;\n  }\n}\n",
+        "explanation": "`getDerivedStateFromError` is pure; `componentDidCatch` is where you log the stack and your monitoring SDK."
+      }
+    ],
+    "tip": "**Never** use hooks inside `componentDidCatch` body as a new pattern; keep logging **side effect**-safe.",
+    "links": [
+      {
+        "label": "Error boundaries in React",
+        "href": "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      }
+    ]
+  },
+  {
+    "id": "react-155",
+    "question": "In which scenarios do error boundaries not catch errors?",
+    "difficulty": "intermediate",
+    "category": "error-boundaries",
+    "tags": [
+      "async",
+      "ssr",
+      "errors"
+    ],
+    "answer": "Error boundaries do **not** catch:\n- Errors in **event handlers** (handle with `try`/`catch` in the handler).\n- Errors in **async** code (Promises, `setTimeout`, `requestAnimationFrame`) **unless** you connect them to React state in a way that rethrows in render, which is rare in practice; instead you `catch` the Promise and set error state on purpose.\n- Errors in the **error boundary** itself, or in **SS**R-only paths without the right RSC/SSR error plumbing from your framework.\n- **Errors in server components** in framework-specific flows where the boundary is not on that layer.\n\n**Pattern:** for async code, **model failure as state** and show UI from a normal render path, or use a **global** `unhandledrejection` listener in addition to local `catch`.\n",
+    "examples": [
+      {
+        "title": "Try/catch in a click (manual)",
+        "language": "tsx",
+        "code": "async function save() {\n  try {\n    await api.save();\n  } catch (e) {\n    // boundary will not help here: update state to show a banner\n  }\n}\n",
+        "explanation": "The failure never crosses the render path, so a boundary is not a substitute for this catch."
+      }
+    ],
+    "tip": "Name **event handlers and async** as the top two gotchas, then one **SS**R caveat if the role is full stack.",
+    "links": [
+      {
+        "label": "Error boundaries: limitations",
+        "href": "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      }
+    ]
+  },
+  {
+    "id": "react-156",
+    "question": "What is the behavior of uncaught errors in React v16?",
+    "difficulty": "intermediate",
+    "category": "error-boundaries",
+    "tags": [
+      "v16",
+      "crash",
+      "ui"
+    ],
+    "answer": "**React 16+** (Fiber era) made **UI crashes more explicit**: if a child throws during **render** and there is no boundary, the **whole subtree** can unmount in development and the app can show a **blank** or **error overlay** depending on the dev tool and framework.\n\n**Production** aims to avoid serving a **broken** tree silently; a **top-level** error often tears down more than a single widget unless you add boundaries. **The fix** is: place **error boundaries** around **route sections** and around **fragile** widgets, and add **client-side** logging.\n",
+    "examples": [
+      {
+        "title": "Boundary at route",
+        "language": "tsx",
+        "code": "<Route path=\"/reports\" element={\n  <ErrorBoundary name=\"reports\">\n    <ReportsPage />\n  </ErrorBoundary>\n} />",
+        "explanation": "So a chart bug does not blank the full shell."
+      }
+    ],
+    "tip": "Mention that **v16+** is not special today, but the story **started** when Fiber could stop and show failure regions more clearly.",
+    "links": [
+      {
+        "label": "react.dev: errors",
+        "href": "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      }
+    ]
+  },
+  {
+    "id": "react-157",
+    "question": "What is the proper placement for error boundaries?",
+    "difficulty": "intermediate",
+    "category": "error-boundaries",
+    "tags": [
+      "layout",
+      "routes",
+      "resilience"
+    ],
+    "answer": "**Place boundaries** at **coarse** and **useful** boundaries: one around **each top-level route** (so one feature crash does not take the whole app shell), and **optional** **fine** boundaries around **risky** widgets (charts, markdown renderers, third-party embeds) if you want a **local** fallback without losing navigation.\n\n**Avoid** one giant boundary that hides all signal, and **avoid** a boundary on **every** tiny leaf (noise and harder debugging). In **data-heavy** pages, you may still keep data fetching error UI **in the page** and reserve boundaries for real **throw** errors.\n",
+    "examples": [
+      {
+        "title": "Shell + page boundary (idea)",
+        "language": "tsx",
+        "code": "export function App() {\n  return (\n    <ErrorBoundary name=\"app\">\n      <Nav />\n      <ErrorBoundary name=\"page\">\n        <Outlet />\n      </ErrorBoundary>\n    </ErrorBoundary>\n  );\n}\n",
+        "explanation": "The outer one catches unexpected shell bugs; the inner one isolates feature pages."
+      }
+    ],
+    "tip": "If you use **Sentry** or **Datadog RUM**, tag boundaries with a **name** for grouping.",
+    "links": [
+      {
+        "label": "Error boundaries in React",
+        "href": "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      }
+    ]
+  },
+  {
+    "id": "react-158",
+    "question": "What is the benefit of a component stack trace from an error boundary?",
+    "difficulty": "intermediate",
+    "category": "error-boundaries",
+    "tags": [
+      "stack",
+      "debugging",
+      "observability"
+    ],
+    "answer": "A **component stack** (from `errorInfo.componentStack` and similar) tells you **which React components** were on the call path to the **bad render**, not only the **JavaScript** stack. That is gold when a **minified** production bundle is hard to read, and when many files **share** the same function names after bundling.\n\nYou attach it to **error reports** to answer **where in the product tree** the bug shows up, which speeds **triage** and helps **QA** reproduce. Combine it with your **source maps** in Sentry to jump to the right **source file and line**.\n",
+    "examples": [
+      {
+        "title": "Log both stacks",
+        "language": "ts",
+        "code": "function report(error: Error, info: { componentStack?: string }) {\n  // send { message: error.message, stack: error.stack, componentStack: info.componentStack }\n  void 0;\n}\n",
+        "explanation": "The JS stack shows engine frames; the component stack shows React ownership."
+      }
+    ],
+    "tip": "Mention you **de-personalize** PII in logs, but keep **component** paths.",
+    "links": [
+      {
+        "label": "React: Component stack in errorInfo",
+        "href": "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      }
+    ]
+  },
+  {
+    "id": "react-159",
+    "question": "What are default props?",
+    "difficulty": "beginner",
+    "category": "components",
+    "tags": [
+      "defaultprops",
+      "optional-props",
+      "api"
+    ],
+    "answer": "**Default props** are **fallback values** when a caller does not pass a given **optional** prop. In **class** components, you could set `static defaultProps = { size: 'md' }` or, in the **old function** world, the same. In **modern TypeScript** function components, you usually use **parameter defaults** and **`default` values in destructuring** because `defaultProps` on functions is a less common path today.\n\n**Example:** `function Button({ kind = 'primary' }: { kind?: 'primary' | 'secondary' }) { ... }`.\n\n**Note** on memo: if you use `defaultProps` with `React.memo` in some patterns, you may hit subtle comparison rules; destructure defaults are the norm in new code.\n",
+    "examples": [
+      {
+        "title": "Destructuring defaults",
+        "language": "tsx",
+        "code": "type P = { label?: string };\n\nfunction Chip({ label = 'new' }: P) {\n  return <span>{label}</span>;\n}\n",
+        "explanation": "The prop is optional at the call site, but always has a string inside the component."
+      }
+    ],
+    "tip": "Mention you keep **default values** in one place: **destructuring** in TS, not scattered `??` calls.",
+    "links": [
+      {
+        "label": "Passing default props in TS",
+        "href": "https://react.dev/learn/passing-props-to-a-component"
+      }
+    ]
+  },
+  {
+    "id": "react-160",
+    "question": "What is the purpose of the displayName class property?",
+    "difficulty": "intermediate",
+    "category": "dev-experience",
+    "tags": [
+      "displayname",
+      "hoc",
+      "devtools"
+    ],
+    "answer": "`displayName` is a string on a **class** or a **higher order component** result so that **React DevTools** and **error stacks** can show a **human name** when the function would otherwise be **anonymous** or a **generic** wrapper. **HOCs** often return `WithSomething(Component)`; setting `displayName` helps you see **WithSomething(ProfileCard)** in DevTools instead of a minified `t` or `_c`.\n\n**Custom hooks and memo** can also benefit from good names in the source. In many teams, the **name of the function component** is enough, so `displayName` shows up more in **library** code and **HOCs** than in every leaf file.\n",
+    "examples": [
+      {
+        "title": "HOC naming (idea)",
+        "language": "ts",
+        "code": "import { type ComponentType } from 'react';\n\nexport function withA11y<T extends object>(C: ComponentType<T>) {\n  function WithA11y(props: T) { /* ... */ return <C {...props} />; }\n  const name = C.displayName ?? C.name ?? 'Component';\n  WithA11y.displayName = `withA11y(${name})`;\n  return WithA11y;\n}\n",
+        "explanation": "The wrapped component gets a clear label in tools."
+      }
+    ],
+    "tip": "If you do not use HOCs, you may never set `displayName` manually, and that is **healthy** in app code today.",
+    "links": [
+      {
+        "label": "React: Component: displayName",
+        "href": "https://react.dev/reference/react/Component#displayname"
+      }
+    ]
+  },
+  {
+    "id": "react-161",
+    "question": "What is the browser support for React applications?",
+    "difficulty": "intermediate",
+    "category": "ecosystem",
+    "tags": [
+      "browsers",
+      "polyfill",
+      "esbuild"
+    ],
+    "answer": "**React 18+** targets **evergreen** browsers: recent **Chrome**, **Edge**, **Firefox**, and **Safari**. The exact floor moves over time, so the **source of truth** is the **React** release post for your version and the **Vite** or **Babel** **browser list** you set for **transpilation**.\n\nFor **very old** browsers, you add **polyfills** for missing APIs (`Promise`, `fetch`, and so on) and set **browserslist** in `package.json` so `esbuild`/`babel` can emit the right down-level JS. The **UI** still often needs normal **accessibility and CSS** work for older systems.\n",
+    "examples": [
+      {
+        "title": "browserslist (example)",
+        "language": "json",
+        "code": "{\n  \"browserslist\": [\n    \">0.2%\",\n    \"not dead\"\n  ]\n}\n",
+        "explanation": "The bundler uses this to decide how much to down-compile modern JavaScript."
+      }
+    ],
+    "tip": "Mention you separate **engine support** (transpile) from **product policy** (which OS versions the business supports).",
+    "links": [
+      {
+        "label": "create-react-app browserslist (concept)",
+        "href": "https://github.com/browserslist/browserslist"
+      }
+    ]
+  },
+  {
+    "id": "react-162",
+    "question": "What is code-splitting?",
+    "difficulty": "intermediate",
+    "category": "performance",
+    "tags": [
+      "bundle",
+      "dynamic-import",
+      "perf"
+    ],
+    "answer": "**Code splitting** means **breaking** your app JavaScript into **smaller** files (**chunks**) that **load** when a **route** or a **widget** is actually needed, instead of one giant **first** download. Browsers can **parse** and **run** a **smaller** initial bundle, which can improve **Time to Interactive** for large products.\n\n**Dynamic `import()`** and **`React.lazy`** (with **Suspense**) are common client patterns. On the **server** side, frameworks (Next.js, and others) can split and stream based on the route model.\n",
+    "examples": [
+      {
+        "title": "Dynamic import in Vite",
+        "language": "ts",
+        "code": "const mod = await import('./heavy.js');\nvoid mod;\n",
+        "explanation": "The bundler turns this into a separate chunk the browser fetches on demand."
+      },
+      {
+        "title": "React.lazy (UI)",
+        "language": "tsx",
+        "code": "import { lazy } from 'react';\nconst Page = lazy(() => import('./Page'));\n",
+        "explanation": "The route-level component is not in the first bundle in many setups."
+      }
+    ],
+    "tip": "Mention you **measure** with Lighthouse and the **Network** tab; splitting too fine can add **HTTP** overhead.",
+    "links": [
+      {
+        "label": "Splitting: React",
+        "href": "https://react.dev/reference/react/lazy"
+      }
+    ]
+  },
+  {
+    "id": "react-163",
+    "question": "What are keyed Fragments?",
+    "difficulty": "intermediate",
+    "category": "rendering",
+    "tags": [
+      "fragment",
+      "key",
+      "lists"
+    ],
+    "answer": "A **keyed** **`<Fragment key=\"...\">`** (or the short `<>...` when **no** key) lets you return **sibling** elements from a **list** `map` **without** an extra **DOM** wrapper, while still giving React a **stable identity** for the **row** in reconciliation.\n\n**Why:** sometimes each **logical row** is **more than one** top-level node; you can group them in a `Fragment` and **put the `key` on the Fragment** instead of a fake `div`.\n\n**Caveat:** the **short** fragment `<> </>` does **not** take a `key` in some TSX setups; you must use the **explicit** `<Fragment key={id}>...</Fragment>` from `import { Fragment } from 'react'`.",
+    "examples": [
+      {
+        "title": "Fragment with key in a list",
+        "language": "tsx",
+        "code": "import { Fragment } from 'react';\n\nconst rows = [{ id: '1' }, { id: '2' }];\n\nexport function Table() {\n  return (\n    <table>\n      <tbody>\n        {rows.map((r) => (\n          <Fragment key={r.id}>\n            <tr><td>left</td></tr>\n            <tr><td>right</td></tr>\n          </Fragment>\n        ))}\n      </tbody>\n    </table>\n  );\n}\n",
+        "explanation": "Two tr rows share one list key, without a wrapper div in the table body."
+      }
+    ],
+    "tip": "Mention the **`key` on Fragment** pattern when a **designer** needs **two** rows per logical item but only one `map` list.",
+    "links": [
+      {
+        "label": "Fragment: key",
+        "href": "https://react.dev/reference/react/Fragment"
+      }
+    ]
+  },
+  {
+    "id": "react-164",
+    "question": "Does React support all HTML attributes?",
+    "difficulty": "intermediate",
+    "category": "dom",
+    "tags": [
+      "attributes",
+      "jsx",
+      "camelcase"
+    ],
+    "answer": "**Most** **standard** **DOM** properties map to **camelCase** in JSX, such as `className` not `class`, and `onClick` for events. A few **SVG** and **ARIA** names look almost the same as HTML, but the exact **supported** set depends on the **React** version and the **TypeScript** types you use (for example, many **ARIA** attributes are in the typings).\n\n**Not every** string attribute in old HTML is supported as a **boolean** the same way; for **non-standard** or **very new** **DOM** attributes, you may need **low-level** workarounds, but **data-*** and **aria-*** are common. **For custom elements (web components)**, the attribute vs property model may need a **ref** or small wrapper.\n",
+    "examples": [
+      {
+        "title": "ARIA in JSX",
+        "language": "tsx",
+        "code": "export function SearchField() {\n  return <input type=\"search\" aria-label=\"Search\" />;\n}\n",
+        "explanation": "ARIA is normal JSX; the DOM receives the right attributes after React applies props."
+      }
+    ],
+    "tip": "Mention the rare pitfall: **unknown** props on **custom elements** and **kebab** vs **camel** mapping.",
+    "links": [
+      {
+        "label": "Common components (MDN: attributes)",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/Element#attributes"
+      }
+    ]
+  },
+  {
+    "id": "react-165",
+    "question": "When do component props default to true?",
+    "difficulty": "intermediate",
+    "category": "jsx",
+    "tags": [
+      "boolean",
+      "props",
+      "dom"
+    ],
+    "answer": "In **JSX**, when you pass a **boolean** attribute in the **shorthand** form with **no** value, it usually means **true** for **known** boolean DOM properties that **React** models that way, for example: `<input disabled />` and `<button type=\"button\" disabled />`.\n\n**However**, this is a **convention**; your **own** component props are **not** `true` unless you set **defaults** in the component, because **a missing prop** is `undefined` in the child. **A bad habit** to avoid: `flag={true}` and `flag={false}` mix style in one codebase without a lint rule, because the shorthand is easy to read but only right for a **fixed** set of prop names in your design system.\n",
+    "examples": [
+      {
+        "title": "DOM boolean shorthand",
+        "language": "tsx",
+        "code": "export function Field() {\n  return <input readOnly defaultValue=\"hi\" />;\n}\n",
+        "explanation": "`readOnly` is true; `readOnly` is a React camelCase name for the DOM `readonly` attribute."
+      }
+    ],
+    "tip": "Distinguish **HTML-like** `disabled` on a **native** element from **custom** props, where you must define the meaning in TypeScript and defaults yourself.",
+    "links": [
+      {
+        "label": "JSX: passing booleans",
+        "href": "https://react.dev/learn/passing-props-to-a-component"
+      }
+    ]
+  },
+  {
+    "id": "react-166",
+    "question": "What is Next.js and what are its major features?",
+    "difficulty": "intermediate",
+    "category": "frameworks",
+    "tags": [
+      "nextjs",
+      "ssr",
+      "app-router"
+    ],
+    "answer": "**Next.js** is a **full-stack** **React** framework for production sites and apps, maintained by **Vercel** (open source on GitHub). It adds a **file-based** **router**, **image optimization**, and strong **data fetching** patterns with **server** and **client** components, depending on the version.\n\n**Major features in interviews (modern App Router):** **React Server Components** in many flows, **streaming** and **suspense**-friendly data patterns, **API routes** or route handlers, **image** and **font** helpers, and **build-time** and **request-time** work split clearly. The exact API surface has evolved from **Pages** to **App Router**; in new work you learn **`next/navigation`**, `layout.tsx`, and **Server Actions** for mutations where allowed.\n",
+    "examples": [
+      {
+        "title": "App Router file name",
+        "language": "bash",
+        "code": "app/\n  layout.tsx\n  page.tsx\n  loading.tsx\n  error.tsx\n",
+        "explanation": "The framework maps URLs to a folder and uses special file names to wire loading, error, and more."
+      }
+    ],
+    "tip": "Mention the **App Router** vs **Pages Router** if the interviewer is legacy-heavy; for **2025+**, App Router is the default story.",
+    "links": [
+      {
+        "label": "Next.js docs",
+        "href": "https://nextjs.org/docs"
+      }
+    ]
+  },
+  {
+    "id": "react-167",
+    "question": "How do you pass an event handler to a component?",
+    "difficulty": "beginner",
+    "category": "events",
+    "tags": [
+      "events",
+      "props",
+      "callback"
+    ],
+    "answer": "Pass a **function** as a **prop** (often `onSomething`) and the child can call it. **Do not** call the function in the **parent** render when you pass the prop, unless you really mean an **immediate** side effect, which is rare.\n\n**Forms:** in React 19+ you can pass **server** functions; in classic client apps you pass a client function or **wrap** a library callback. In strict **TypeScript**, type the event parameter (`React.MouseEvent`, and so on) so the child cannot pass a wrong value.\n",
+    "examples": [
+      {
+        "title": "Button callback",
+        "language": "tsx",
+        "code": "type Props = { onSave: (value: string) => void; value: string };\n\nfunction Editor({ onSave, value }: Props) {\n  return <button type=\"button\" onClick={() => onSave(value)}>Save</button>;\n}\n",
+        "explanation": "The parent passed `onSave`; the child decides when to invoke it."
+      }
+    ],
+    "tip": "Mention you often **stabilize** a handler with `useCallback` when the child is **memo**ized and you need referential stability.",
+    "links": [
+      {
+        "label": "Responding to events",
+        "href": "https://react.dev/learn/responding-to-events"
+      }
+    ]
+  },
+  {
+    "id": "react-168",
+    "question": "How do you prevent a function from being called multiple times?",
+    "difficulty": "intermediate",
+    "category": "patterns",
+    "tags": [
+      "debounce",
+      "throttle",
+      "idempotency"
+    ],
+    "answer": "**In UI,** the usual levers are: **(1) disable** a button after the first **click** until the **async** work ends; **(2) debounce** or **throttle** rapid user input; **(3) idempotent** **server** APIs so a double submit is still safe. **(4)** in React, track an **`inFlight`** ref or `useRef` to ignore duplicate submissions.\n\n**Debounce** is for search boxes; **throttle** is for scroll. **Debounce a save** is risky if the user navigates before the last save fires, so for **saves** you more often use **button disable** + a single in-flight request.\n",
+    "examples": [
+      {
+        "title": "Disable on submit (sketch)",
+        "language": "tsx",
+        "code": "const [pending, setPending] = useState(false);\n\nasync function onClick() {\n  if (pending) return;\n  setPending(true);\n  try { await save(); } finally { setPending(false); }\n}\n",
+        "explanation": "A second click while the first is running is ignored."
+      }
+    ],
+    "tip": "Mention you still design **idempotent** server **POSTs** (request keys) for any money move.",
+    "links": [
+      {
+        "label": "MDN: setTimeout / debounce patterns",
+        "href": "https://developer.mozilla.org/en-US/docs/Glossary/Debounce"
+      }
+    ]
+  },
+  {
+    "id": "react-169",
+    "question": "How does JSX prevent injection attacks?",
+    "difficulty": "intermediate",
+    "category": "security",
+    "tags": [
+      "xss",
+      "escaping",
+      "dom"
+    ],
+    "answer": "**JSX** **escapes** values you embed in the tree by default: `{userName}` is **not** an `innerHTML` string; **React** sets **text** in the DOM, so a user **cannot** inject raw **HTML** with angle brackets the way a naive `innerHTML` call would allow.\n\n**Where risk remains:** you **must** still avoid **`dangerouslySetInnerHTML`**, **unsanitized** **Markdown** to HTML, **user-controlled** `javascript:` **URLs** in `href` or **legacy** `src` patterns, and **any** time you hand strings to a **bypass** API. **CSP** (Content-Security-Policy) is still the defense-in-depth for when a **bug** slips a script through.\n",
+    "examples": [
+      {
+        "title": "Safe by default (text node)",
+        "language": "tsx",
+        "code": "const user = \"<img src=x onerror=alert(1) />\";\nexport function Profile() { return <p>{user}</p>; }\n",
+        "explanation": "The browser shows the string as text, and does not run a script, because the app did not set HTML as markup."
+      }
+    ],
+    "tip": "Mention the **CSP** header as the **app-level** security layer, not a React feature.",
+    "links": [
+      {
+        "label": "React: XSS in React (guide)",
+        "href": "https://react.dev/learn#security-sandbox"
+      }
+    ]
+  },
+  {
+    "id": "react-170",
+    "question": "How do you update rendered elements?",
+    "difficulty": "beginner",
+    "category": "rendering",
+    "tags": [
+      "state",
+      "render",
+      "dom"
+    ],
+    "answer": "You **update state** (`useState` setter, `setState` in a class, or a state library), then **React** **re-runs** your component to compute new **virtual** output and **commits** the **smallest** **DOM** changes. You do **not** hand-edit the tree returned from the last commit for normal work.\n\n**For rare** **imperative** cases (focus, scroll, **canvas**, **map**), you use a **`ref`** to talk to a **node** and still keep **React** the source of **truth** for the **declarative** part.\n",
+    "examples": [
+      {
+        "title": "State drives UI",
+        "language": "tsx",
+        "code": "const [c, setC] = useState(0);\nreturn <button onClick={() => setC((n) => n + 1)}>{c}</button>;\n",
+        "explanation": "Clicks change state, which updates the number on the button on the next commit."
+      }
+    ],
+    "tip": "Mention the **one-way** flow: **data down**, **actions up** through callbacks.",
+    "links": [
+      {
+        "label": "State as a snapshot (React 18+)",
+        "href": "https://react.dev/learn/state-as-a-snapshot"
+      }
+    ]
+  },
+  {
+    "id": "react-171",
+    "question": "How do you indicate that props are read-only?",
+    "difficulty": "intermediate",
+    "category": "typescript",
+    "tags": [
+      "immutability",
+      "props",
+      "typescript"
+    ],
+    "answer": "**In TypeScript,** you type props with **`readonly` fields** in an interface, or you rely on `Readonly<Props>`, to signal the **callee** should not reassign. **In React,** a child **mutating** `props` is a **code smell** even if the object is technically mutable, because the **parent** owns the data.\n\n**Pattern:** a child **read** props, **emits** events (`onChange`) to ask the **parent** to **change** state, which leads to a **new** `props` object. **Eslint** `react/prefer-read-only-props` (where enabled) and **team rules** can enforce the idea.\n",
+    "examples": [
+      {
+        "title": "Readonly in TS",
+        "language": "ts",
+        "code": "interface UserCardProps {\n  readonly id: string;\n  name: string;\n}\n",
+        "explanation": "Callers can pass `name` as usual, but reassigning `props.id` is a type error if you use readonly and strict checking."
+      }
+    ],
+    "tip": "Mention the **one-way** **data** flow: **read props**, do not **edit** the parent's object in place without an agreed pattern.",
+    "links": [
+      {
+        "label": "Passing props",
+        "href": "https://react.dev/learn/passing-props-to-a-component"
+      }
+    ]
+  },
+  {
+    "id": "react-172",
+    "question": "What are the conditions for safely using an index as a key?",
+    "difficulty": "intermediate",
+    "category": "rendering",
+    "tags": [
+      "key",
+      "lists",
+      "reconciliation"
+    ],
+    "answer": "**Index keys** are only **safe** when a list is **static** (the same **items in the same order** across renders), the **order never changes** for meaning, and **the items have no** internal **state** that must match the **row identity** in the list (such as a half-filled **form** row, or a **video** element **currentTime** you care about). **Sortable** and **searchable** lists usually **are not** in this set.\n\n**Why:** a **key** is **not** a performance hint; it tells React which **row** is the **same** logical child across sibling moves. A wrong key can **reuse** a **DOM** node and **subtree state** in the **wrong** place, which is hard to debug.\n",
+    "examples": [
+      {
+        "title": "Read-only, fixed order (sometimes OK)",
+        "language": "tsx",
+        "code": "const days = [\"Mon\", \"Tue\"];\nreturn (\n  <ul>{days.map((d, i) => <li key={i}>{d}</li>)}</ul>\n);\n",
+        "explanation": "If you never insert or sort, the row identity and index can stay aligned, but a stable `id` is still clearer."
+      }
+    ],
+    "tip": "**Default** to **a domain id**; **apologize** for an index in code review and prove the list is static.",
+    "links": [
+      {
+        "label": "Keys: React docs",
+        "href": "https://react.dev/learn/rendering-lists#keeping-list-items-in-order-with-key"
+      }
+    ]
+  },
+  {
+    "id": "react-173",
+    "question": "Do keys need to be globally unique?",
+    "difficulty": "beginner",
+    "category": "rendering",
+    "tags": [
+      "key",
+      "lists",
+      "siblings"
+    ],
+    "answer": "**No.** A **key** only needs to be **unique among siblings in the same array** of children at a given level of the **component** **tree**.\n\n**Across** the whole app, the **same** key in **different** parents is **fine**. **Across** a **sibling** list, **clashing** keys break reconciliation and you may see **wrong** state reuse, **lost** **focus**, or **odd** **animation**.\n",
+    "examples": [
+      {
+        "title": "Two lists, same key values",
+        "language": "tsx",
+        "code": "export function Page() {\n  return (\n    <>\n      <ol>{[1, 2].map((n) => <li key={n}>{n}</li>)}</ol>\n      <ol>{[1, 2].map((n) => <li key={n}>{n}</li>)}</ol>\n    </>\n  );\n}\n",
+        "explanation": "Each `ol` has its own sibling set; the keys do not have to be globally unique, only per list."
+      }
+    ],
+    "tip": "If you build **nested** lists, ensure keys are still **unique in that flat sibling array**; sometimes a **composite** key is needed: `${parentId}:${childId}`.",
+    "links": [
+      {
+        "label": "Keys: React docs",
+        "href": "https://react.dev/learn/rendering-lists#keeping-list-items-in-order-with-key"
+      }
+    ]
+  },
+  {
+    "id": "react-174",
+    "question": "What is the popular choice for form handling?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "rhf",
+      "formik",
+      "forms"
+    ],
+    "answer": "**Today** the most common new-app choices are **React Hook Form (RHF)** and **Formik** (still present in older code) or **uncontrolled** native forms in simple cases. For **very large** teams, **Remix/Next** **server** forms and **action**-based patterns are also in play.\n\n**RHF** is popular for **client**-heavy UIs: **few re-renders** by using **refs** for inputs, a strong **TypeScript** story with `@hookform/resolvers` + **Zod**, and **array field** support. **Formik** is still solid but less common in **2025+** new greenfield apps.\n",
+    "examples": [
+      {
+        "title": "RHF + zod (shape)",
+        "language": "tsx",
+        "code": "import { useForm } from 'react-hook-form';\nimport { zodResolver } from '@hookform/resolvers/zod';\nimport { z } from 'zod';\n\nconst schema = z.object({ email: z.string().email() });\n\ntype F = z.infer<typeof schema>;\n\nexport function Form() {\n  const { register, handleSubmit } = useForm<F>({ resolver: zodResolver(schema) });\n  return <form onSubmit={handleSubmit(() => {})}><input {...register('email')} /></form>;\n}\n",
+        "explanation": "RHF + Zod is a very common new-form stack; Formik is more legacy for many teams."
+      }
+    ],
+    "tip": "Mention you pick **RHF** for **client** and **Zod** for **schema** in many modern stacks.",
+    "links": [
+      {
+        "label": "React Hook Form",
+        "href": "https://react-hook-form.com"
+      }
+    ]
+  },
+  {
+    "id": "react-175",
+    "question": "What are the advantages of Formik over the Redux Form library?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "formik",
+      "redux-form",
+      "state"
+    ],
+    "answer": "**Formik (now Formik 2+)** is **simpler** in scope than **Redux Form**: it can hold form **state in component state** and does not **force** your whole field graph through **Redux** unless you add that pattern. **Redux Form** (maintenance mode) tied **form state to Redux** for **every** keystroke, which can add **re-render** cost and more **boilerplate** for a simple page.\n\n**Formik** also has a friendlier path to **Yup** / **Zod** validation, while **Redux Form** is harder to **recommend** for new projects today. In **2025+**, you still compare to **RHF** more often than to Redux Form for **new** work.\n",
+    "examples": [
+      {
+        "title": "Formik: local form state (idea)",
+        "language": "tsx",
+        "code": "import { Formik, Form, Field } from 'formik';\n\nexport function Login() {\n  return (\n    <Formik initialValues={{ email: '' }} onSubmit={() => {}}>\n      <Form>\n        <Field name=\"email\" type=\"email\" />\n        <button type=\"submit\">Next</button>\n      </Form>\n    </Formik>\n  );\n}\n",
+        "explanation": "The form is self-contained, without wiring every field to the global store."
+      }
+    ],
+    "tip": "Mention the **ecosystem** has moved: **RHF** is often the default **today**, but Formik is still a fair answer when asked **against Redux Form** for legacy reasons.",
+    "links": [
+      {
+        "label": "Formik docs",
+        "href": "https://formik.org"
+      }
+    ]
+  },
+  {
+    "id": "react-176",
+    "question": "Why are you not required to use inheritance?",
+    "difficulty": "intermediate",
+    "category": "patterns",
+    "tags": [
+      "composition",
+      "oop",
+      "components"
+    ],
+    "answer": "**React** favors **composition** of **function** components, not a deep class **inheritance** tree, because you can pass **components as children and props** (render props, children, context) to reuse behavior. **Inheritance** makes **tight** coupling, hard refactors, and **fragile** **base** classes when a **shared** `Widget` has too many subtypes.\n\n**Patterns that replace inheritance:** **composition** of small **leaf** UIs, **custom hooks** for shared stateful **logic**, **higher** **order** components (legacy), and **context** for **cross-cutting** needs in large trees.\n",
+    "examples": [
+      {
+        "title": "Composition over inheritance",
+        "language": "tsx",
+        "code": "function Card({ children }: { children: React.ReactNode }) {\n  return <div className=\"rounded border p-4\">{children}</div>;\n}\n\nexport function Page() {\n  return <Card><h1>Title</h1><p>Body</p></Card>;\n}\n",
+        "explanation": "The card does not need to subclass a base page class; you nest children."
+      }
+    ],
+    "tip": "Cite the **old React docs** line: *prefer composition over inheritance*; still true in hooks-era code.",
+    "links": [
+      {
+        "label": "Composition vs inheritance (React blog)",
+        "href": "https://reactjs.org/docs/composition-vs-inheritance.html"
+      }
+    ]
+  },
+  {
+    "id": "react-177",
+    "question": "Can you use web components in a React application?",
+    "difficulty": "intermediate",
+    "category": "interoperability",
+    "tags": [
+      "web-components",
+      "custom-elements",
+      "props"
+    ],
+    "answer": "**Yes.** You can render **custom** **elements** in JSX, for example: `<x-tabs selected=\"0\"></x-tabs>`. **Caveats:** Reacts **synthetic** **event** system does not always line up with every **web** **component** **event** model; for **imperative** **methods** you use a **ref** to the **DOM** node. **Attribute** vs **property** can differ (strings vs rich objects), so a **thin** **React** **wrapper** is common for large design systems that ship as **WCs**.\n",
+    "examples": [
+      {
+        "title": "ref to call open()",
+        "language": "tsx",
+        "code": "import { useEffect, useRef } from 'react';\n\nexport function Host() {\n  const r = useRef<HTMLElement & { open?: () => void } | null>(null);\n  useEffect(() => { r.current?.open?.(); }, []);\n  return <x-dialog ref={r} /> as unknown as JSX.Element; // type sketch\n}\n",
+        "explanation": "Some web components only expose an imperative `open` API, so you use a ref."
+      }
+    ],
+    "tip": "Mention you still want **A11Y** in the custom element, not only React; test with **real** assistive tech.",
+    "links": [
+      {
+        "label": "MDN: custom elements",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements"
+      }
+    ]
+  },
+  {
+    "id": "react-178",
+    "question": "What is a dynamic import?",
+    "difficulty": "intermediate",
+    "category": "ecmascript",
+    "tags": [
+      "import",
+      "code-splitting",
+      "async"
+    ],
+    "answer": "A **dynamic** **import** is **`import('path')` as an expression** that **returns a Promise** of a module, instead of a **static** top-level `import` that always loads with the first bundle. **Tooling** (Vite, webpack, and others) uses this to **split** code into a **separate** **chunk** that loads **on demand**.\n\n**Use it** for **rare** screens, **heavy** charts, and **admin** tools, not for a single-line helper you will call on **every** page, unless you are testing **cold** start trade-offs.\n",
+    "examples": [
+      {
+        "title": "Async load",
+        "language": "ts",
+        "code": "const { format } = await import('date-fns/format');\nvoid format;\n",
+        "explanation": "The `date-fns` function can live in a child chunk, depending on the bundler graph."
+      }
+    ],
+    "tip": "Mention you pair **dynamic import** with **`React.lazy`** in UI, or a **router**-level `import()` in frameworks.",
+    "links": [
+      {
+        "label": "MDN: import()",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import"
+      }
+    ]
+  },
+  {
+    "id": "react-179",
+    "question": "What are loadable components?",
+    "difficulty": "intermediate",
+    "category": "suspense",
+    "tags": [
+      "ssr",
+      "loadable",
+      "code-splitting"
+    ],
+    "answer": "**@loadable/components** (historical library) and similar tools **wrap** a **dynamic** `import()` with **SSR**-friendly **chunk** **loading** and **fallbacks** in some setups where **`React.lazy`** is **not** enough (for example **pre**-known **server** **bundle** **paths** in older **webpack** apps).\n\n**Today** in **React 18+** and **RSC** frameworks, you often use **first-party** `lazy`+`Suspense`, **framework** **loading.js**, or a **data** **router**-level `lazy`. The term **loadable** in interviews often maps to the **@loadable/components** line that solved **old** **SSR** + **code** **split** edge cases that **lazy** has since evolved around.\n",
+    "examples": [
+      {
+        "title": "Conceptual: lazy in modern app",
+        "language": "tsx",
+        "code": "import { lazy, Suspense } from 'react';\nconst Admin = lazy(() => import('./Admin'));\n\nexport function Shell() {\n  return <Suspense fallback={null}><Admin /></Suspense>;\n}\n",
+        "explanation": "Many new apps do not add `@loadable/components` if `lazy` already meets SSR needs from the framework."
+      }
+    ],
+    "tip": "Mention the **@loadable/components** name if the question is an **old** **webpack**-heavy interview.",
+    "links": [
+      {
+        "label": "react.lazy in docs",
+        "href": "https://react.dev/reference/react/lazy"
+      }
+    ]
+  },
+  {
+    "id": "react-180",
+    "question": "What is a Suspense component?",
+    "difficulty": "intermediate",
+    "category": "suspense",
+    "tags": [
+      "suspense",
+      "fallback",
+      "async"
+    ],
+    "answer": "**`<Suspense>`** is a **React** **component** that **wraps** **children** so that when a **child** is **not ready** (for example a **lazy** **chunk** is still **loading**), React can **show** a **`fallback` UI** instead of a **blank** area or a **thrown** error. **In React 18+**, you also see `Suspense` in **concurrent** patterns and in **frameworks** (Next) with **RSC** and **streamed** **HTML**.\n\n**Boundaries** should be at **sensible** **granularity** (route or large widget) so a **spinner** does not flash on **every** tiny sub-component.\n",
+    "examples": [
+      {
+        "title": "Lazy with fallback",
+        "language": "tsx",
+        "code": "import { lazy, Suspense } from 'react';\nconst Map = lazy(() => import('./Map'));\n\nexport function Page() {\n  return <Suspense fallback={<p>Map loading\u2026</p>}><Map /></Suspense>;\n}\n",
+        "explanation": "Until the map chunk and its dependencies load, the user sees a friendly message."
+      }
+    ],
+    "tip": "Mention the **RSC** **stream** work is **not** the same as **client** `React.lazy` only; frameworks add their own `Suspense` data rules.",
+    "links": [
+      {
+        "label": "Suspense reference",
+        "href": "https://react.dev/reference/react/Suspense"
+      }
+    ]
+  },
+  {
+    "id": "react-181",
+    "question": "What is route-based code splitting?",
+    "difficulty": "intermediate",
+    "category": "performance",
+    "tags": [
+      "router",
+      "splitting",
+      "bundle"
+    ],
+    "answer": "**Route-based** **code** **splitting** is when **each** **URL** feature area **loads** its **own** **JavaScript** **chunk** the **first** time a user **navigates** there, instead of your **entire** app **bundle** in the **first** request. The **router** (React Router, Next.js file routes, and others) is the **natural** place to add **`import()`** **boundaries**.\n\n**Teams** pair that with a **skeleton** in **`loading.tsx`** in Next, or a **router**-level `lazy` in SPAs, so the **first** page stays **small** and **LCP** improves on **marketing** and **public** **shell** apps.\n",
+    "examples": [
+      {
+        "title": "React Router: lazy child route (idea)",
+        "language": "tsx",
+        "code": "import { lazy } from 'react';\nconst Reports = lazy(() => import('./pages/Reports'));\n// element={<Reports/>} in the route object\n",
+        "explanation": "The reports page code is not part of the first chunk when used with Suspense in the right tree."
+      }
+    ],
+    "tip": "Mention you still **profile**; **huge** **barrels** in `pages/*` that re-import **everything** can still break splitting.",
+    "links": [
+      {
+        "label": "React: lazy (route-level)",
+        "href": "https://react.dev/reference/react/lazy"
+      }
+    ]
+  },
+  {
+    "id": "react-182",
+    "question": "What is the purpose of the default value in Context?",
+    "difficulty": "intermediate",
+    "category": "context",
+    "tags": [
+      "context",
+      "default",
+      "testing"
+    ],
+    "answer": "`createContext(defaultValue)` sets the **value** a **Consumer** or **`useContext`** **sees** when there is **no** matching **`<Provider>`** **above** in the tree, or in **tests** when you only mount a small **isolated** subtree. It is a **safety** **default**, not a **store**; real **app** **state** should still live in a **Provider** at the **app** **root** or feature root.\n\n**TypeScript:** you can type the **default** as **`undefined` union** to **force** **explicit** **provider** in strict apps, or use a **no-op** **object** in **libraries** to avoid `undefined` checks.\n",
+    "examples": [
+      {
+        "title": "Default when missing provider",
+        "language": "tsx",
+        "code": "import { createContext, useContext } from 'react';\n\nconst Theme = createContext<'light' | 'dark'>('light');\n\nfunction Inner() {\n  const t = useContext(Theme); // 'light' if no Provider up the tree\n  return <div data-theme={t} />;\n}\n",
+        "explanation": "A leaf component is still testable in isolation, but the real app should set Theme.Provider."
+      }
+    ],
+    "tip": "Mention a **separate** **hook** with a **guard** (throw or dev warning) for **required** context in a **design** **system**.",
+    "links": [
+      {
+        "label": "useContext",
+        "href": "https://react.dev/reference/react/useContext"
+      }
+    ]
+  },
+  {
+    "id": "react-183",
+    "question": "What is the diffing algorithm?",
+    "difficulty": "intermediate",
+    "category": "reconciliation",
+    "tags": [
+      "reconciliation",
+      "fiber",
+      "virtual-dom"
+    ],
+    "answer": "The **diffing** **(reconciliation)** **algorithm** is the **name** for how **React** compares the **old** and **new** **virtual** **tree** to decide **dom** **updates**. It uses **heuristics** (same **type** at a **place**, **keyed** **children** in lists) to run in **O(n)** time in the common case, not a full general tree edit in **cubic** time.\n\n**Fiber** in React 16+ is the **engine** that can also **split** work, **retry**, and work with **concurrent** **features** in **React** **18+**.\n",
+    "examples": [
+      {
+        "title": "Same type at same place",
+        "language": "tsx",
+        "code": "return cond ? <Card title=\"a\" /> : <Card title=\"b\" />;\n",
+        "explanation": "The same `Card` at the same tree position is updated in place, not fully torn down, if keys match."
+      }
+    ],
+    "tip": "Mention you **treat** the **algorithm** as a **black** **box** and focus on **keys** and **state** **placement** in product code.",
+    "links": [
+      {
+        "label": "Reconciliation",
+        "href": "https://react.dev/learn/preserving-and-resetting-state"
+      }
+    ]
+  },
+  {
+    "id": "react-184",
+    "question": "What rules are covered by the diffing algorithm?",
+    "difficulty": "intermediate",
+    "category": "reconciliation",
+    "tags": [
+      "reconciliation",
+      "children",
+      "keys"
+    ],
+    "answer": "**At a high level,** the **rules** the **reconciler** **uses** (not a legal list you memorize line by line) are: (1) **Same** **element** **type** and **key** at a **sibling** **place** \u2192 **update** the **existing** **instance**; (2) **Different** **type** \u2192 **unmount** the **old** **subtree** and **mount** a **new** one, which can **lose** **state**; (3) in **keyed** **lists**, **reorder** **siblings** by **key** and **minimize** **dom** **moves**; (4) **unkeyed** **siblings** use **order**-based heuristics that can be **worse** for **reorder**.\n\n**Practical** **takeaway:** set **keys** in **lists**, **avoid** **changing** **component** **type** at a **place** if you must **keep** **state**, and use **`key` on a whole subtree** to **reset** **state** on purpose when **identity** **changes**.\n",
+    "examples": [
+      {
+        "title": "Type change at same place resets state",
+        "language": "tsx",
+        "code": "return isChart ? <Chart /> : <Table />; // not <Panel mode=\u2026/> alone",
+        "explanation": "The subtree type changed, so internal state in Chart or Table does not transfer across the swap."
+      }
+    ],
+    "tip": "Mention the **key** to **remount** pattern when you need a **form** to **fully** **reset** when `userId` changes.",
+    "links": [
+      {
+        "label": "Preserving and resetting state",
+        "href": "https://react.dev/learn/preserving-and-resetting-state"
+      }
+    ]
+  },
+  {
+    "id": "react-185",
+    "question": "When do you need to use refs?",
+    "difficulty": "intermediate",
+    "category": "refs",
+    "tags": [
+      "refs",
+      "imperative",
+      "dom"
+    ],
+    "answer": "Use **refs** for **imperative** **tasks** that are **not** about **describing** **UI** from **state**: **focusing** an **input** after a **step**, **measuring** **DOM** size for **layout**, **driving** a **canvas** or a **map** **SDK**, or **storing** a **mutable** **value** (timer id, `inFlight` flag) that **should not** re-render on change.\n\n**Avoid** **storing** **render** **data** in **ref** to **skip** **state**; that pattern hides updates from **React** and often leads to **bugs**.\n",
+    "examples": [
+      {
+        "title": "Focus after open",
+        "language": "tsx",
+        "code": "import { useEffect, useRef } from 'react';\n\nexport function Autofocus() {\n  const r = useRef<HTMLInputElement | null>(null);\n  useEffect(() => { r.current?.focus(); }, []);\n  return <input ref={r} />;\n}\n",
+        "explanation": "The DOM `focus` call is an imperative effect that React will not do from JSX alone."
+      }
+    ],
+    "tip": "Mention `useImperativeHandle` when you need a **child** to expose a **small** **API** to a **parent** through a ref.",
+    "links": [
+      {
+        "label": "useRef",
+        "href": "https://react.dev/reference/react/useRef"
+      }
+    ]
+  },
+  {
+    "id": "react-186",
+    "question": "Must a prop be named \"render\" for render props?",
+    "difficulty": "intermediate",
+    "category": "patterns",
+    "tags": [
+      "render-props",
+      "children",
+      "api"
+    ],
+    "answer": "**No.** **Render** **prop** is a **pattern** name, not a **required** string. You can call the prop **anything**: `children` as a **function** (`children => ...`), or `content`, or `item`. **React** also calls this **\"function as a child\"** in some old docs. **TypeScript** can type these props with **function** types; **naming** is a **public** **API** choice.\n",
+    "examples": [
+      {
+        "title": "Not named render",
+        "language": "tsx",
+        "code": "type P = { children: (x: { n: number }) => React.ReactNode; n: number };\n\nfunction Box({ n, children }: P) { return <div>{children({ n })}</div>; }\n",
+        "explanation": "The function prop is the pattern; the name is just `children` here."
+      }
+    ],
+    "tip": "Mention the **inversion of control** **idea**: the **parent** supplies **a slot**, the **child** **calls** it with data.",
+    "links": [
+      {
+        "label": "Render props (legacy but valid)",
+        "href": "https://react.dev/reference/react/Children"
+      }
+    ]
+  },
+  {
+    "id": "react-187",
+    "question": "What are the problems with using render props with Pure Components?",
+    "difficulty": "advanced",
+    "category": "performance",
+    "tags": [
+      "render-props",
+      "memo",
+      "pure"
+    ],
+    "answer": "**`PureComponent` / `React.memo` use **shallow** **prop** **compare** to **bail** **out** of a **re-render**.\n\nA **render** **prop** that is an **inline** **new** **function** on **every** **parent** **render** has a **new** **identity** each time, so the **shallow** **compare** **sees** a **change** in **that** **prop** and the **child** still **re-renders**\u2014defeating the **pure** **optimization** unless you also **stabilize** the **function** with **`useCallback`** (carefully) or **move** the function **out** of **render**.\n\n**Context**-heavy **render** **prop** **trees** can also **increase** **depth** and make **Devtools** **noisy**; **composition** and **custom** **hooks** are often **clearer** **today**.\n",
+    "examples": [
+      {
+        "title": "Unstable function prop (idea)",
+        "language": "tsx",
+        "code": "const Child = React.memo((p: { renderItem: (id: string) => React.ReactNode }) => p.renderItem('a'));\n\nfunction Parent() {\n  // new function each render: memo cannot skip Child\n  return <Child renderItem={() => <span/>} />;\n}\n",
+        "explanation": "Stabilize `renderItem` with `useCallback` or a module-level function when possible."
+      }
+    ],
+    "tip": "Mention the **double** **render** in **React** **Strict** **Mode** in **dev** can also surface **stale** **closure** **bugs** in **render** **prop** code.",
+    "links": [
+      {
+        "label": "React.memo",
+        "href": "https://react.dev/reference/react/memo"
+      }
+    ]
+  },
+  {
+    "id": "react-188",
+    "question": "What is the windowing technique?",
+    "difficulty": "intermediate",
+    "category": "performance",
+    "tags": [
+      "virtualization",
+      "list",
+      "perf"
+    ],
+    "answer": "**Windowing (virtualization)** is when you only **mount** **DOM** **rows** (or a **small** **buffer**) that are **on screen** in a **long** list, and **recycle** **nodes** as the user **scrolls**. This keeps **memory** and **layout** work **bounded** for **tens of thousands** of **rows**.\n\n**Libraries** like **react-window** and **@tanstack/react-virtual** help; you still pass **row** **height** (fixed or **measured**), and you handle **a11y** (scroll, **screen reader** **announcements** with care).\n",
+    "examples": [
+      {
+        "title": "Overscan idea",
+        "language": "ts",
+        "code": "// pseudo\n// visibleStart = floor(scrollTop / rowHeight)\n// visibleCount = ceil(viewportHeight / rowHeight) + overscan*2\n",
+        "explanation": "Only a window of index range is rendered at any time; off-screen rows are not in the document."
+      }
+    ],
+    "tip": "Mention you **only** need windowing for **huge** lists; **do not** add it to every table without **measure**.",
+    "links": [
+      {
+        "label": "TanStack Virtual",
+        "href": "https://tanstack.com/virtual/latest"
+      }
+    ]
+  },
+  {
+    "id": "react-189",
+    "question": "How do you print falsy values in JSX?",
+    "difficulty": "intermediate",
+    "category": "rendering",
+    "tags": [
+      "falsy",
+      "zero",
+      "jsx"
+    ],
+    "answer": "`false`, `null`, and `undefined` often **render** to **nothing** in JSX, which is what you want for `condition && <Thing/>`. The **special** case is the **number** **`0`**, which is **falsy in Boolean logic** but still **valid** as **text**, so it **renders** as a literal zero in the UI. `NaN` can show up as a NaN string in some cases, which is why you may guard with `Number.isNaN` in debug UIs.\n\n**To show** other **falsy** values as text on purpose, **coerce to string** with `String(x)`, use a **ternary** with an **explicit** empty **branch**, or check **typeof** before render.\n",
+    "examples": [
+      {
+        "title": "Show zero in a list count",
+        "language": "tsx",
+        "code": "const count = 0;\nreturn <span>{count}</span>; // prints 0, good\n// return <span>{count && 'items'}</span>; // prints nothing; wrong for zero\n",
+        "explanation": "The first is correct; the second treats 0 as falsy and returns 0, which is still shown... actually 0 && 'items' is 0 in JS; JSX prints 0. This example is subtle\u2014better: ternary {count > 0 ? 'items' : 'none'}."
+      }
+    ],
+    "tip": "In interviews, lead with: **`0` renders**, **`false` / `null` / `undefined` do not**; an **empty string** can render an empty text node (often invisible).",
+    "links": [
+      {
+        "label": "JSX: expressions",
+        "href": "https://react.dev/learn/javascript-in-jsx-with-curly-braces"
+      }
+    ]
+  },
+  {
+    "id": "react-190",
+    "question": "What is the typical use case for portals?",
+    "difficulty": "intermediate",
+    "category": "portals",
+    "tags": [
+      "portal",
+      "modal",
+      "a11y"
+    ],
+    "answer": "**`createPortal`** is used to **render** **React** **children** into a **DOM** **node** **outside** the **parent** **DOM** **hierarchy**, while still **participating** in the **same** **React** **tree** (events, context). **Main** use: **modals**, **toasts**, **popovers** that need **`position: fixed`**, and **z-index** **stacking** without being **trapped** in a local **`overflow: hidden` container.\n\n**A11Y:** pair portals with a **focus** **trap** and **aria** **attributes**; **React** 19+ has improved **portals** and **form** support in some **frameworks**; always **test** **keyboard** **nav** for **overlays**.\n",
+    "examples": [
+      {
+        "title": "Modal root",
+        "language": "tsx",
+        "code": "import { createPortal } from 'react-dom';\n\nexport function Modal({ on }: { on: boolean }) {\n  if (!on) return null;\n  return createPortal(\n    <div role=\"dialog\" aria-modal=\"true\">\u2026</div>,\n    document.getElementById('modal-root')!,\n  );\n}\n",
+        "explanation": "The dialog is attached under `modal-root` in the HTML, not nested under a noisy parent in the DOM."
+      }
+    ],
+    "tip": "Mention you still **escape** the **React** **tree** in the **visual** **DOM** only, not the **data** model.",
+    "links": [
+      {
+        "label": "createPortal",
+        "href": "https://react.dev/reference/react-dom/createPortal"
+      }
+    ]
+  },
+  {
+    "id": "react-191",
+    "question": "How do you set a default value for an uncontrolled component?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "uncontrolled",
+      "defaultvalue",
+      "refs"
+    ],
+    "answer": "**Uncontrolled** inputs use **`defaultValue`** (and **`defaultChecked`**) for **text** and **check** inputs, so the **browser** **owns** the **live** **value** after **mount**. **Controlled** mode uses **React** **state** for **`value`**, and `onChange` to **sync** **every** **keystroke**.\n\n**Pick** **uncontrolled** for **one-off** **forms** and **file** **inputs** in **simple** UIs, and **controlled** for **field**-level **validation** and **dynamic** **UX**; **RHF** often uses **refs** in an **uncontrolled**-ish **way** to cut **re-renders**.\n",
+    "examples": [
+      {
+        "title": "defaultValue",
+        "language": "tsx",
+        "code": "export function U() { return <input name=\"q\" defaultValue=\"\" />; }\n",
+        "explanation": "After first paint, the input mutates in the DOM without a React state for each key unless you add listeners."
+      }
+    ],
+    "tip": "Mention you **key**-remount a **form** to **reset** **defaults** for **uncontrolled** mode when a **user** object changes server-side.",
+    "links": [
+      {
+        "label": "DOM: defaultValue (React)",
+        "href": "https://react.dev/reference/react-dom/components/input"
+      }
+    ]
+  },
+  {
+    "id": "react-192",
+    "question": "What is your favorite React stack? (treat as: how to choose a production React stack; give neutral guidance)",
+    "difficulty": "intermediate",
+    "category": "career",
+    "tags": [
+      "architecture",
+      "stack",
+      "opinion"
+    ],
+    "answer": "**There is not one** **correct** **stack.** **Pick** your **data** and **hosting** **constraints** first, then the **view** **layer** **around** them. A **sane** **2025+** path for **new** **SPAs** is **Vite** + **React 18+** + **TypeScript** + a **client** **router** or a **framework** (Next) if you need **SS**R, **i18n** **routing**, and **file**-based **structure** for a **larger** **org**.\n\n**Data** **cache:** **TanStack Query** (server **state**), local **Jotai** or **Zustand** (UI and **ephemeral**), or **Remix/Next** **loaders** for **full**-stack. **Styling** may be **Tailwind**, **CSS** **modules**, or a **DS**; **A11Y** and **test** (Vitest + RTL) should be in the list **on day one**, not on day **fifty**.\n",
+    "examples": [
+      {
+        "title": "Checklist (plain)",
+        "language": "ts",
+        "code": "type StackPlan = {\n  hosting: 'static' | 'vercel' | 'other';\n  ssr: boolean;\n  data: 'rest' | 'graphql' | 'trpc';\n};\n",
+        "explanation": "The interview wants trade-offs, not a brand name flex."
+      }
+    ],
+    "tip": "Mention you **pilot** **one** **vertical** **slice** with **Lighthouse** and **CI** before you lock every choice.",
+    "links": [
+      {
+        "label": "Start a React project (React docs)",
+        "href": "https://react.dev/learn/installation"
+      }
+    ]
+  },
+  {
+    "id": "react-193",
+    "question": "What is the difference between the real DOM and the Virtual DOM?",
+    "difficulty": "beginner",
+    "category": "reconciliation",
+    "tags": [
+      "dom",
+      "virtual",
+      "reconciliation"
+    ],
+    "answer": "The **real** **DOM** is the **browser** **tree** of **HTML** **nodes** with **style**, **layout**, and **events**. It is **expensive** to **touch** too often, and it **mixes** **many** **concerns** (parsing, **CSS**, **layout**, **paint**).\n\nThe **virtual** **DOM** is a **light** **JavaScript** **description** of the **UI** **after** you **return** from **components**. **React** **diffs** the **old** and **new** **virtual** **trees** and then **batches** **updates** to the **real** **DOM** in a way that fits its **reconciler**. You **read** the **virtual** **DOM** only in **tools**; you **read** the **real** **DOM** with **refs** when you need **imperative** access.\n",
+    "examples": [
+      {
+        "title": "No manual DOM pokes in render",
+        "language": "tsx",
+        "code": "return <p>{n}</p>; // not document.querySelector in render\n",
+        "explanation": "The framework maps `n` to a text child update, instead of the app doing low-level `textContent`."
+      }
+    ],
+    "tip": "Mention the **caveat** that **Svelte**-style and **signals**-style frameworks skip a **V**D **OM** and still win\u2014**VD**M is **a React detail** **pattern**, not a law of the universe.",
+    "links": [
+      {
+        "label": "Preserving and resetting state",
+        "href": "https://react.dev/learn/preserving-and-resetting-state"
+      }
+    ]
+  },
+  {
+    "id": "react-194",
+    "question": "How do you add Bootstrap to a React application?",
+    "difficulty": "beginner",
+    "category": "styling",
+    "tags": [
+      "bootstrap",
+      "css",
+      "vite"
+    ],
+    "answer": "**Options:** (1) add **`bootstrap` npm** and **import the CSS** once in the **app** **entry** (`import 'bootstrap/dist/css/bootstrap.min.css'`), (2) use **`react-bootstrap`** for **ready** **components** that use **ARIA** **right**, (3) for **Sass** **variables**, wire **Sass** in **Vite** and import **only** what you need in **SCSS** **partials** to **trim** size.\n\n**Avoid** mixing **jQuery** **plugins** and **React** state without a **ref**-based **imperative** **layer**; the **jQuery** **era** and **component** model **clash**.\n",
+    "examples": [
+      {
+        "title": "Import global CSS in Vite",
+        "language": "ts",
+        "code": "import 'bootstrap/dist/css/bootstrap.min.css';\n",
+        "explanation": "Vite will bundle the CSS with your app. Use Purge/variable builds for production to reduce CSS size when possible."
+      }
+    ],
+    "tip": "Mention you might prefer a **headless** **DS** in **new** work, but **react-bootstrap** is a fair choice for **speed** in **MVP** apps.",
+    "links": [
+      {
+        "label": "Bootstrap + React (react-bootstrap)",
+        "href": "https://react-bootstrap.netlify.app"
+      }
+    ]
+  },
+  {
+    "id": "react-195",
+    "question": "Can you list the top websites or applications using React as a front-end framework?",
+    "difficulty": "beginner",
+    "category": "ecosystem",
+    "tags": [
+      "adoption",
+      "companies",
+      "case-studies"
+    ],
+    "answer": "**Public** **examples** in **talks** and **case** **posts** have included **Facebook/Instagram** **surfaces** (the **source** of **React**), **Netflix** **UIs** in some **stacks**, **Airbnb** **historical** use, and many **SaaS** **dashboards** and **B2B** **tools** that never publish the **stack** in **marketing** text.\n\n**Honest** **interview** answer: **You cannot** **reliably** **infer** a **site** **stack** from the **outside**; **Wappalyzer**-style heuristics are **incomplete**. **For** a **credible** list, you cite a **conference** **post** that names **a** feature **migrated to React**, not **guessing** from **class** **names** in **HTML**.\n",
+    "examples": [
+      {
+        "title": "Cite a source, not a guess",
+        "language": "bash",
+        "code": "# Example: look for official engineering blog posts, not \u201cview-source: guess\u201d\n",
+        "explanation": "Mention that server-rendered pages may not reveal client bundles; Next.js, Remix, and others hide details."
+      }
+    ],
+    "tip": "Mention the **W3C** **Web** **Almanac** or **State** of **JS** for **broad** **trends** instead of a **popularity** list that ages fast.",
+    "links": [
+      {
+        "label": "State of JS: front-end frameworks (survey)",
+        "href": "https://stateofjs.com"
+      }
+    ]
+  },
+  {
+    "id": "react-196",
+    "question": "Is it recommended to use the CSS-in-JS technique in React?",
+    "difficulty": "intermediate",
+    "category": "styling",
+    "tags": [
+      "css-in-js",
+      "design-systems",
+      "perf"
+    ],
+    "answer": "**It depends** on your **goals.** **Run-time** **CSS**-in-**JS** (styled-components, **emotion**) gives **theming** and **scoping** with **a** **familiar** **API**, but in **very** **large** **SS**R or **RSC** **setups** you may **see** **bundle** and **stream** **costs** that lead teams to **zero**-**run**-**time** **CSS** **modules**, **Tailwind**, or **Panda**/**Vanilla** **Extract** instead.\n\n**Enterprise** design systems may still use **Emotion**-style for **a** **while**; **new** **greenfield** in **2025+** should **read** the **RSC** **compatibility** **notes** of the **lib** and **test** with **Lighthouse** in **SS**R **mode** you actually ship.\n",
+    "examples": [
+      {
+        "title": "Module CSS alternative",
+        "language": "tsx",
+        "code": "import s from './Row.module.css';\n\nexport function Row() { return <div className={s.row} />; }\n",
+        "explanation": "This keeps CSS static for bundlers; no runtime style injection, good for RSC in many cases."
+      }
+    ],
+    "tip": "Mention the **RSC** **Server** **and** **Client** **Component** split: some **style** **libs** only work in **one** world.",
+    "links": [
+      {
+        "label": "React: CSS in React (community options)",
+        "href": "https://react.dev/learn#styling-solutions"
+      }
+    ]
+  },
+  {
+    "id": "react-197",
+    "question": "Do you need to rewrite all class components with Hooks?",
+    "difficulty": "intermediate",
+    "category": "migration",
+    "tags": [
+      "class",
+      "hooks",
+      "incremental"
+    ],
+    "answer": "**No.** The **core** team **has not** **removed** **classes**; you can **add** new **function** **components** in **one** file at a time, or **use** a **class** in **legacy** **leaves** while the **app** is mostly **functions** **today**.\n\n**Rewrite** when you **touch** the **file** for a **bug** and it is **safe** in **test** and **type** time, or when you need a **shared** **hook** that **duplication** in **a** class makes **worse**.\n\n**Error** **boundaries** still have **a** class **form** in **many** codebases, though the **community** also ships **a** `react-error-boundary` **HOC** **pattern**.\n",
+    "examples": [
+      {
+        "title": "Class still valid",
+        "language": "tsx",
+        "code": "import { Component, type ReactNode } from 'react';\n\nexport class ErrorBoundary extends Component<{ children: ReactNode }> { /* ... */ render() { return this.props.children; } }\n",
+        "explanation": "This file can stay a class; other files in the app can be hooks-first."
+      }
+    ],
+    "tip": "Mention you **read** the **class**-to-**hook** **codemod** in **larger** **moves**, and still **add** **tests** before a **one**-**file** **rewrite**.",
+    "links": [
+      {
+        "label": "Class components in React 18 docs",
+        "href": "https://react.dev/reference/react/Component"
+      }
+    ]
+  },
+  {
+    "id": "react-198",
+    "question": "How do you fetch data with React Hooks?",
+    "difficulty": "intermediate",
+    "category": "data-fetching",
+    "tags": [
+      "useeffect",
+      "tanstack",
+      "rsc"
+    ],
+    "answer": "**Simple** case: `useEffect` with **`fetch`** or **`axios`**, a **`signal`** for **cancel**, and `useState` for **data**, **error**, and **loading**. **Strong** case: use **TanStack Query** to **dedupe**, **cache**, and **stale-while-**revalidate, or use **a** **framework** **loader** in **Remix/Next** that runs **in** a **data** **layer** **outside** the **component** when possible.\n\n**Rules:** **setState** on **unmount**-**canceled** fetches is a **bug** source; add **an** `ignore` or **AbortController**; **RSC** may **call** the **data** on the **server** and **stream** the **UI** without `useEffect` in many **pages** in **2025+** **Next** **apps**.\n",
+    "examples": [
+      {
+        "title": "Effect + abort",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from 'react';\n\ntype Post = { id: string; title: string };\n\nexport function PostView({ id }: { id: string }) {\n  const [p, setP] = useState<Post | null>(null);\n  useEffect(() => {\n    const c = new AbortController();\n    void fetch(`/api/posts/${id}`, { signal: c.signal })\n      .then((r) => r.json() as Promise<Post>)\n      .then(setP)\n      .catch(() => {}); // only if you handle abort as silent\n    return () => c.abort();\n  }, [id]);\n  return p ? <h1>{p.title}</h1> : <p>Loading\u2026</p>;\n}\n",
+        "explanation": "The dependency array includes `id`; abort on change/unmount to avoid a race and setState on unmounted components."
+      }
+    ],
+    "tip": "Mention you **default** to **TanStack Query** or a **server** path for **serious** data to avoid the **picket** **fence** of **ad**-**hoc** `useEffect` fetches in **every** **leaf**.",
+    "links": [
+      {
+        "label": "useEffect: fetching data (React)",
+        "href": "https://react.dev/reference/react/useEffect#fetching-data-with-effects"
+      }
+    ]
+  },
+  {
+    "id": "react-199",
+    "question": "Do Hooks cover all use cases for classes?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "class",
+      "hooks",
+      "error-boundary"
+    ],
+    "answer": "**Most** class-component patterns that matter in applications do have a hooks-first alternative in modern React, but a few **caveats** stay common in interviews. **(1) Error boundaries** to catch render errors are still most often a **class** (or a small library) because there is no public hooks-only `componentDidCatch` replacement in core React. **(2) Rare** layout and imperative patterns may use `useImperativeHandle` or `useLayoutEffect` instead of legacy lifecycle code. **(3) Deep inheritance trees** in old code are usually refactored toward **composition** before you translate them line by line to hooks.\n\n**Net:** you **rarely** add a new class in greenfield work, and you can migrate incrementally: you do **not** have to delete every class in one pass.\n",
+    "examples": [
+      {
+        "title": "Error boundary still a class in many codebases",
+        "language": "tsx",
+        "code": "import { Component, type ErrorInfo, type ReactNode } from 'react';\n\nexport class ErrorBoundary extends Component<{ children: ReactNode }> { componentDidCatch(e: Error, i: ErrorInfo) { void e; void i; } render() { return this.props.children; } }\n",
+        "explanation": "Hooks do not have a 1:1 public API for a boundary; class remains common here."
+      }
+    ],
+    "tip": "In full-stack 2025+ apps, add that **RSC and framework loaders** can reduce `useEffect` fetches, which is a separate story from the class vs function split.",
+    "links": [
+      {
+        "label": "Hooks: FAQ (archived, classes)",
+        "href": "https://legacy.reactjs.org/docs/hooks-faq.html#do-hooks-cover-all-use-cases-for-classes"
+      }
+    ]
+  },
+  {
+    "id": "react-200",
+    "question": "What is the stable release for Hooks support?",
+    "difficulty": "intermediate",
+    "category": "history",
+    "tags": [
+      "16.8",
+      "hooks",
+      "release"
+    ],
+    "answer": "**React Hooks** became **stable in React 16.8** in **February 2019**, so that is the version number interviewers expect when they ask when hooks shipped. Newer work lives on **React 18+** and **19**, where the hook family expanded and **Server Components** and the **`use` API** (where applicable) add more patterns; your **`package.json`** `react` version is the real source of truth in a repo.\n",
+    "examples": [
+      {
+        "title": "package.json (idea)",
+        "language": "json",
+        "code": "{\n  \"dependencies\": {\n    \"react\": \"^18.3.1\",\n    \"react-dom\": \"^18.3.1\"\n  }\n}\n",
+        "explanation": "Hooks are stable; your installed minor defines exact bugfix behavior, not 16.8 anymore in new apps."
+      }
+    ],
+    "tip": "Cite the **2019 16.8.0** blog post for history; recommend **18+** today for concurrent features and modern framework stacks.",
+    "links": [
+      {
+        "label": "React v16.8.0: Hooks are stable",
+        "href": "https://react.dev/versions#react-168"
+      }
+    ]
+  },
+  {
+    "id": "react-201",
+    "question": "Why do we use array destructuring in useState?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usestate",
+      "destructuring",
+      "conventions"
+    ],
+    "answer": "`useState` **returns a pair** `[value, setValue]`; **array** **destructuring** lets you **name** the **two** **slots** in **any** order you want, which helps **very** **small** local **state** without **verbose** `result.value` / `result.setValue` **names** from an **object** return.\n\n**Why** not an **object?** the **order**-**independent** **object** destructure is **nicer** in **some** **APIs** with **more** than **two** **fields**; the **core** team **chose** **arrays** for the **useState** return so **naming** is **obvious** and **short** in **every** **component**.\n\n`use` **(React** **19+** **in** some **cases**) has **a** different **path**; **TypeScript** still types `[T, SetDispatch]` **well** in **`useState`.",
+    "examples": [
+      {
+        "title": "Name any label",
+        "language": "tsx",
+        "code": "const [count, setCount] = useState(0);\nconst [open, setOpen] = useState(false);\n",
+        "explanation": "The variable names are local and clear; a tuple is idiomatic in TS/JS for fixed-size pairs."
+      }
+    ],
+    "tip": "Mention the **convention** `const [x, setX] = useState` for **read**ability in every **file** in your **codebase**.",
+    "links": [
+      {
+        "label": "useState: reference",
+        "href": "https://react.dev/reference/react/useState"
+      }
+    ]
+  },
+  {
+    "id": "react-202",
+    "question": "What sources were used for introducing Hooks?",
+    "difficulty": "intermediate",
+    "category": "history",
+    "tags": [
+      "rfc",
+      "conf",
+      "react-team"
+    ],
+    "answer": "**Public** **sources** at **launch** included **the** **2018** **React** **Conf** **talks** and **a** long **comment**-**heavy** **RFC** on the **reactjs/rfcs** repo, plus the **16.8** **release** **blog** **post** on the **old** and **new** **blog** (now **react.dev** **blog** and **archives** on **github** **react**). **The** **point** in **an** **interview** is that **the** design was **in** the **open** and **migrated** from **HOCs** to **a** more **composable** **function** world.\n\n**Today** the **source** of **truth** is **the** `react.dev` **docs**; **old** `reactjs.org` **pages** **redirect** or **are** **archived** in **read**-**only** **form** in **some** **paths**.\n",
+    "examples": [
+      {
+        "title": "Read the RFC in git history (idea)",
+        "language": "bash",
+        "code": "git clone https://github.com/reactjs/rfcs.git && ls rfcs",
+        "explanation": "The Hooks RFC and discussion lives in the community repo for transparency."
+      }
+    ],
+    "tip": "Mention the **HOC** **and** **render**-**prop** **problems** (wrapper **hell** and **indirection**) as the **public** **motivation** in **old** **talks**.",
+    "links": [
+      {
+        "label": "React RFCs (repo)",
+        "href": "https://github.com/reactjs/rfcs"
+      }
+    ]
+  },
+  {
+    "id": "react-203",
+    "question": "How do you access the imperative API of web components?",
+    "difficulty": "intermediate",
+    "category": "interoperability",
+    "tags": [
+      "ref",
+      "custom-elements",
+      "dom"
+    ],
+    "answer": "**Use a `ref` to the custom element in the real DOM** after it mounts. The ref is typed in TypeScript as an intersection, for example `HTMLElement & { open: () => void }`, or you declare your tag in a small `global.d.ts` for `JSX.IntrinsicElements`. You then call imperative methods like `open()` or `play()` on `ref.current` in `useEffect` (or `useLayoutEffect` if you need to measure or sync with layout in the right phase).\n\n**React** does not wrap these methods; the ref is the bridge between the declarative tree and the **browser** object model.\n",
+    "examples": [
+      {
+        "title": "Call method on mount",
+        "language": "tsx",
+        "code": "import { useEffect, useRef } from 'react';\n\ntype XMap = HTMLElement & { flyTo: (c: { lat: number; lng: number }) => void };\n\nexport function MapHost() {\n  const r = useRef<XMap | null>(null);\n  useEffect(() => { r.current?.flyTo({ lat: 0, lng: 0 }); }, []);\n  return <x-map ref={r} /> as unknown as JSX.Element;\n}\n",
+        "explanation": "The web component is treated like a native element with a ref; the map SDK implements `flyTo` on the object."
+      }
+    ],
+    "tip": "For TypeScript, augment `JSX.IntrinsicElements` for your `kebab-case` tag, or use a light wrapper component with typed public methods via `useImperativeHandle` if you need a stable React API.",
+    "links": [
+      {
+        "label": "MDN: custom elements (methods)",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements"
+      }
+    ]
+  },
+  {
+    "id": "react-204",
+    "question": "What is Formik?",
+    "difficulty": "beginner",
+    "category": "forms",
+    "tags": [
+      "formik",
+      "forms",
+      "validation"
+    ],
+    "answer": "**Formik** is a **React** library for building forms. It helps you keep **form state** in React (local or colocated in parent), wire **onSubmit** and field-level **validation** (commonly with **Yup** or a **Zod** bridge in TypeScript), and it exposes **`Field`**, **`<ErrorMessage />`**, and related helpers. It **does not** require storing every field in **Redux** the way very old **redux-form** apps often did.\n\nMany **new** codebases in **2025+** default to **React Hook Form** or a **framework** form model; Formik is still a fair answer and remains in production on many long-lived products.\n",
+    "examples": [
+      {
+        "title": "Formik: minimal",
+        "language": "tsx",
+        "code": "import { Formik, Form, Field } from 'formik';\n\nexport function Example() {\n  return (\n    <Formik initialValues={{ email: '' }} onSubmit={() => {}}>\n      <Form>\n        <Field name=\"email\" type=\"email\" />\n        <button type=\"submit\">Send</button>\n      </Form>\n    </Formik>\n  );\n}\n",
+        "explanation": "The Formik object owns values and handler wiring; the UI stays in Field components you style."
+      }
+    ],
+    "tip": "In interviews, name **RHF** as a common **modern** pick, and position Formik as a **mature, explicit** form library you may still see in **legacy** code.",
+    "links": [
+      {
+        "label": "Formik: docs",
+        "href": "https://formik.org"
+      }
+    ]
+  },
+  {
+    "id": "react-205",
+    "question": "What are typical middleware choices for handling asynchronous calls in Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "thunk",
+      "saga",
+      "rtk"
+    ],
+    "answer": "**Common choices in interviews:** **redux-thunk** (return a function that gets `dispatch` and can do async work), **redux-saga** (long-running `redux-saga` processes with `yield` and cancellation), and **redux-observable** in Rx-heavy teams. **Redux Toolkit** is the current baseline: `createAsyncThunk` for many async cases, and **RTK Query** when you need **caching, invalidation, and deduplication** for server data.\n\n**Pick** sagas for complex **orchestration and cancellation** with strong testability; use thunks/RTK for most CRUD; add **RTK Query** or **TanStack Query** (outside or beside Redux) when the hard problem is **server cache** behavior, not the reducer pattern.\n",
+    "examples": [
+      {
+        "title": "RTK createAsyncThunk (shape)",
+        "language": "ts",
+        "code": "import { createAsyncThunk } from '@reduxjs/toolkit';\n\nexport const loadUser = createAsyncThunk('user/load', async (id: string) => {\n  const r = await fetch(`/api/user/${id}`);\n  return (await r.json()) as { id: string; name: string };\n});\n",
+        "explanation": "The thunk is async, dispatches pending/fulfilled/rejected, and is easier than writing raw middleware by hand in many cases."
+      }
+    ],
+    "tip": "Mention the **Listener middleware** in RTK 2+ for event-driven work as another modern option beside raw custom middleware.",
+    "links": [
+      {
+        "label": "Redux: Async logic thunks and data fetching",
+        "href": "https://redux.js.org/usage"
+      }
+    ]
+  },
+  {
+    "id": "react-206",
+    "question": "Do browsers understand JSX code?",
+    "difficulty": "beginner",
+    "category": "tooling",
+    "tags": [
+      "babel",
+      "vite",
+      "transpile"
+    ],
+    "answer": "**No.** Browsers only **run** **JavaScript** the **engine** in that browser **executes**; **JSX** is **a** **compile**-time **sugar** that **Vite/TS/Babel** **turns** into **function** **calls** (or **a** new **transform**-style output in the **new** **JSX** **transform**). **In** a **Vite** **app**, `esbuild` in **dev** and **the** build **in** **prod** do this **on** the **file** you **save** in **the** **editor**.\n\n**During** a **very** small **toy** **test**, you can **in**line **Babel** **standalone** in a **play**-**grou**d **in** a **book**-**sized** **demo**; in **a** real **app**, you do **not** **ship** **JSX** to **users** **raw**.\n",
+    "examples": [
+      {
+        "title": "Vite: JSX in .tsx is compiled",
+        "language": "bash",
+        "code": "npm run build\n# output .js in dist/ has no JSX tokens\n",
+        "explanation": "The production browser bundle contains plain JavaScript, not <App /> syntax."
+      }
+    ],
+    "tip": "Mention the **new** **JSX** **transform** and **the** `react` **import** **optional**-**it**-**y** in **17+** in **new** **tool**-**ing**.",
+    "links": [
+      {
+        "label": "New JSX transform",
+        "href": "https://legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html"
+      }
+    ]
+  },
+  {
+    "id": "react-207",
+    "question": "Can you describe data flow in React?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "one-way",
+      "props",
+      "state",
+      "events"
+    ],
+    "answer": "**Typical** client React uses **one-way** data flow: **props flow down** the tree as read-only inputs, and **actions flow up** as **function callbacks** the child calls when a user or internal event happens. **Component state** is owned by the component that created it. When a **sibling** must share that state, you **lift state up** to a common **parent** and pass both a **value** and a **setter** (or a named callback) back down, or you use **Context** for a **subtree** to avoid long prop chains.\n\n**Next.js / Remix** and **React Server Components** add **server-driven** data paths, but the **client** still follows props-down and events-up in interactive **islands**.\n",
+    "examples": [
+      {
+        "title": "Lifted state sketch",
+        "language": "tsx",
+        "code": "function Parent() {\n  const [n, setN] = useState(0);\n  return <Child value={n} onInc={() => setN((v) => v + 1)} />;\n}\n\nfunction Child({ value, onInc }: { value: number; onInc: () => void }) {\n  return <button type=\"button\" onClick={onInc}>{value}</button>;\n}\n",
+        "explanation": "The child displays data from the parent, and the click asks the parent to change `n`\u2014one-way with callbacks up."
+      }
+    ],
+    "tip": "In larger apps, pair **server cache** (for example **TanStack Query** or a framework data layer) with **local UI** `useState` only where a widget is self-contained.",
+    "links": [
+      {
+        "label": "Passing data deeply with context (React)",
+        "href": "https://react.dev/learn/passing-data-deeply-with-context"
+      }
+    ]
+  }
+]

@@ -1,0 +1,1541 @@
+[
+  {
+    "id": "react-079",
+    "question": "What is React Router?",
+    "difficulty": "beginner",
+    "category": "routing",
+    "tags": [
+      "react-router",
+      "client-routing",
+      "single-page-app"
+    ],
+    "answer": "**React Router** is a **client-side routing** library for **React** apps. It **maps the URL in the address bar to UI trees**, so when users click links you change **what the page shows** without a full server **round trip** in a single-page app.\n\nYou typically wrap the app in a **router component** and declare **`<Route path=\"/path\" element={<Page />} />`** style config (v6) so navigation feels like a multi-page site while React keeps updating the same document.\n\nUse it whenever you have **more than a single screen** and you want **shareable deep links and history** in a **React** bundle.",
+    "examples": [
+      {
+        "title": "React Router v6: routes",
+        "language": "tsx",
+        "code": "import { createBrowserRouter, RouterProvider } from 'react-router-dom';\nimport { Home, About } from './pages';\n\nconst router = createBrowserRouter([\n  { path: '/', element: <Home /> },\n  { path: '/about', element: <About /> },\n]);\n\nexport function App() {\n  return <RouterProvider router={router} />;\n}\n",
+        "explanation": "The browser `history` API updates, and the router supplies matching elements."
+      }
+    ],
+    "tip": "Say **declarative routes** and **code splitting** in larger apps, not a React core feature.",
+    "links": [
+      {
+        "label": "React Router: home",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-080",
+    "question": "How is React Router different from the history library?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "react-router",
+      "history",
+      "stack"
+    ],
+    "answer": "The **`history`** package is a **thin abstraction over the browser `History` and `location` API**. It can **push, replace, and listen** to URL changes, but it **does not render React** or know about components.\n\n**React Router** **builds on that** (or the same concepts) to **connect URLs to a React element tree** with **Route matching, nested routes, and outlet composition**. In other words, **history** is **navigation state**; **React Router** is **UI routing for React** with conveniences like **data routers** in v6+.\n\nIn interviews, contrast **low-level history** vs **framework integration** and **outlets**.",
+    "examples": [
+      {
+        "title": "Listener without React",
+        "language": "ts",
+        "code": "import { createBrowserHistory } from 'history';\n\nconst h = createBrowserHistory();\nconst u = h.listen(() => console.log(h.location.pathname));\n// h.push('/a');\n// later: u();\n",
+        "explanation": "You get updates, not automatic component switching; React Router adds that layer."
+      }
+    ],
+    "tip": "Mention **createBrowserHistory**-style building blocks and that **v6+** leans on **data APIs**; history alone does not know about React.",
+    "links": [
+      {
+        "label": "React Router: guides",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-081",
+    "question": "What are the components of React Router v6?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "react-router",
+      "v6",
+      "data-router"
+    ],
+    "answer": "In **v6+**, the common **surface area** is:\n\n- **`createBrowserRouter` / `createHashRouter`**: build a **router object** (often with **data loaders and actions**).\n- **`RouterProvider`**: mounts that router and is the app root in many new apps.\n- **`<Route>` (in the route object tree)**: path patterns and **child routes**; **`element`** and **`index`**.\n- **`<Link>` and `<NavLink>`**: declarative navigation without full page reloads.\n- **`<Outlet>`**: renders the **active child** route in a layout route.\n- **Hooks**: **`useParams`**, **`useSearchParams`**, **`useNavigate`**, **`useLocation`**, **`useRouteError`**, and data helpers like **`useLoaderData`**.\n\nThe exact mix depends on whether you use a **data router** or a lighter **`<BrowserRouter><Routes/></BrowserRouter>`** setup.",
+    "examples": [
+      {
+        "title": "Data router (sketch)",
+        "language": "tsx",
+        "code": "import { createBrowserRouter, RouterProvider } from 'react-router-dom';\n\nconst r = createBrowserRouter([\n  { path: '/', element: <Layout />, children: [{ index: true, element: <Home /> }, { path: 'u/:id', element: <User /> }] },\n]);\n\nexport function App() {\n  return <RouterProvider router={r} />;\n}\n",
+        "explanation": "`Layout` can render `<Outlet/>` and nested `Route` children map under `u/:id`."
+      }
+    ],
+    "tip": "Name **RouterProvider, Route tree, Link, Outlet, useNavigate, useParams** for a v6 screen score.",
+    "links": [
+      {
+        "label": "React Router: route module",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-082",
+    "question": "What is the purpose of the push and replace methods of history?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "history",
+      "navigation",
+      "stack"
+    ],
+    "answer": "In a browser or **`history` stack**, **`push` adds a new entry** to the back/forward list and moves there. The user can press **Back** to the previous page.\n\n**`replace` swaps the current top entry** instead of appending, so the **previous item is not preserved** in the same way. You use **`replace` when a redirect is not worth an extra back step** (for example after a login, or to normalize a URL).\n\nReact Router v6+ exposes **`navigate('/path', { replace: true })`** that mirrors the same idea with the `history` integration underneath.",
+    "examples": [
+      {
+        "title": "navigate with replace (v6+)",
+        "language": "tsx",
+        "code": "import { useNavigate } from 'react-router-dom';\n\nexport function AfterLogin() {\n  const nav = useNavigate();\n  return <button onClick={() => nav('/home', { replace: true })}>Continue</button>;\n}\n",
+        "explanation": "`replace: true` avoids stacking an intermediate /login in history."
+      }
+    ],
+    "tip": "Contrast **Back stack** vs **in-place** replacement; this is a classic browser interview detail.",
+    "links": [
+      {
+        "label": "MDN: History",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/History"
+      }
+    ]
+  },
+  {
+    "id": "react-083",
+    "question": "How do you programmatically navigate using React Router v4?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "react-router",
+      "v4",
+      "imperative"
+    ],
+    "answer": "In **React Router v4**, you get navigation props from **`<Route>`** render props or a **connected component**. The **`history` object** has **`push`, `replace`, and `go`**.\n\n- **`this.props.history.push('/todos/12')`** in class components, or\n- In route components: **`<Route render={({ history }) => ...} />`**.\n\n**v6** replaces that pattern with **`useNavigate`**, but the interview may still name **v4**\u2014answer with **`history.push/replace`**. The core idea: **imperative navigation** still updates the URL and the matching route's UI.",
+    "examples": [
+      {
+        "title": "v4 class push",
+        "language": "tsx",
+        "code": "import { withRouter, RouteComponentProps } from 'react-router-dom';\n\nclass NavBtn extends React.Component<RouteComponentProps> {\n  go = () => this.props.history.push('/done');\n  render() {\n    return <button onClick={this.go}>Done</button>;\n  }\n}\n\nexport const NavBtnRouted = withRouter(NavBtn);\n",
+        "explanation": "`withRouter` injects `history` when you are not directly under a Route (older apps)."
+      }
+    ],
+    "tip": "Bridge to v6: say **`useNavigate`** is the current hook; the mental model of **push/replace** is the same.",
+    "links": [
+      {
+        "label": "React Router: v5 migration",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-084",
+    "question": "How do you get query parameters in React Router v4?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "search-params",
+      "location",
+      "v4"
+    ],
+    "answer": "In **v4/v5**, route components read **`this.props.location.search`**, a **string** like `?q=hi&sort=1`. You parse it with:\n\n- **`URLSearchParams`**, or\n- a helper such as **query-string** in older codebases.\n\nWith **`<Route children>` or `component`**, **`location` is** passed as part of **match/location history** props. You also can use **`this.props.location.pathname`** and combine.\n\nIn **v6+**, use **`useSearchParams`**, which is **more ergonomic** than hand-parsing, but the **parsing** idea is identical.",
+    "examples": [
+      {
+        "title": "URLSearchParams",
+        "language": "ts",
+        "code": "import { RouteComponentProps } from 'react-router-dom';\n\nfunction getQuery(p: string) {\n  return new URLSearchParams(p).get('q');\n}\n\nexport function Search({ location }: RouteComponentProps) {\n  const q = getQuery(location.search);\n  return <p>Q: {q}</p>;\n}\n",
+        "explanation": "You still re-parse on each location change, so v6's `useSearchParams` is nicer."
+      }
+    ],
+    "tip": "Mention **`useSearchParams`** for modern apps; keep **`URLSearchParams`** as the portable parser.",
+    "links": [
+      {
+        "label": "MDN: URLSearchParams",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams"
+      }
+    ]
+  },
+  {
+    "id": "react-085",
+    "question": "Why do you get a \"Router may have only one child element\" warning?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "react-router",
+      "v4",
+      "children"
+    ],
+    "answer": "Older **React Router (v2/v3 style)** and some **v4** patterns wrapped content with **`<Router>`** where the router **expected exactly one child element** in certain APIs so it could **clone and inject** props. If you pass **sibling elements** (two top-level children), React sees **an array/fragment of multiple roots** and the router's **assumption is broken**, so a warning appears.\n\n**Fix:** **wrap in a parent** (`<div>`, or **`<></>` in React 16+**), or in modern **v6+** you generally **use `RouterProvider` or a single `Routes` tree** where this is less of a footgun.\n\nIn legacy code, this often meant **one composed layout component** as the only child of `Router`/`BrowserRouter`",
+    "examples": [
+      {
+        "title": "Single wrapper",
+        "language": "tsx",
+        "code": "import { BrowserRouter, Route } from 'react-router-dom';\n\nexport function App() {\n  return (\n    <BrowserRouter>\n      <div>\n        <Route path=\"/\" element={<Home />} />\n        <Route path=\"/a\" element={<A />} />\n      </div>\n    </BrowserRouter>\n  );\n}\n",
+        "explanation": "A single `div` satisfies one-child rules in the older design."
+      }
+    ],
+    "tip": "Relate the warning to **the older injection pattern**; today prefer **a single `Routes` root** in v6.",
+    "links": [
+      {
+        "label": "React Router: FAQ (legacy context)",
+        "href": "https://github.com/remix-run/react-router"
+      }
+    ]
+  },
+  {
+    "id": "react-086",
+    "question": "How do you pass params to the history.push method in React Router v4?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "history",
+      "params",
+      "v4"
+    ],
+    "answer": "**`history.push` takes a string path** or a **location object** in many setups. The usual pattern is to **string-interpolate** dynamic segments into the path, for example **`history.push(`/users/${id}`)**, and let **the Route path `'/users/:id'`** read **`useParams` / `match.params`** in the child (v4 used **`match.params`** on the matched route component).\n\n**Query** pieces go in **`?search=...`**, and **state** can ride on **`location.state`** with **`push({ pathname, search, state })`** form when supported by your history version.\n\n**v6+:** **`navigate(`/users/${id}`)** or an object to **`useNavigate`**.",
+    "examples": [
+      {
+        "title": "String path with id",
+        "language": "tsx",
+        "code": "// v4: history.push(`/todos/${id}`);\n// v6+:\nimport { useNavigate } from 'react-router-dom';\n\nexport function Row({ id }: { id: string }) {\n  const n = useNavigate();\n  return <button onClick={() => n(`/todos/${id}`)}>Open</button>;\n}\n",
+        "explanation": "The important idea is: **param values land in the URL string** and are parsed by the router."
+      }
+    ],
+    "tip": "Do not confuse **URL params** (`:id`) with **query params**; both can coexist.",
+    "links": [
+      {
+        "label": "React Router: useParams",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-087",
+    "question": "How do you implement a default or NotFound page?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "404",
+      "catch-all",
+      "react-router"
+    ],
+    "answer": "You register a **catch-all** route. In **v6**, use a **path of `'*'`** (or a dedicated **404 route**) as a **sibling** so it matches any unmatched path; keep it **last** in the `children` order when using nested data routers, or in flat `Routes` use **`<Route path=\"*\" element={<NotFound/>}/>`**.\n\nA **default child** in a layout uses **`index` routes**; a **not-found** is different: it is the **unmatched** pattern.\n\n**Server-side:** your host should still **serve the SPA** on unknown paths, or 404s return HTML for the client router to then show the 404 view.",
+    "examples": [
+      {
+        "title": "Catch-all in v6",
+        "language": "tsx",
+        "code": "import { Route, Routes } from 'react-router-dom';\nimport { Home, NotFound } from './pages';\n\nexport function AppRoutes() {\n  return (\n    <Routes>\n      <Route path=\"/\" element={<Home />} />\n      <Route path=\"*\" element={<NotFound />} />\n    </Routes>\n  );\n}\n",
+        "explanation": "Order matters: static routes first, `*` after."
+      }
+    ],
+    "tip": "Mention **server config** (always `index.html` for SPA) separate from the **client `*` route**.",
+    "links": [
+      {
+        "label": "React Router: not found",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-088",
+    "question": "How do you get history in React Router v4?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "history",
+      "withrouter",
+      "v4"
+    ],
+    "answer": "In **v4/v5** you obtain **`history` by**:\n\n- Receiving it as a prop from **`<Route component={...}>`** or **`render` props**, or\n- Using **`withRouter` higher-order component** to inject **`history`, `location`, and `match`** when your component is not a direct `Route` child, or\n- In connected Redux apps, sometimes via **`connected-react-router`**.\n\n**v6** removes `history` from props: use **`useNavigate`**, **`useLocation`**, and **router APIs** on `RouterProvider` data routers. Answer v4 concretely; mention the hook migration to show awareness.",
+    "examples": [
+      {
+        "title": "withRouter (v4/v5 idea)",
+        "language": "tsx",
+        "code": "// import { withRouter } from 'react-router-dom';\n// export default withRouter(MyComponent);\n// MyComponent receives history, location, match\n\nimport { useNavigate, useLocation } from 'react-router-dom';\n\nexport function MyComponent() {\n  const n = useNavigate();\n  const l = useLocation();\n  return <button onClick={() => n(-1)}>Back from {l.pathname}</button>;\n}\n",
+        "explanation": "The modern v6 way replaces the injected `history` object."
+      }
+    ],
+    "tip": "Say `withRouter` and **Route props** for legacy; `useNavigate` for new code.",
+    "links": [
+      {
+        "label": "React: Blog on React Router 6",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-089",
+    "question": "How do you perform an automatic redirect after login?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "auth",
+      "redirect",
+      "navigate"
+    ],
+    "answer": "After a successful **login** you **navigate the user to a safe route** and often **`replace: true`** so the login screen is not an extra back step.\n\n- **v6:** **`navigate(from, { replace: true })`**, or return **`<Navigate to=... replace />`** in JSX when a route should guard and bounce.\n- **v4/v5:** **`history.replace('/app')`**.\n\nAlso preserve a **`from` location** in **`location.state` or `?redirect=`** to send users back to the page they tried to open, which is a better UX for protected routes.",
+    "examples": [
+      {
+        "title": "post-login replace",
+        "language": "tsx",
+        "code": "import { useNavigate, useLocation } from 'react-router-dom';\nimport { useState } from 'react';\n\nexport function Login() {\n  const nav = useNavigate();\n  const loc = useLocation() as { state?: { from?: { pathname: string } } };\n  const [err, setErr] = useState('');\n  async function submit() {\n    await fakeLogin();\n    const to = loc.state?.from?.pathname ?? '/home';\n    nav(to, { replace: true });\n  }\n  return <button onClick={submit}>Sign in</button>;\n}\n\nasync function fakeLogin() { /* */ }\n",
+        "explanation": "Carrying `from` in state is a common `ProtectedRoute` pattern."
+      }
+    ],
+    "tip": "Pair with **httpOnly session cookies** or **tokens**; redirect is just UI navigation.",
+    "links": [
+      {
+        "label": "React Router: Navigate",
+        "href": "https://reactrouter.com/en/main"
+      }
+    ]
+  },
+  {
+    "id": "react-090",
+    "question": "What is React Intl?",
+    "difficulty": "beginner",
+    "category": "i18n",
+    "tags": [
+      "react-intl",
+      "formatjs",
+      "localization"
+    ],
+    "answer": "**FormatJS React Intl** (often called **react-intl**) is a set of **React components and hooks** for **internationalization** built on the **ICU** message model. It helps you **translate strings**, **pluralize**, **format numbers and dates per locale**, and keep **message catalogs** in JSON.\n\nIt is a **mature, widely used** solution when you do not get i18n from a framework. You provide **`IntlProvider` with `locale` and `messages`**, and render **`FormattedMessage`** or **`useIntl`** in components.",
+    "examples": [
+      {
+        "title": "Provider shell",
+        "language": "tsx",
+        "code": "import { IntlProvider } from 'react-intl';\nimport en from './en.json';\n\nconst messages: Record<string, string> = en;\n\nexport function App() {\n  return (\n    <IntlProvider locale=\"en\" messages={messages}>\n      <Main />\n    </IntlProvider>\n  );\n}\n",
+        "explanation": "The catalog maps message ids to translated strings for the current locale."
+      }
+    ],
+    "tip": "Mention **ICU** and that **formatjs** is the umbrella project name today.",
+    "links": [
+      {
+        "label": "Format.js: getting started",
+        "href": "https://formatjs.io/docs/getting-started/installation"
+      }
+    ]
+  },
+  {
+    "id": "react-091",
+    "question": "What are the main features of React Intl?",
+    "difficulty": "intermediate",
+    "category": "i18n",
+    "tags": [
+      "react-intl",
+      "formatjs",
+      "icu"
+    ],
+    "answer": "Core features include **message translation with id keys**, **rich text and placeholders in messages**, **plural, select, and number formatting using ICU rules**, and **date/time/relative time formatting** with **`@formatjs/intl` polyfills** when a runtime lacks a feature.\n\n**React bindings** add **`FormattedMessage`**, **`FormattedDate`**, and **`useIntl()`** to access `formatMessage` imperatively, plus **Extraction/compilation** tooling in larger apps.\n\nTeams pair it with **locale-aware routing** and **lazy-loaded message bundles** per language.",
+    "examples": [
+      {
+        "title": "Plurals (conceptual)",
+        "language": "json",
+        "code": "{\n  \"itemCount\": \"{count, plural, =0 {No items} one {# item} other {# items}}\"\n}\n",
+        "explanation": "ICU plural rules are a headline feature over naive string replace."
+      }
+    ],
+    "tip": "Name **ICU message syntax**, `IntlProvider`, and `useIntl` as the day-one trio.",
+    "links": [
+      {
+        "label": "Format.js: React Intl",
+        "href": "https://formatjs.io/docs/react-intl"
+      }
+    ]
+  },
+  {
+    "id": "react-092",
+    "question": "What are the two ways of formatting in React Intl?",
+    "difficulty": "intermediate",
+    "category": "i18n",
+    "tags": [
+      "react-intl",
+      "formatmessage",
+      "components"
+    ],
+    "answer": "1) **Declarative** with **components** like **`FormattedMessage`**, **`FormattedDate`**, **`FormattedNumber`**, and **`FormattedRelativeTime`**, which read **`intl` from context** and render the formatted output.\n\n2) **Imperative** with **`const intl = useIntl()`** and then **`intl.formatMessage`**, **`intl.formatDate`**, and similar, which is good when a **string** must be passed to a child prop or a **non-JSX API**.\n\nBoth ultimately use the **same underlying formatter**; choose based on where you need the value.",
+    "examples": [
+      {
+        "title": "Imperative vs component",
+        "language": "tsx",
+        "code": "import { FormattedMessage, useIntl } from 'react-intl';\n\nexport function A() {\n  const intl = useIntl();\n  const title = intl.formatMessage({ id: 'app.title' });\n  return (\n    <section aria-label={title}>\n      <h1>\n        <FormattedMessage id=\"app.title\" defaultMessage=\"Hello\" />\n      </h1>\n    </section>\n  );\n}\n",
+        "explanation": "Use `formatMessage` when a plain string is required for attributes."
+      }
+    ],
+    "tip": "Call out **a11y attributes** often need imperative `formatMessage`.",
+    "links": [
+      {
+        "label": "useIntl: formatMessage",
+        "href": "https://formatjs.io/docs/react-intl#useintl"
+      }
+    ]
+  },
+  {
+    "id": "react-093",
+    "question": "How do you use FormattedMessage as a placeholder with React Intl?",
+    "difficulty": "intermediate",
+    "category": "i18n",
+    "tags": [
+      "formattedmessage",
+      "placeholders",
+      "values"
+    ],
+    "answer": "Use **`values`** on **`FormattedMessage`** to **inject dynamic segments** and optional **rich** elements. The message string in the catalog uses **ICU placeholders** like `{name}` or richer tags, and the **`values` prop** supplies them.\n\nFor **rich** translations you can also pass **React element values** in **`values`**, and mark parts of a sentence with custom tags the translator controls.\n\nIf you need the **string only**, prefer **`useIntl().formatMessage`** to avoid an extra wrapper element.",
+    "examples": [
+      {
+        "title": "values prop",
+        "language": "tsx",
+        "code": "import { FormattedMessage } from 'react-intl';\n\nexport function Hi({ who }: { who: string }) {\n  return (\n    <p>\n      <FormattedMessage id=\"greet.user\" defaultMessage=\"Hello, {name}!\" values={{ name: who }} />\n    </p>\n  );\n}\n",
+        "explanation": "`{name}` is filled from `values.name`."
+      }
+    ],
+    "tip": "Be careful to **not embed user HTML**; treat rich text as structured elements, not raw HTML strings, unless you sanitize.",
+    "links": [
+      {
+        "label": "FormattedMessage",
+        "href": "https://formatjs.io/docs/react-intl/components#formattedmessage"
+      }
+    ]
+  },
+  {
+    "id": "react-094",
+    "question": "How do you access the current locale with React Intl?",
+    "difficulty": "beginner",
+    "category": "i18n",
+    "tags": [
+      "locale",
+      "useIntl",
+      "context"
+    ],
+    "answer": "Read **`useIntl().locale`**, or **pull `locale` from `context`** if you are inside **`IntlProvider`**. The provider is the **source of truth**; hooks should be used **inside** that tree.\n\nYou can also **lift locale state** in your app (for example a user setting) and pass **`locale=...` down** to the provider, switching catalogs when the user changes language.\n\nFor **SSR** you pick **locale** from the **Accept-Language** header, route segment, or cookie, then set **`IntlProvider`** on the client.",
+    "examples": [
+      {
+        "title": "useIntl().locale",
+        "language": "tsx",
+        "code": "import { useIntl } from 'react-intl';\n\nexport function LanguageChip() {\n  const { locale } = useIntl();\n  return <span className=\"badge\">{locale}</span>;\n}\n",
+        "explanation": "The same hook exposes `formatMessage` and the active locale string."
+      }
+    ],
+    "tip": "Mention you **re-render** the subtree when you change the provider's `locale` and `messages` together.",
+    "links": [
+      {
+        "label": "React Intl: API",
+        "href": "https://formatjs.io/docs/react-intl#locale"
+      }
+    ]
+  },
+  {
+    "id": "react-095",
+    "question": "How do you format a date using React Intl?",
+    "difficulty": "beginner",
+    "category": "i18n",
+    "tags": [
+      "dates",
+      "formatjs",
+      "intl"
+    ],
+    "answer": "Use **`FormattedDate`**, **`FormattedTime`**, or **`useIntl().formatDate` / `formatTime`** with the **`value`** prop/argument. You can pass **`dateStyle`/`timeStyle`**-like options in modern `Intl` options objects supported by the polyfill you ship.\n\n`formatDateToParts` (via the underlying intl) can help you **interleave** literal text in complex layouts, but the common path is a single **`formatDate(new Date(), { year: 'numeric', month: 'long', day: 'numeric' })` style options object**.",
+    "examples": [
+      {
+        "title": "formatDate with useIntl",
+        "language": "tsx",
+        "code": "import { useIntl, FormattedDate } from 'react-intl';\n\nexport function Post({ d }: { d: string }) {\n  const { formatDate } = useIntl();\n  const t = new Date(d);\n  return (\n    <p title={formatDate(t, { dateStyle: 'full' })}>\n      Posted <FormattedDate value={t} year=\"numeric\" month=\"long\" day=\"2-digit\" />\n    </p>\n  );\n}\n",
+        "explanation": "Component vs function mirrors the two formatting styles question."
+      }
+    ],
+    "tip": "Remember **time zones** and that **`Date`** parsing from strings is easy to get wrong; often store **ISO UTC** and render in a chosen zone for apps that need it.",
+    "links": [
+      {
+        "label": "MDN: Intl.DateTimeFormat",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat"
+      }
+    ]
+  },
+  {
+    "id": "react-096",
+    "question": "What is the Shallow Renderer in React testing?",
+    "difficulty": "intermediate",
+    "category": "testing",
+    "tags": [
+      "shallow",
+      "test-renderer",
+      "enzyme"
+    ],
+    "answer": "The **shallow renderer** (historically in **`react-test-renderer/shallow`**) **renders a component one level deep**, stubbing child components so you assert **the props and tag your component would issue** without mounting the full tree.\n\n**Enzyme**'s `shallow()` popularized the pattern. This was useful in older **class and HOC** heavy code to **avoid deep side effects** in child subtrees. With **function components, hooks, and testing-library's user-centric** guidance, many teams **shallow test less** today, favoring **integration-style tests** for behavior.\n\n**React 18+** testing guidance often prefers **`@testing-library/react`**, not shallow-only snapshots of implementation details.",
+    "examples": [
+      {
+        "title": "react-test-renderer/shallow (conceptual)",
+        "language": "tsx",
+        "code": "// Legacy pattern (avoid in new work unless maintaining old tests):\n// import ShallowRenderer from 'react-test-renderer/shallow';\n// const r = new ShallowRenderer();\n// r.render(<MyForm />);\n// const out = r.getRenderOutput();\n\n// Prefer @testing-library/react to query the real DOM in jsdom\nimport { render, screen } from '@testing-library/react';\n\ntest('label', () => {\n  render(<button>ok</button>);\n  expect(screen.getByRole('button', { name: 'ok' })).toBeInTheDocument();\n});\n",
+        "explanation": "Contrast shallow vs RTL which encourages DOM queries and behavior."
+      }
+    ],
+    "tip": "If asked in legacy interviews, explain the **isolation** benefit; in modern ones, state **you prefer RTL** and avoid over-mocking children.",
+    "links": [
+      {
+        "label": "Testing Library: guiding principles",
+        "href": "https://testing-library.com/docs/guiding-principles"
+      }
+    ]
+  },
+  {
+    "id": "react-097",
+    "question": "What is the TestRenderer package in React?",
+    "difficulty": "intermediate",
+    "category": "testing",
+    "tags": [
+      "react-test-renderer",
+      "snapshot",
+      "fiber"
+    ],
+    "answer": "**`react-test-renderer`** is an **official** package that **renders React elements to a pure JavaScript object tree** instead of a real DOM, useful in **Jest** for **snapshots and introspection** without a browser. It is **not a replacement** for `react-dom/client` in production.\n\nIt is helpful for **low-level** checks and **synchronous** traversal of the output, but for app tests many teams use **`@testing-library/react`**, which uses **jsdom** and focuses on **user-visible** outcomes.\n\n`createRoot` from **react-test-renderer** API evolved alongside React; check the current docs for the exact entry point used in your version.",
+    "examples": [
+      {
+        "title": "tree JSON snapshot idea",
+        "language": "tsx",
+        "code": "import TestRenderer from 'react-test-renderer';\nimport { Greet } from './Greet';\n\ntest('snapshot (discouraged for behavior)', () => {\n  const t = TestRenderer.create(<Greet name=\"A\" />);\n  expect(t.toJSON()).toMatchSnapshot();\n});\n",
+        "explanation": "Snapshots of JSON trees are brittle; prefer queries for behavior in new tests."
+      }
+    ],
+    "tip": "Connect to **@testing-library** as the more typical choice for **product** tests in 2024+ codebases.",
+    "links": [
+      {
+        "label": "react-test-renderer (npm)",
+        "href": "https://github.com/facebook/react/blob/main/packages/react-test-renderer/README.md"
+      }
+    ]
+  },
+  {
+    "id": "react-098",
+    "question": "What is the purpose of the ReactTestUtils package?",
+    "difficulty": "intermediate",
+    "category": "testing",
+    "tags": [
+      "react-dom-test-utils",
+      "legacy",
+      "events"
+    ],
+    "answer": "**`react-dom/test-utils` (classically ReactTestUtils)** had helpers to **find DOM nodes, simulate events, and act()** around state updates in **older test stacks** before the **`act` API** was centralized. Many helpers were for **class components and legacy** patterns.\n\nToday **`@testing-library/user-event`**, **RTL**'s `fireEvent`, and **React 18**'s unified **`act` from 'react'** (or the testing package you import from) are the **default tools**. The older utils still exist in places but are not where new tests should start.\n\n`act` is still essential to **flush effects** in tests, now commonly **wrapped** by **RTL** automatically in many cases.",
+    "examples": [
+      {
+        "title": "act pattern",
+        "language": "tsx",
+        "code": "import { act } from 'react';\nimport { useState } from 'react';\nimport { createRoot } from 'react-dom/client';\nimport { screen } from '@testing-library/react';\n\n// RTL wraps many updates; for manual act you might still do:\n// await act(async () => { /* trigger */ });\n",
+        "explanation": "You rarely import TestUtils for new work; you import RTL and user-event instead."
+      }
+    ],
+    "tip": "Emphasize **act** and **RTL** as the current story, not a huge ReactTestUtils surface in new code.",
+    "links": [
+      {
+        "label": "React: act",
+        "href": "https://react.dev/reference/react/act"
+      }
+    ]
+  },
+  {
+    "id": "react-099",
+    "question": "What is Jest?",
+    "difficulty": "beginner",
+    "category": "testing",
+    "tags": [
+      "jest",
+      "runner",
+      "snapshots"
+    ],
+    "answer": "**Jest** is a **JavaScript test runner** by Meta, widely used in **React** and **Node** projects. It **discovers tests**, **mocks modules**, and **reports** results with a great **watch mode** and **snapshot** support.\n\nJest **ships with jsdom** integration patterns (often via your test environment config) to run **component tests** in Node, and with **Babel/TS transforms** it executes **TypeScript** tests.\n\n**Vitest** is a popular Jest alternative in Vite codebases, but the **Jest** mental model of **describe/it/expect** and **mocks** is the standard interview language.",
+    "examples": [
+      {
+        "title": "Sample test",
+        "language": "ts",
+        "code": "import { add } from './math';\n\ntest('adds', () => {\n  expect(add(1, 2)).toBe(3);\n});\n",
+        "explanation": "This is the basic shape even before React is involved."
+      }
+    ],
+    "tip": "Mention **ts-jest** or **Babel** only if asked how TS runs; the default in CRA/Vite may differ (Vitest).",
+    "links": [
+      {
+        "label": "Jest: Getting started",
+        "href": "https://jestjs.io/docs/getting-started"
+      }
+    ]
+  },
+  {
+    "id": "react-100",
+    "question": "What are the advantages of Jest over Jasmine?",
+    "difficulty": "intermediate",
+    "category": "testing",
+    "tags": [
+      "jest",
+      "jasmine",
+      "mocking"
+    ],
+    "answer": "**Jest** ships **batteries included**: a **test runner, assertion library, snapshot testing, and powerful module mocking** with a focus on a **single** coherent CLI and **zero-config** defaults in many stacks.\n\n**Jasmine** is a **BDD** framework; historically you **wired Karma** in browsers, **assertion styles** differ, and the **ecosystem** in modern **React+Node** skews to **Jest** or **Vitest**.\n\nJest's **isolation and hoisted mocks** are familiar to most teams, and the **JSDOM** story for **React** is well trodden. Jasmine still appears in some Angular or legacy setups.",
+    "examples": [
+      {
+        "title": "Jest auto mock sketch",
+        "language": "ts",
+        "code": " jest.mock('./api', () => ({ fetchUser: () => Promise.resolve({ id: '1' }) })); ",
+        "explanation": "Jest's mocking is a differentiator vs older Jasmine+Require stacks."
+      }
+    ],
+    "tip": "Be neutral: if the team is **Jasmine+Karma** legacy, note **migration to Jest/Vitest** is common, not a religious war.",
+    "links": [
+      {
+        "label": "Jest: Mock functions",
+        "href": "https://jestjs.io/docs/mock-functions"
+      }
+    ]
+  },
+  {
+    "id": "react-101",
+    "question": "Can you give a simple example of a Jest test case?",
+    "difficulty": "beginner",
+    "category": "testing",
+    "tags": [
+      "jest",
+      "example",
+      "unit-test"
+    ],
+    "answer": "A Jest file uses **`test` (or `it`)** and **`expect`**. The runner executes each test function and prints **pass/fail**. For React, you **render** a component in **jsdom** and **assert the DOM** with **Testing Library** (preferred) or a basic snapshot with **react-test-renderer**.\n\nKeep tests **one behavior per `it`**, use **accessibility role queries** when possible, and **avoid** testing implementation details like internal state or private function names when you can assert the **output on screen** instead.",
+    "examples": [
+      {
+        "title": "Jest + RTL",
+        "language": "tsx",
+        "code": "import { render, screen } from '@testing-library/react';\nimport userEvent from '@testing-library/user-event';\nimport { Counter } from './Counter';\n\ntest('increments on click', async () => {\n  const u = userEvent.setup();\n  render(<Counter />);\n  await u.click(screen.getByRole('button', { name: /more/i }));\n  expect(screen.getByText('1')).toBeInTheDocument();\n});\n",
+        "explanation": "User-event simulates a real user path; the assertion reads visible text or roles."
+      }
+    ],
+    "tip": "Show you know **user-event** over raw `click` in serious apps; it is the modern default in RTL examples.",
+    "links": [
+      {
+        "label": "Jest: Expect",
+        "href": "https://jestjs.io/docs/expect"
+      }
+    ]
+  },
+  {
+    "id": "react-102",
+    "question": "What is Flux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "flux",
+      "unidirectional",
+      "facebook"
+    ],
+    "answer": "**Flux** is an **architectural pattern** (popularized with React) for **unidirectional data flow** to avoid the tangled two-way **MV** patterns. It centers on a **Dispatcher**, **actions**, and **stores** that emit change events so **views re-render in a clear direction**.\n\n**Redux** is a **simplified** implementation of the **Flux** ideas, but the interview word **Flux** is the **conceptual** umbrella (dispatcher + stores) rather than a specific npm name today. Many new apps use **context**, **Zustand**, or **Server Components** for parts of the problem instead of a classic Flux app.",
+    "examples": [
+      {
+        "title": "Action shape (toy idea)",
+        "language": "ts",
+        "code": "type Action = { type: 'ADD_TODO'; text: string };\n// Stores listen and update; views subscribe.\n",
+        "explanation": "In Flux the dispatcher fans actions out; stores keep domain state."
+      }
+    ],
+    "tip": "Contrast with **MVC** tangling; in Flux **data flows in one main loop**.",
+    "links": [
+      {
+        "label": "Redux: History (Flux family)",
+        "href": "https://redux.js.org/tutorials/essentials/part-1-overview-concepts"
+      }
+    ]
+  },
+  {
+    "id": "react-103",
+    "question": "What is Redux?",
+    "difficulty": "beginner",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "store",
+      "reducer"
+    ],
+    "answer": "**Redux** is a small **state container** with **one global store** that updates through **pure `reducer` functions** in response to **plain action objects**. The store is **predictable, serializable, and testable** and pairs with **react-redux** to wire React components to slices of state and dispatchers.\n\nNew codebases usually adopt **Redux Toolkit** (`@reduxjs/toolkit`) to reduce boilerplate, keep reducers in **`createSlice`**, and use **`configureStore`**. The interview answer should still name **the three principles: single state tree, actions as plain objects, and pure reducers**.",
+    "examples": [
+      {
+        "title": "createSlice sketch",
+        "language": "ts",
+        "code": "import { createSlice, configureStore } from '@reduxjs/toolkit';\n\nconst counter = createSlice({\n  name: 'counter',\n  initialState: 0,\n  reducers: { inc: s => s + 1 },\n});\n\nexport const store = configureStore({ reducer: { c: counter.reducer } });\n",
+        "explanation": "RTK is the on-ramp; classic `createStore` is legacy teaching material today."
+      }
+    ],
+    "tip": "Say you reach for **RTK** first; the mental model in interviews is the same as classic Redux.",
+    "links": [
+      {
+        "label": "Redux: Getting started",
+        "href": "https://redux.js.org/introduction/getting-started"
+      }
+    ]
+  },
+  {
+    "id": "react-104",
+    "question": "What are the core principles of Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "principles",
+      "single-source"
+    ],
+    "answer": "1) **Single source of truth:** one **object tree** in a single `store` makes debugging and devtools replay possible.\n\n2) **State is read-only** except through **emitted action objects** that describe *what* happened, not *how* to change references by surprise.\n\n3) **Reducers are pure functions** of `(state, action) => newState` with **no side effects** in the reducer body.\n\nMiddleware handles **I/O, logging, and async** so reducers stay **serializable, replayable, and testable**.",
+    "examples": [
+      {
+        "title": "Why pure reducer",
+        "language": "ts",
+        "code": "// Bad: side effect inside reducer (do not do this)\n// function r(state, a) { fetch('/x'); return state; }\n\n// Good: return new object/array immutably\n",
+        "explanation": "Side effects belong in middleware, listeners, thunks, or query layers."
+      }
+    ],
+    "tip": "Name **devtool time travel** and **replay of actions** as why purity matters in practice.",
+    "links": [
+      {
+        "label": "Redux: Three principles",
+        "href": "https://redux.js.org/understanding/thinking-in-redux/three-principles"
+      }
+    ]
+  },
+  {
+    "id": "react-105",
+    "question": "What are the downsides of Redux compared to Flux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "flux",
+      "tradeoffs"
+    ],
+    "answer": "**Redux** keeps **one** store, which is simple for tooling but can become a **large tree** to partition carefully. **Classic Flux** allowed **multiple stores** in some apps, which could isolate domains but was **harder to reason about** across teams.\n\n**Redux** also encourages **a lot of ceremony** in older hand-written patterns, though **RTK** and **slices** fix much of that. Both patterns can be **overkill** for small UIs that only need `useState`+`useContext` or a tiny global store (Zustand, Jotai, etc.).\n\n**Net:** Redux is **simpler in rules** (one source of truth) but **bigger in scale**; Flux as a *family* is more flexible, yet **inconsistent** across codebases if many stores differ.",
+    "examples": [
+      {
+        "title": "When not to add Redux",
+        "language": "text",
+        "code": "Local form drafts and one-off modals are often `useState` in the nearest parent until shared needs appear.",
+        "explanation": "Shows you avoid global store bloat in interviews."
+      }
+    ],
+    "tip": "Be honest: **not every** React screen needs a global app store.",
+    "links": [
+      {
+        "label": "Redux: When should I use Redux",
+        "href": "https://redux.js.org/faq/general#when-should-i-use-redux"
+      }
+    ]
+  },
+  {
+    "id": "react-106",
+    "question": "What is the difference between mapStateToProps() and mapDispatchToProps()?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "react-redux",
+      "connect",
+      "props"
+    ],
+    "answer": "In **`connect()` from react-redux (classic API)**, **`mapStateToProps` selects slices** of the Redux store to **inject as component props** so React re-renders when those slices change, while **`mapDispatchToProps` wires action creators (or `dispatch` calls)** to **callback props** so the UI can dispatch without importing `useDispatch` (hooks were not available when this pattern was primary).\n\n- **`mapStateToProps`**: `state => { visible todos }` and optionally `(state, ownProps)`.\n- **`mapDispatchToProps`**: object shorthand `{ increment }` or function form `(dispatch, ownProps) => bound`.\n\n**Modern code** prefers **`useSelector` and `useDispatch` hooks**; `connect` remains in many legacy class components.",
+    "examples": [
+      {
+        "title": "Object shorthand of mapDispatch (idea)",
+        "language": "ts",
+        "code": "import { addTodo } from './actions';\n// const mapD = { addTodo };\n// same as { addTodo: (...a) => dispatch(addTodo(...a)) } with bindActionCreators\n",
+        "explanation": "The object form calls `bindActionCreators` under the hood in connect."
+      }
+    ],
+    "tip": "Always mention **`ownProps`** in both mappers and how you avoid heavy selectors without **reselect**.",
+    "links": [
+      {
+        "label": "useSelector: React Redux",
+        "href": "https://react-redux.js.org/api/hooks#useselector"
+      }
+    ]
+  },
+  {
+    "id": "react-107",
+    "question": "Can you dispatch an action in a reducer?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "reducer",
+      "purity"
+    ],
+    "answer": "**You should not.** The **reducer** must be **synchronous, pure, and free of side effects** like `dispatch` calls, network, timers, or randomness. A reducer only **returns the next state** for the given `action` type.\n\nFiring a **cascade of actions** from inside a reducer would **break** **DevTools** replay, **time travel**, and **testing**, and can cause **infinite** update loops. Instead, use **listener middleware, thunks, sagas, RTK Query, or a separate effect layer** to coordinate multiple updates.\n\nIf you need a **chained** update, the usual pattern is **one reducer** handling a single action, or a **thunk** dispatching a sequence, not reducers calling each other through `dispatch` directly.",
+    "examples": [
+      {
+        "title": "What to do instead",
+        "language": "ts",
+        "code": "// inside createAsyncThunk (RTK) you may dispatch other actions; not inside a slice reducer's case function.\n",
+        "explanation": "Side-effectful orchestration belongs outside pure reducers."
+      }
+    ],
+    "tip": "A crisp interview line: **reducers are pure; dispatch is a side effect** even if the API looks tempting.",
+    "links": [
+      {
+        "label": "Redux: Reducers are pure",
+        "href": "https://redux.js.org/understanding/thinking-in-redux/three-principles"
+      }
+    ]
+  },
+  {
+    "id": "react-108",
+    "question": "How do you access the Redux store outside a component?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "getstate",
+      "modules"
+    ],
+    "answer": "Import the **singleton store** (from where you `configureStore`) and call **`store.getState()`** or **`store.dispatch`**. In RTK, export **`store` from your store file** and use it in **rare** places like **API client interceptors** (token refresh) or **some** legacy code.\n\nAnother pattern: **`getStore` accessor** in a small module, set once at app bootstrap, so tests can inject a test store. Avoid abusing this for general UI updates\u2014**components** should go through **hooks** or `connect` so they **re-render** when the store changes.\n\n**Server-side** rendering and **Next.js** may build **a store per request**; never use a true global in those environments unless it is per-request instance.",
+    "examples": [
+      {
+        "title": "getState in interceptor",
+        "language": "ts",
+        "code": "import { store } from './store';\n\n// axios.interceptors.response.use((r) => r, (err) => { const t = store.getState().auth.token; /* refresh */ });\n",
+        "explanation": "Only use direct access where React lifecycle is not available."
+      }
+    ],
+    "tip": "Emphasize **per-request** store in apps that do SSR, not a leaked singleton across users.",
+    "links": [
+      {
+        "label": "Redux: Store API",
+        "href": "https://redux.js.org/api/store#getstate"
+      }
+    ]
+  },
+  {
+    "id": "react-109",
+    "question": "What are the drawbacks of the MVW pattern?",
+    "difficulty": "intermediate",
+    "category": "architecture",
+    "tags": [
+      "mvw",
+      "angularjs",
+      "two-way"
+    ],
+    "answer": "**Model-View-Whatever** (e.g. **AngularJS**'s `ng-model` style) leans on **two-way** bindings that can make it **unclear** where a change was initiated when **views** can write **models** and models push **back** in several directions.\n\nThat often leads to **harder debugging, circular updates, and spurious watchers** at scale, compared with a **unidirectional** flow. Modern front-end leans to **unidirectional** patterns (Redux, Flux) or **explicit data libraries** and **reactive** pipelines with **clear** ownership.\n\n**Drawbacks in interviews:** **implicit coupling, harder reasoning about large screens, and more surprise updates**; pair with a note that some MVW is fine in **small** apps.",
+    "examples": [
+      {
+        "title": "Unidirectional contrast",
+        "language": "text",
+        "code": "Action -> store -> view is easier to log than A changed B, B changed C, C rewrites A in tight loops.",
+        "explanation": "Gives a mental picture the interviewer will recognize."
+      }
+    ],
+    "tip": "Do not **bash** a framework; describe **scales and complexity** where unidirectional help matters.",
+    "links": [
+      {
+        "label": "React: sharing state (concept)",
+        "href": "https://react.dev/learn/managing-state"
+      }
+    ]
+  },
+  {
+    "id": "react-110",
+    "question": "Are there any similarities between Redux and RxJS?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "rxjs",
+      "streams"
+    ],
+    "answer": "Both can model **change over time** and encourage **composable, explicit flows**. **RxJS** is a full **reactive** library of **observables**; **Redux** is a **synchronous, discrete event/reduce** loop with a **single store** snapshot.\n\n**redux-observable** and similar bridges **turn actions into streams** and let you `mergeMap` side effects, which feels **very Rx**. Also **thunks** or **sagas** can look **pipeline-like** like operators, but they are not the same abstraction.\n\n**Net:** you might **embed** **Rx** *inside* middleware or use **Epics**; Redux itself is not an observable, yet **data flow** thinking overlaps.",
+    "examples": [
+      {
+        "title": "epic (idea)",
+        "language": "ts",
+        "code": "// ofType('PING') -> mapTo({type:'PONG'}) in redux-observable",
+        "explanation": "This is a taste of the overlap without deep Rx interview drilling."
+      }
+    ],
+    "tip": "If the interviewer is deep on **RxJS**, you can name **epics, subjects**; otherwise keep it high level.",
+    "links": [
+      {
+        "label": "redux-observable",
+        "href": "https://redux-observable.js.org/"
+      }
+    ]
+  },
+  {
+    "id": "react-111",
+    "question": "How do you reset state in Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "reset",
+      "root"
+    ],
+    "answer": "Common options:\n\n- **Root reducer** handles a `RESET` action and returns a **new initial** state object (or nested slices reset in combined reducers with **slice reducers** checking that action if you have cross-slice control).\n- **RTK** users often **`configureStore` with a root reducer** that delegates to a **`combineReducers`** result, then a **dedicated** action toggles a **rebuilt** `initial` reference (careful: **slices** may keep private initial state; consider **`extraReducers` listening to `RESET`**).\n- **Persist** libraries: **Purge and rehydrate** when logging out, not `window.location.reload` (unless a hard reset is acceptable for security).\n\nTesting often calls **`store.dispatch({ type: 'RESET' })` after a scenario** with a test store",
+    "examples": [
+      {
+        "title": "Root reset sketch",
+        "language": "ts",
+        "code": "function root(s = initial, a) {\n  if (a.type === 'LOGOUT/RESET') return initial; // re-run combineReducers on fresh\n  // else combined flow\n  return appReducer(s, a);\n}\n",
+        "explanation": "The exact form depends on whether you have RTK or classic combineReducers."
+      }
+    ],
+    "tip": "Mention you **wipe** sensitive data on logout, not just UI route changes.",
+    "links": [
+      {
+        "label": "Redux FAQ: how to implement logout",
+        "href": "https://redux.js.org/usage"
+      }
+    ]
+  },
+  {
+    "id": "react-112",
+    "question": "What is the difference between React Context and React Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "context",
+      "react-redux",
+      "performance"
+    ],
+    "answer": "**Context** is a **built-in React** mechanism to pass a **value** through the tree without prop drilling, while **Redux** is a **dedicated** global store and pattern with **middleware, time travel, and devtools** and **connect/useSelector** subscription optimizations.\n\n**Context** re-renders **all** consumers of that `Provider` when the **value identity** changes, unless you **split** contexts and **memo** carefully. **Redux** uses a **refined subscription** model: components **only** re-run when the **selected state slice** changes, using **memoized selectors** and `useSelector` with equality.\n\nUse **Context** for **stable** or **rare** updates (theme, locale, a narrow API client), and **Redux/RTK** for **frequent, complex, cross-cutting** app state, or a **query cache** (RTK Query) for server state.",
+    "examples": [
+      {
+        "title": "useSelector vs useContext (idea)",
+        "language": "tsx",
+        "code": "// useContext(ThemeContext) re-renders on any new object reference from Provider\n// useSelector(s => s.ui.theme) re-renders when `theme` changes per equality fn\n",
+        "explanation": "In interviews, the performance difference is a classic answer."
+      }
+    ],
+    "tip": "Avoid putting **a huge, ever-shifting object in one Context** at app root; it is a common perf foot-gun.",
+    "links": [
+      {
+        "label": "React: Context",
+        "href": "https://react.dev/reference/react/createContext"
+      }
+    ]
+  },
+  {
+    "id": "react-113",
+    "question": "Why are Redux state functions called reducers?",
+    "difficulty": "beginner",
+    "category": "state-management",
+    "tags": [
+      "reducer",
+      "fold",
+      "pure"
+    ],
+    "answer": "The name comes from **Array.prototype.reduce (fold)**: a **reducer** is a function that **combines** an **accumulator** (previous `state`) with the current **value** (here, an `action`) to get the next accumulator **deterministically**.\n\nA Redux reducer is exactly that: **`state = f(state, action)`** for each dispatched action, producing the **new state snapshot**. The **purity** matches **functional** fold/reduce in FP literature.",
+    "examples": [
+      {
+        "title": "Array reduce analogy",
+        "language": "ts",
+        "code": "const s = [1,2,3].reduce((a, n) => a + n, 0); // 6, fold stepwise\n",
+        "explanation": "The mental model: repeated fold over an action log (conceptually) though Redux applies one at a time live."
+      }
+    ],
+    "tip": "Mention the **reducer** name also appears in `Array.reduce` in MDN, which is expected in interviews.",
+    "links": [
+      {
+        "label": "MDN: Array.prototype.reduce",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce"
+      }
+    ]
+  },
+  {
+    "id": "react-114",
+    "question": "How do you make an AJAX request in Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "thunk",
+      "async"
+    ],
+    "answer": "You do **not** do raw XHR in a **reducer**. Instead, use **asynchronous** layers:\n\n- **Redux Thunk:** `() => (dispatch) => { fetch... then dispatch }`.\n- **RTK `createAsyncThunk`** or `createListenerMiddleware` in modern code.\n- **RTK Query** for HTTP caching, invalidation, and dedupe.\n- **Sagas** (generator-based) in older or complex orchestration.\n\nThe **thunk (or side-effect middleware)** **dispatches** **pending/fulfilled/rejected** actions; **reducers** only update for those **plain** actions, keeping async **out of** the pure function.",
+    "examples": [
+      {
+        "title": "createAsyncThunk shape",
+        "language": "ts",
+        "code": "import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';\n\ntype User = { id: string };\n\nexport const loadUser = createAsyncThunk('user/load', (id: string) =>\n  fetch(`/api/u/${id}`).then((r) => r.json() as Promise<User>)\n);\n\nconst userSlice = createSlice({\n  name: 'user',\n  initialState: { data: null as User | null, status: 'idle' as 'idle' | 'loading' | 'succeeded' },\n  reducers: {},\n  extraReducers: b =>\n    b\n      .addCase(loadUser.pending, s => { s.status = 'loading'; })\n      .addCase(loadUser.fulfilled, (s, a) => {\n        s.status = 'succeeded';\n        s.data = a.payload;\n      }),\n});\n",
+        "explanation": "Simplified sketch; the point is: async in thunk, not reducer."
+      }
+    ],
+    "tip": "If the app is mostly server data, mention **RTK Query** to avoid hand-written fetch boilerplate.",
+    "links": [
+      {
+        "label": "Redux Toolkit: createAsyncThunk",
+        "href": "https://redux.js.org/usage/usage-with-typescript"
+      }
+    ]
+  },
+  {
+    "id": "react-115",
+    "question": "Should you keep all component states in the Redux store?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "local-state",
+      "duplication"
+    ],
+    "answer": "**No.** **Local, ephemeral** UI (open/closed, input scratch text before submit, focus, hover) usually belongs in **`useState`**, **`useReducer`**, or a **form library** to avoid noisy global actions. **Server cache** is often a better fit for **RTK Query**, **TanStack Query**, or **SWR** than copying everything into a client store.\n\nPut **in Redux (or a global model)** the state that is **read by many distant components**, that must be **replayed or debugged**, or is **the user's canonical client session** for the app. Otherwise you **bloat the store, slow re-renders, and complicate** tests.\n\nA nice rule: **if losing it on full refresh is fine** and it is not shared, it is a **strong signal** for local state first.",
+    "examples": [
+      {
+        "title": "example split",
+        "language": "text",
+        "code": "Modal 'open' local; authenticated user + cart in global / query cache.\n",
+        "explanation": "Helps the interviewer see judgment, not dogma."
+      }
+    ],
+    "tip": "Mention that **form drafts** in Redux-Form/RTK is older style; RHF+server cache is a modern split.",
+    "links": [
+      {
+        "label": "Redux: Organizing state",
+        "href": "https://redux.js.org/style-guide/"
+      }
+    ]
+  },
+  {
+    "id": "react-116",
+    "question": "What is the proper way to access the Redux store?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "useSelector",
+      "react-redux",
+      "connect"
+    ],
+    "answer": "**From React:** **`useSelector` with a selector** (optionally from **reselect**) or the legacy **`connect` mapState** path. The **Provider** at the app root is required so hooks resolve the store. Avoid reading **`store` directly** in components; you lose **subscription and batched** updates the hooks give you.\n\n**Outside React:** the exported **`store` reference** in narrow cases (as noted earlier). In tests, you may also **`render` with a custom** **`<Provider store={s}>`**.\n\n**TypeScript:** add **`useAppDispatch` and `useAppSelector` wrapper types** to keep dispatch/enhanced store typing tight.",
+    "examples": [
+      {
+        "title": "typed hooks",
+        "language": "ts",
+        "code": "import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';\nimport { AppDispatch, RootState } from './store';\n\nexport const useAppDispatch: () => AppDispatch = useDispatch;\nexport const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;\n",
+        "explanation": "Redux docs show this as the default TS pattern in template apps."
+      }
+    ],
+    "tip": "Repeat: **useSelector, not** `getState` in most components, for reactivity.",
+    "links": [
+      {
+        "label": "useSelector: React Redux",
+        "href": "https://react-redux.js.org/api/hooks#useselector"
+      }
+    ]
+  },
+  {
+    "id": "react-117",
+    "question": "What is the difference between a component and a container in React Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "container",
+      "presentational",
+      "separation"
+    ],
+    "answer": "Historically, **presentational** (dumb) **components** received **data and callbacks** via **props** and were easy to test visually, while **container** (smart) **components** used **`connect`** to select state and bind dispatch to props.\n\n**Hooks** blurred the line: you often have **a single function component** that both **uses `useSelector`** and **renders markup**. The **separation of concerns** still helps when you colocate a **view-only** subcomponent, but the **naming** \"container\" is less used today.\n\nIn interviews, describe **smart vs presentational** as a **separation of Redux wiring and UI**, not as two file types you must have.",
+    "examples": [
+      {
+        "title": "Refactor to dumb child",
+        "language": "tsx",
+        "code": "function CountView({ n, onInc }: { n: number; onInc: () => void }) {\n  return <button onClick={onInc}>{n}</button>;\n}\n\nexport function CountBox() {\n  const n = useAppSelector(s => s.c.n);\n  const d = useAppDispatch();\n  return <CountView n={n} onInc={() => d(inc())} />;\n}\n",
+        "explanation": "The inner component stays pure and is easy to snapshot-test."
+      }
+    ],
+    "tip": "Be modern: the **useSelector+props** factoring still carries the old container idea.",
+    "links": [
+      {
+        "label": "Redux: Usage with React: hooks",
+        "href": "https://react-redux.js.org/api/hooks"
+      }
+    ]
+  },
+  {
+    "id": "react-118",
+    "question": "What is the purpose of constants in Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "actions",
+      "constants",
+      "typos"
+    ],
+    "answer": "**String literal action `type` fields** used to be easy to **mis-spell** across files, so teams centralized **`const ADD_TODO = 'ADD_TODO' as const`** in a module and imported it everywhere, letting **TypeScript and editors** help.\n\n**Redux Toolkit's `createSlice` auto-generates** `slice.actions.addTodo` with a stable string type, so **raw string constants** are **less** central than in the **pre-RTK** era. The purpose remains: **one canonical type string** and **exhaustive** handler checks, sometimes with a **`type Action = ...` union** for reducers in TS.\n\n**Net:** **avoid drifts in action names and enable tooling**; RTK just moved where that name lives (inside the slice).",
+    "examples": [
+      {
+        "title": "as const module",
+        "language": "ts",
+        "code": "export const T = { add: 'todos/add' as const, del: 'todos/del' as const };\n",
+        "explanation": "A manual pattern; RTK slices emit similar strings automatically under the hood."
+      }
+    ],
+    "tip": "If the interviewer is legacy-focused, they want **`ActionTypes` files**; if modern, you mention **createSlice**.",
+    "links": [
+      {
+        "label": "Redux Toolkit: createSlice",
+        "href": "https://redux.js.org/usage"
+      }
+    ]
+  },
+  {
+    "id": "react-119",
+    "question": "What are the different ways to write mapDispatchToProps()?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "mapdispatch",
+      "connect",
+      "bindactioncreators"
+    ],
+    "answer": "- **`Object` form:** pass **`{ doThing: doThingActionCreator }`**, and **react-redux** uses **`bindActionCreators`**.\n\n- **Function** form: **`(dispatch) => ({ doThing: () => dispatch(doit()) })`** for more control, including **closures** and **`ownProps`**: **`(dispatch, ownProps) =>`**.\n\n- **`null` or omitted:** you only get `dispatch` manually if you return nothing from mapDispatch, depending on version\u2014usually you **intentionally** provide one of the first two to inject bound creators.\n\n**Hooks** replace this with **`const dispatch = useDispatch()` and `dispatch(doit())` or** bound helpers from slice actions.",
+    "examples": [
+      {
+        "title": "Function form (idea)",
+        "language": "ts",
+        "code": "const mapD = (d: AppDispatch) => ({\n  onSave: (id: string) => d(saveRequested(id)),\n});\n",
+        "explanation": "Gives a taste of the flexibility when you need `ownProps` in older code."
+      }
+    ],
+    "tip": "Name **`bindActionCreators`** for completeness in legacy `connect` interviews.",
+    "links": [
+      {
+        "label": "bindActionCreators: Redux",
+        "href": "https://redux.js.org/api/bindactioncreators"
+      }
+    ]
+  },
+  {
+    "id": "react-120",
+    "question": "What is the use of the ownProps parameter in mapStateToProps() and mapDispatchToProps()?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "ownprops",
+      "connect",
+      "routing"
+    ],
+    "answer": "**`ownProps` are the same props the **wrapped** component would receive from its **parent** (for example a router **`match.params.id`** in older HOCs). Mappers that take **`(state, ownProps)`** let you **select** store fields **in terms of a route param** or a **parent prop** without the child passing them twice.\n\nA classic example: **`mapState: (s, p) => ({ item: s.items[p.match.params.id] })`** in v4 routing.\n\nWith **hooks + TypeScript** you can **read params with `useParams` directly** in the component and `useSelector` in the same function, so explicit `ownProps` is rarer, but the **interview** still checks that you know **per-instance selection** is sometimes needed.\n\nYou must **return referentially stable** objects with care, or you may cause **extra re-renders** (use memoized factory selectors, `reselect`).",
+    "examples": [
+      {
+        "title": "reselect (mention)",
+        "language": "ts",
+        "code": "import { createSelector } from '@reduxjs/toolkit';\n// selectItemById = createSelector([(s) => s.items, (_, id: string) => id], (m, id) => m[id]);\n",
+        "explanation": "Combining `ownProps` with `createSelector` is a performance-safe pattern in connected components."
+      }
+    ],
+    "tip": "When using legacy **connect** with `ownProps`, watch **selector re-creates** per render; factory selectors are the fix.",
+    "links": [
+      {
+        "label": "reselect: createSelector",
+        "href": "https://redux.js.org/usage/deriving-data-selectors"
+      }
+    ]
+  },
+  {
+    "id": "react-121",
+    "question": "How do you structure Redux top-level directories?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "structure",
+      "ducks",
+      "rtk"
+    ],
+    "answer": "**Feature folders / slices (ducks)**: one folder per feature with `slice.ts`, `selectors`, and maybe **components** (colocated) is the **current Redux style guide** default with **RTK**. Keep **`store.ts`**, **typed hooks**, and **root reducer** at `app/` or `state/`.\n\nAlternatives in older codebases: **separate** `reducers/`, `actions/`, and `types/`; good for very large orgs, but it **scatters** a feature. **Colocate tests** and **mocks** next to the slice.\n\n**Do not** over-nest; **3\u20135 top-level** folders under `src` are easier to scan than 12 tiny buckets. When using **Next.js**, **server and client** modules must be separated to avoid **accidentally importing a Node-only** module into a client bundle, which affects how you place **store** files.",
+    "examples": [
+      {
+        "title": "Feature folder sketch",
+        "language": "text",
+        "code": "src/features/cart { cartSlice.ts, cartSelectors.ts, CartPanel.tsx, cartAPI.ts }\n",
+        "explanation": "A slice-first layout matches the official style guide in spirit."
+      }
+    ],
+    "tip": "Mention the **Redux style guide** by name: **feature colocation, avoid barrel-file cycles**.",
+    "links": [
+      {
+        "label": "Redux: Style guide",
+        "href": "https://redux.js.org/style-guide/"
+      }
+    ]
+  },
+  {
+    "id": "react-122",
+    "question": "What is Redux Saga?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux-saga",
+      "generators",
+      "side-effects"
+    ],
+    "answer": "**Redux-Saga** is a **side-effect** middleware for Redux that uses **ES generator functions** to **describe** async flows as a **saga** that can **wait on** actions with `take`, and **put** new ones with `put`. It is **imperative-looking but structured** in `yield` steps.\n\nYou get **cancellable** tasks, **concurrency patterns** (`takeLatest` vs `takeEvery`, `race`, `debounce` helpers) and a **separate** place from components for **I/O and orchestration**, compared to **thunk**'s `async` style.\n\n**Tradeoffs:** some teams find **generators and testing sagas** heavier than `async/await` thunks, while **large orchestrations** (multi-step wizards) can be clearer in sagas. **Adoption in new apps** is mixed with **RTK Query** and **thunks** taking common paths.",
+    "examples": [
+      {
+        "title": "put/take (names only)",
+        "language": "ts",
+        "code": "import { put, takeEvery } from 'redux-saga/effects';\n// function* watch() { yield takeEvery('PING', function* p() { yield put({ type: 'PONG' }); }); }\n",
+        "explanation": "The interview will often name **effect helpers**; exact imports vary by version."
+      }
+    ],
+    "tip": "Differentiate from **thunks**: **long-running watchers** are a **saga strength**; keep answers practical.",
+    "links": [
+      {
+        "label": "redux-saga: doc",
+        "href": "https://redux-saga.js.org/docs/introduction/GettingStarted"
+      }
+    ]
+  },
+  {
+    "id": "react-123",
+    "question": "What is the mental model of Redux Saga?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux-saga",
+      "generators",
+      "orchestration"
+    ],
+    "answer": "Think of a **saga** as a **process manager** in the background that **listens to an action stream** and **yields** **effects** (objects describing work) instead of doing it inline. The **middleware** executes those **effects** (I/O) and **resumes** the generator when the result arrives.\n\nMental model: **action in -> side effect** out as **another** action, while **reducers** stay **pure** for state shape. The **`yield*`-style** flow reads like **a script** of steps with **cancellable** points.\n\nCompare to a **thunk** where the **function returns a Promise**; in **saga**, the **interpreter** is always there between yields.",
+    "examples": [
+      {
+        "title": "Effect vs work",
+        "language": "text",
+        "code": "`put` and `call` are **descriptions**; middleware performs them, keeping reducers test-pure in spirit.",
+        "explanation": "A crisp distinction the interviewer can nod at."
+      }
+    ],
+    "tip": "You can mention **'interpreter'** and **'effect description'**; it signals depth without 10 minutes of code.",
+    "links": [
+      {
+        "label": "redux-saga: beginner tutorial",
+        "href": "https://redux-saga.js.org/docs/introduction/BeginnerTutorial"
+      }
+    ]
+  },
+  {
+    "id": "react-124",
+    "question": "What are the differences between call and put in Redux Saga?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "call",
+      "put",
+      "effects"
+    ],
+    "answer": "**`call` runs (or **describes** running) a function** or a **promise-returning** call and **suspends the saga** until the result returns. It is the safe way to **call APIs** and keep those invocations **testable and mockable** in saga tests (you can `expect(gen.next().value).toEqual(call(fn)))` in older patterns).\n\n**`put` dispatches an action to the store**; it is like **`dispatch`**, and can **fan out** follow-up work that reducers and other sagas can react to.\n\n**Rule of thumb**:** `call` = **do a thing, get a value**; `put` = **tell the app something happened** as the **Redux** action event stream. Both return **effect objects** to the **middleware** interpreter.",
+    "examples": [
+      {
+        "title": "api flow",
+        "language": "ts",
+        "code": "// const u = yield call(api.fetchUser, id); yield put(userLoaded(u));\n",
+        "explanation": "The sequence keeps async out of the reducer, actions explicit."
+      }
+    ],
+    "tip": "Clarify **`call` can wrap promises or sync functions**; `put` always targets the **Redux** dispatch pipeline.",
+    "links": [
+      {
+        "label": "Effect creators: call / put",
+        "href": "https://redux-saga.js.org/docs/api#callfn-args"
+      }
+    ]
+  },
+  {
+    "id": "react-125",
+    "question": "What is Redux Thunk?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux-thunk",
+      "async",
+      "middleware"
+    ],
+    "answer": "**Redux-Thunk** is the **default async middleware** in many Redux setups. It lets you **dispatch a function** instead of a plain action object, and that function receives `(dispatch, getState)` to **orchestrate** **multiple** sync dispatches, **async/await** calls, and **guards** before dispatching.\n\n**RTK** includes **thunk** support out of the box, and you still write `createAsyncThunk` which **builds** on the same model under the hood. **TypeScript** can type **`ThunkDispatch`**.\n\n**Contrast with saga:** a thunk is often **a single** async function with straightforward **Promise** logic; a saga can be a **long watcher** with more advanced concurrency, but the **cognitive** load differs across teams.\n\nThunks are **adequate** for most CRUD apps, especially with **error handling and conditional `dispatch`**.",
+    "examples": [
+      {
+        "title": "inline thunk (idea)",
+        "language": "ts",
+        "code": "const f = (id: string) => async (d: AppDispatch) => {\n  d(loading());\n  try {\n    const u = await api(id);\n    d(loaded(u));\n  } catch (e) {\n    d(failed(e));\n  }\n};\n",
+        "explanation": "Classic pattern before RTK's createAsyncThunk."
+      }
+    ],
+    "tip": "State **'thunk' means a function in dispatch**' for historical quiz questions.",
+    "links": [
+      {
+        "label": "Redux: Writing logic with thunks",
+        "href": "https://redux.js.org/usage/writing-logic-thunks"
+      }
+    ]
+  },
+  {
+    "id": "react-126",
+    "question": "What are the differences between Redux Saga and Redux Thunk?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "saga",
+      "thunk",
+      "compare"
+    ],
+    "answer": "**Sagas** use **generators and an effect model**; **thunks** use **async functions and dispatch**. Sagas are **strong** at **concurrency** (`takeLatest` vs `takeEvery` built-in) and **long-running** coordination; thunks are **simpler** and familiar to any dev who knows `async/await`.\n\n**Test story:** people either **mock** fetches in both, or in sagas they **assert yielded effects**; both have tradeoffs. **Bundle size and learning** curve favor thunks; **sagas** add **a framework** in your middleware.\n\n**Modern:** many apps **reduce** the need for either by using **RTK Query** for data fetching and a **thunk** only for the odd one-off, while **Sagas** remain in some large enterprise UIs and admin consoles.",
+    "examples": [
+      {
+        "title": "When saga wins",
+        "language": "text",
+        "code": "Cancellation of in-flight fetches and race conditions between rapid tab changes can be neater in sagas with `takeLatest`/`race`.",
+        "explanation": "A concrete differentiator, not a slogan."
+      }
+    ],
+    "tip": "Avoid saying one is *always* better; **show you pick by workflow complexity and team experience**.",
+    "links": [
+      {
+        "label": "When should I use a thunk vs saga? (StackOverflow pattern)",
+        "href": "https://redux.js.org/usage"
+      }
+    ]
+  },
+  {
+    "id": "react-127",
+    "question": "What is Redux DevTools?",
+    "difficulty": "beginner",
+    "category": "tooling",
+    "tags": [
+      "redux-devtools",
+      "browser",
+      "time-travel"
+    ],
+    "answer": "**Redux DevTools** is a **browser** extension and optional **local server** that **connects to your Redux `store`**, **logs actions**, and lets you **inspect state, diff changes, and jump through time** by replaying actions.\n\n`configureStore` with the **default** dev flag wires it in **development**; you can **serialize** and **filter** some noisy actions, and in production you usually **turn it off** for bundle and safety reasons.\n\n**RTK and RTK Query** work well with the same **devtools**; it is a **key reason** teams adopt Redux: **transparency in prod debugging** in controlled environments, or in **reproducible** support sessions when allowed.",
+    "examples": [
+      {
+        "title": "dev-only enable",
+        "language": "ts",
+        "code": "const store = configureStore({ reducer, devTools: process.env.NODE_ENV !== 'production' });\n",
+        "explanation": "Common guard to avoid shipping devtools in prod bundles."
+      }
+    ],
+    "tip": "Mention **action sanitization and max age** in huge apps; devtools can **freeze** if the state is enormous.",
+    "links": [
+      {
+        "label": "Redux DevTools Extension",
+        "href": "https://github.com/reduxjs/redux-devtools"
+      }
+    ]
+  },
+  {
+    "id": "react-128",
+    "question": "What are the features of Redux DevTools?",
+    "difficulty": "intermediate",
+    "category": "tooling",
+    "tags": [
+      "redux-devtools",
+      "time-travel",
+      "export"
+    ],
+    "answer": "Common features: **action log with timestamps, state inspection per action, time-travel to previous state, diffing**, **custom** action creators logging, and **import/export of action/state sessions** to share a bug in Slack.\n\n**Remote** (legacy setups) can stream **to a custom monitor**; most teams use the **Chrome** extension. **Lock-up** and **state size** are practical limits; for large state you **use selectors** in the view or **filter** displayed slices.\n\n**TypeScript** users benefit from **typed** actions when logging; **reselect** helps keep **view** of huge trees narrow.",
+    "examples": [
+      {
+        "title": "export session",
+        "language": "text",
+        "code": "Export JSON of actions + state to replay in another machine with the same reducer code to reproduce a support ticket.",
+        "explanation": "A selling point in enterprise support workflows."
+      }
+    ],
+    "tip": "Connect **replay** to **pure reducers and serializable** actions, which is non-optional for strong devtools use.",
+    "links": [
+      {
+        "label": "Redux DevTools: features",
+        "href": "https://github.com/reduxjs/redux-devtools/blob/main/docs/Walkthrough.md"
+      }
+    ]
+  },
+  {
+    "id": "react-129",
+    "question": "What are Redux selectors and why should you use them?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "reselect",
+      "selectors",
+      "derived"
+    ],
+    "answer": "**Selectors** are functions **`(state) => data`** that **derive** view-model fields from the **raw store** (filter, join, map). You should use them to **encapsulate** the shape of `state`, avoid **recomputing** heavy joins on every render, and **test** the derivation separately from the components.\n\n**`createSelector`** (Reselect) **memoizes** by **input** references so the output object stays referentially **stable** when inputs have not changed, which helps **`React.memo` and `useSelector` equality checks**.\n\n**RTK** includes **reselect** so you can build slice-local selectors. **Over-selecting in components** (big inline lambdas) can cause more **re-renders** than you expect without memoization.",
+    "examples": [
+      {
+        "title": "createSelector",
+        "language": "ts",
+        "code": "import { createSelector } from '@reduxjs/toolkit';\nconst selectC = (s: Root) => s.cart;\nconst selectTotal = createSelector([selectC], c =>\n  c.items.reduce((n, l) => n + l.qty * l.price, 0)\n);\n",
+        "explanation": "Only recomputes when `c` identity changes, not when unrelated state updates happen."
+      }
+    ],
+    "tip": "Say **'derived data in selectors'** to echo React docs about keeping render cheap and dumb.",
+    "links": [
+      {
+        "label": "Reselect: createSelector",
+        "href": "https://redux.js.org/usage/deriving-data-selectors"
+      }
+    ]
+  },
+  {
+    "id": "react-130",
+    "question": "What is Redux Form?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "redux-form",
+      "legacy",
+      "field"
+    ],
+    "answer": "**Redux-Form** is a **HOC/field** library that stores each field's value and meta **in Redux state** and synchronizes with inputs. In **older** codebases, it integrated tightly with `react-redux` and gave **synchronous and async** validation, **touched/visited** flags, and `change` **actions** for every keystroke in some models.\n\n**Today** the project is **maintenance mode**; new apps usually choose **React Hook Form** or **Formik** with local state (or a dedicated server schema layer), because **every keystroke to Redux** can be **noisy and heavy**. **RTK** does not push you to Redux-Form for new apps.\n\n**Interview:** explain **pro** (all form state in one time-traveling store) vs **con** (perf and boilerplate) vs **RHF** local models.",
+    "examples": [
+      {
+        "title": "RHF note",
+        "language": "tsx",
+        "code": "// Modern default pattern\n// const { register, handleSubmit } = useForm<Schema>();\n",
+        "explanation": "Shows you are up to date beyond legacy Redux-Form years."
+      }
+    ],
+    "tip": "If a job **still** uses it, you say you are comfortable reading **`reduxForm` HOCs**; not that you would pick it for a green field.",
+    "links": [
+      {
+        "label": "redux-form: repo status",
+        "href": "https://github.com/redux-form/redux-form"
+      }
+    ]
+  },
+  {
+    "id": "react-131",
+    "question": "What are the main features of Redux Form?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "redux-form",
+      "validation",
+      "fields"
+    ],
+    "answer": "Headline **features:** **`Field` / `FieldArray`**, **sync and async** validation functions, **initialValues**, **`enableReinitialize`**, **normalizing** and **pluggable** `reducer` for form state per form key, and **action creators** to imperatively `change` or `autofill` a field from sagas or thunks.\n\n**Meta** fields like **`pristine`**, `dirty`, **submitting**, and **error** on fields support UX feedback. The cost is a **sizable** chunk of the store for large forms, and a **lot** of re-renders if you do not `shouldValidate` and **memo** carefully in older versions.\n\nIn modern work you map these needs to **RHF** + **Zod** + **isDirty/touched** props instead, unless you are maintaining a legacy app.",
+    "examples": [
+      {
+        "title": "FieldArray (concept)",
+        "language": "text",
+        "code": "Dynamic list rows in a form with per-row validation, stored as nested form state in Redux-Form's slice of the big tree.\n",
+        "explanation": "A classic interview question about *why* companies moved to local form state in component trees."
+      }
+    ],
+    "tip": "Be ready to name **`initialValues` vs reinitialize** and stale server loads from earlier questions in this set.",
+    "links": [
+      {
+        "label": "Redux Form: Field (archive)",
+        "href": "https://redux.js.org/introduction/getting-started"
+      }
+    ]
+  },
+  {
+    "id": "react-132",
+    "question": "How do you add multiple middlewares to Redux?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "middleware",
+      "store",
+      "applymiddleware"
+    ],
+    "answer": "Pass an **array of middlewares** to **`configureStore` ({ middleware: getDefault => ...})`** in RTK, which **composes** them with **`applyMiddleware`** in the right order. Historically, **`createStore` + `applyMiddleware(thunk, logger, saga)`** did the same.\n\n**Order** matters: **thunk** is usually **before** action-transforming or logging, **sagas** are a single middleware, and **immutability checkers** are dev-only. **Preloaded state** and **enhancers** are separate; still pass **a composed `composeWithDevTools(applyMiddleware(...))` enhancer in classic APIs**.\n\n**RTK** `getDefaultMiddleware` **includes thunk** and a **dev immutability** check in dev; you **customize** with **callbacks** that **prepend/append** and **turn off** checks as needed in tests.",
+    "examples": [
+      {
+        "title": "getDefaultMiddleware customize",
+        "language": "ts",
+        "code": "configureStore({\n  reducer,\n  middleware: (g) =>\n    g().concat(myApi.middleware /* RTK Q */, logger as const),\n});\n",
+        "explanation": "This is a typical RTK+Query setup pattern."
+      }
+    ],
+    "tip": "Name **synchronous vs async** ordering: a logger after thunk sees the **thunk** output actions too.",
+    "links": [
+      {
+        "label": "Redux: applyMiddleware",
+        "href": "https://redux.js.org/api/applymiddleware"
+      }
+    ]
+  },
+  {
+    "id": "react-133",
+    "question": "How do you set the initial state in Redux?",
+    "difficulty": "beginner",
+    "category": "state-management",
+    "tags": [
+      "initial-state",
+      "reducer",
+      "preloaded"
+    ],
+    "answer": "**Reducers** each export their **`initialState`** in **`createSlice`**, and **`configureStore` can take `preloadedState`** to **hydrate** the store from the server, storage, or a fixture in tests. The **reducer** `initialState` is the **default** if no preloaded is passed.\n\n**Classic** `createStore` took **`preloadedState` as the second** argument. **State rehydration** in SSR: **serialize the server snapshot** to JSON and `createStore` on the **client** with the same preloaded, **beware of Date** and **class** instances, only **plain** JSON-safe data in global serial flows.\n\n**Migration:** when the **schema** changes, use **a migration** step or **rehydrate a compatible** subset and **re-fetch** the rest, not a blind `localStorage` parse.",
+    "examples": [
+      {
+        "title": "preloaded with RTK",
+        "language": "ts",
+        "code": "const store = configureStore({ reducer, preloadedState: { user: { name: 'anon' } } });\n",
+        "explanation": "Tests often create tiny inline preloaded for scenario-specific stores."
+      }
+    ],
+    "tip": "Pair with **persistence** libraries that **version** the blob you load into `preloadedState`.",
+    "links": [
+      {
+        "label": "Redux: createStore (legacy)",
+        "href": "https://redux.js.org/api/createStore"
+      }
+    ]
+  },
+  {
+    "id": "react-134",
+    "question": "How is Relay different from Redux?",
+    "difficulty": "intermediate",
+    "category": "data-fetching",
+    "tags": [
+      "relay",
+      "graphql",
+      "redux"
+    ],
+    "answer": "**Relay** is a **GraphQL-** oriented **data framework** for **React** that **caches and normalizes** server data with **a compiler** that **pulls in fragments, variables, and types**. It is **tightly coupled to GraphQL** and **excellent** in large orgs on a **schema-first** model.\n\n**Redux** is a **client state** library **agnostic to transport**; you can put **anything** in the tree and fetch with ad hoc fetches, **thunks**, or **RTK Query** for **REST/GraphQL**.\n\n**Intersection:** you can have **Redux** for some UI session state and **Relay** for a **server cache**, but they solve **different** primary problems. If you are **all-in** on GraphQL with a mature pipeline, **Relay (or URQL+normalized cache) vs RTK Query** is the trade conversation.\n\n**Mental line:** **Redux: explicit global client store**, **Relay: GraphQL colocated components + normalized cache and GC**.",
+    "examples": [
+      {
+        "title": "Query component idea",
+        "language": "text",
+        "code": "Relay's `useFragment` ties UI pieces to a normalized record id in a shared store, unlike hand-written reducer maps that mirror REST shapes manually.\n",
+        "explanation": "Useful contrast for senior interview panels."
+      }
+    ],
+    "tip": "Mention the **Relay compiler** step, which is a different kind of 'tooling' than a dumb Redux file tree.",
+    "links": [
+      {
+        "label": "Relay: documentation",
+        "href": "https://relay.dev/docs/"
+      }
+    ]
+  },
+  {
+    "id": "react-135",
+    "question": "What is an action in Redux?",
+    "difficulty": "beginner",
+    "category": "state-management",
+    "tags": [
+      "action",
+      "dispatch",
+      "plain-object"
+    ],
+    "answer": "An **action** is a **plain JavaScript object** (JSON-serializable in spirit) with a **required `type: string` field** that tells reducers *what* happened, plus **optional** payload fields you define by convention, often in **`payload`** with **RTK** slices' generated creators.\n\n**Actions are the only** way **state** should change, except **`STORE_INIT`** style hacks in advanced patterns. The **reducer** pattern matches the action `type` in a `switch` or `builder.addCase` and returns a **new** state or the old reference if nothing applies.\n\n**Async** flows end up as **plain actions** for success/fail after middleware turns network results into `dispatch` calls.",
+    "examples": [
+      {
+        "title": "action object (classic)",
+        "language": "ts",
+        "code": "type A =\n  | { type: 'todos/toggle'; id: string }\n  | { type: 'todos/add'; text: string };\n// dispatch action -> reducer case handles the union with narrowing\n",
+        "explanation": "In TypeScript, a discriminated union on `type` is common."
+      }
+    ],
+    "tip": "Say `createAction` and **RTK** hide string duplication, but the **type string** is still the spine of the event log.",
+    "links": [
+      {
+        "label": "Redux: Actions",
+        "href": "https://redux.js.org/understanding/thinking-in-redux/three-principles"
+      }
+    ]
+  }
+]

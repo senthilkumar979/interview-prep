@@ -1,0 +1,123 @@
+import json
+from pathlib import Path
+
+L = lambda label, href: [{"label": label, "href": href}]
+E = lambda title, code, exp, lang="tsx": {"title": title, "language": lang, "code": code, "explanation": exp}
+ROOT = Path(__file__).resolve().parent
+
+ITEMS: list[dict] = [
+    {
+        "id": "react-021",
+        "question": "What is the difference between `createElement` and `cloneElement`?",
+        "difficulty": "intermediate",
+        "category": "jsx",
+        "tags": ["createElement", "cloneElement", "elements"],
+        "answer": "`createElement(type, props, ...children)` **builds a new** React element from a **type** and **props**. `cloneElement(element, partialProps, ...children)` **starts from an existing element** and **merges** in new props; shallow merges mean later keys can override earlier ones in the second argument, and you can replace `children` when you pass new ones.\n\n**When to use `cloneElement`:** parents that must **tweak** a child element the consumer already provided (class names, `ref`, or event handlers) without reimplementing the child. In **new** feature code, **custom hooks** and **context** are often preferred for sharing logic, but libraries still use `cloneElement` in composition APIs.\n",
+        "examples": [E("Merge extra props into a child", "import { cloneElement, type ReactElement } from 'react';\n\nfunction WithPadding({ u }: { u: ReactElement }) {\n  return cloneElement(u, { style: { padding: 8, ...u.props.style } });\n}\n", "The child element is reused with **merged** `style` so existing inline styles are preserved when you spread `u.props.style`.")],
+        "tip": "Favor **explicit props** or a **render prop** when the API is your own; reserve `cloneElement` for **wrapping** arbitrary `children` in design systems and similar.",
+        "links": L("React: cloneElement", "https://react.dev/reference/react/cloneElement"),
+    },
+    {
+        "id": "react-022",
+        "question": "What is \"lifting state up\"?",
+        "difficulty": "beginner",
+        "category": "state-and-props",
+        "tags": ["lifting", "state", "parent", "siblings"],
+        "answer": "**Lifting state up** means moving **shared** state to the **lowest parent** that should **own** that fact, then **passing** the value to children with **props** and sending changes **up** with **callbacks** (`onX`).\n\nIf two leaves must stay in sync (for example a list and a detail pane showing the same selected id), the **id** (or the whole selected row) should live in the **ancestor** they share. **One** `useState` (or reducer) at that parent beats two independent copies for the same fact.\n",
+        "examples": [E("Shared temperature", "import { useState } from 'react';\n\nfunction Panel() {\n  const [c, setC] = useState(0);\n  return (\n    <>\n      <Field value={c} onChange={setC} />\n      <Readout c={c} />\n    </>\n  );\n}\n", "`Field` and `Readout` both read `c` from `Panel`; the parent is the single owner.", "tsx")],
+        "tip": "Before reaching for **context** or a global store, see whether **lifting one level** fixes the “props drilling only two steps” case.",
+        "links": L("React: Sharing state between components", "https://react.dev/learn/sharing-state-between-components"),
+    },
+    {
+        "id": "react-023",
+        "question": "What is a higher-order component (HOC)?",
+        "difficulty": "intermediate",
+        "category": "patterns",
+        "tags": ["hoc", "composition", "hooks"],
+        "answer": "A **higher-order component** is a **function** that takes a **component** and returns a **new component** with **extra behavior** (data, handlers, or layout). The classic form is `const Enhanced = withSomething(Base);` and `Enhanced` renders `Base` with more props or wrappers.\n\nHOCs were common **before hooks**; today **custom hooks** (`useAuth`, `useQuery`) are often a clearer way to **reuse stateful logic** without the indirection and **DisplayName** / **prop collision** issues that can appear when you **stack** many HOCs.\n\nIn interviews, show you can **read** HOC-based code in older apps, but for **new** work you default to **hooks** unless a library’s API is HOC-shaped.\n",
+        "examples": [E("Shape of a HOC", "function withLoading<P extends object>(C: React.ComponentType<P>) {\n  return function LoadingWrapper(props: P) {\n    return <C {...props} />;\n  };\n}\n", "Conceptual: the returned component wraps `C`. Real `withLoading` would add state and pass `isLoading` down.", "tsx")],
+        "tip": "If you stack HOCs, **debug names** (`displayName`) and **ref forwarding** (`forwardRef`) become part of the story—hooks often avoid that ceremony.",
+        "links": L("React: Reusing logic with custom hooks (HOC comparison)", "https://react.dev/learn/reusing-logic-with-custom-hooks"),
+    },
+    {
+        "id": "react-024",
+        "question": "What is the `children` prop?",
+        "difficulty": "beginner",
+        "category": "components",
+        "tags": ["children", "composition", "props"],
+        "answer": "The **`children` prop** is what sits **between** a component’s opening and closing tags: `<Box>Here</Box>` passes **`\"Here\"`** (or nested elements) as `children`.\n\nIt is the main way to build **layout** and **shell** components: a `Modal`, `Card`, or `Layout` that **wraps** content the parent supplies. The parent can pass **one node**, a **list**, or **fragments**—React passes the right `children` value to your component function.\n\nFor more than one **slot**, many APIs add **named** props like `header` and `footer` (typed as `ReactNode`) instead of overloading `children` with a custom object shape.\n",
+        "examples": [E("Children in a panel", "function Panel({ children }: { children: React.ReactNode }) {\n  return <section className=\"panel\">{children}</section>;\n}\n", "Anything the parent nests between `<Panel>` and `</Panel>` becomes `children` inside the section.", "tsx")],
+        "tip": "`children` can be **any** `ReactNode`—including `null`—so guard or render nothing when that is valid for your API.",
+        "links": L("React: Passing JSX as children", "https://react.dev/learn/passing-props-to-a-component#passing-jsx-as-children"),
+    },
+    {
+        "id": "react-025",
+        "question": "How do you write comments in JSX?",
+        "difficulty": "beginner",
+        "category": "jsx",
+        "tags": ["jsx", "comments", "syntax"],
+        "answer": "Inside JSX, use a **JavaScript block comment** inside braces: `{/* ... */}`. A plain `//` on a line **inside** JSX is not a line comment the way it is in `.ts` files; the parser is in an expression context, so **`{/* */}`** is the reliable form.\n\nYou can still use normal **`//` and `/* */`** in the **function body** above the `return`, where ordinary JavaScript rules apply.\n",
+        "examples": [E("JSX comment", "return (\n  <ul>\n    {/* One item */}\n    <li>a</li>\n  </ul>\n);\n", "The comment does not create a DOM node; it is only for readers and tools.", "tsx")],
+        "tip": "Some formatters strip or move comments; if a note must survive, also document the pattern in your component’s file header or Storybook.",
+        "links": L("React: Writing markup with JSX", "https://react.dev/learn/writing-markup-with-jsx"),
+    },
+    {
+        "id": "react-026",
+        "question": "What is an error boundary in React?",
+        "difficulty": "intermediate",
+        "category": "reliability",
+        "tags": ["error-boundary", "class", "crashes"],
+        "answer": "An **error boundary** is a **class component** that implements **`static getDerivedStateFromError` and/or `componentDidCatch`** to **catch render-time errors** in the tree **below** it (for example when a child throws while rendering). It does **not** catch every failure: **event handler** errors, **async** work, and **errors in the boundary itself** follow different rules and you still **try/catch** or handle where the work runs.\n\n**Why it matters:** one broken widget should not **white-screen** the whole app; you can show a **fallback** UI, **log** to your service, and keep the rest of the tree stable.\n",
+        "examples": [E("Where errors are caught", "class Boundary extends React.Component {\n  state = { err: null as Error | null };\n  static getDerivedStateFromError(e: Error) {\n    return { err: e };\n  }\n  render() {\n    if (this.state.err) return <p>Something broke.</p>;\n    return this.props.children;\n  }\n}\n", "Sketch only—real teams add `componentDidCatch` for logging and reset behavior.", "tsx")],
+        "tip": "Use a **route-level** boundary plus **finer** boundaries around risky third-party islands so one bad panel does not take the nav away.",
+        "links": L("React: Error boundaries in class components", "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"),
+    },
+    {
+        "id": "react-027",
+        "question": "How do you lazy-load a component in React?",
+        "difficulty": "intermediate",
+        "category": "tooling",
+        "tags": ["lazy", "suspense", "code-splitting"],
+        "answer": "Use **`React.lazy`** with a **dynamic** `import()` so the **bundler** can emit a **separate** chunk, and wrap the result in **`<Suspense fallback={...}>`** so the UI shows a **placeholder** (spinner, skeleton) while the chunk **loads the first time**.\n\n`lazy` expects a factory that returns a `Promise` of **`{ default: Component }`**. If the file only has **named** exports, map them: `lazy(() => import('./mod').then((m) => ({ default: m.Thing })))`.\n",
+        "examples": [E("Route-level lazy page", "import { lazy, Suspense } from 'react';\n\nconst Page = lazy(() => import('./HeavyPage'));\n\nexport function App() {\n  return (\n    <Suspense fallback={<p>Loading…</p>}>\n      <Page />\n    </Suspense>\n  );\n}\n", "First time `Page` is rendered, the chunk is fetched, then the component is shown.", "tsx")],
+        "tip": "Put the **suspense** boundary at a **coarse** level (page or tab) so you do not flash many tiny fallbacks on one screen.",
+        "links": L("React: lazy", "https://react.dev/reference/react/lazy"),
+    },
+    {
+        "id": "react-028",
+        "question": "Why use `className` instead of `class` in React?",
+        "difficulty": "beginner",
+        "category": "jsx",
+        "tags": ["className", "dom", "props"],
+        "answer": "JSX compiles to **JavaScript**; `class` is a **reserved word** in the language, so the DOM property used in React is **`className`**, matching **`HTMLElement.className`**. The HTML you write as `class=\"...\"` becomes `className={...}` in React.\n\n**`<label htmlFor={id}>`** uses the same idea: `for` is also reserved, so the JSX name is `htmlFor` and must match a control’s `id`.\n",
+        "examples": [E("className in JSX", "function Banner({ active }: { active: boolean }) {\n  return <div className={active ? 'on' : 'off'}>Hi</div>;\n}\n", "The built-in is still `className` even though designers say “class” in conversation.", "tsx")],
+        "tip": "With **Tailwind** or **CSS modules**, the string you pass to `className` is the same—only the *source* of the string changes.",
+        "links": L("React: Common components (className)", "https://react.dev/reference/react-dom/components/common"),
+    },
+    {
+        "id": "react-029",
+        "question": "What is a React portal?",
+        "difficulty": "intermediate",
+        "category": "react-dom",
+        "tags": ["portal", "modals", "dom"],
+        "answer": "A **portal** (`createPortal` from `react-dom`) **renders React children** into a **DOM node** that is not under the same parent in the **browser** tree, while the React **fiber** tree still looks like a normal child for **context** and **updates** from the place you called the portal from.\n\n**Typical use:** **modals, toasts, and hover panels** that must paint **on top** of the page or break out of a clipped ancestor. In React, **bubbling** of events in the React sense follows the **component** tree, which keeps portal content behaving predictably with **keyboard** and **focus** patterns when you set them up correctly.\n",
+        "examples": [E("Modal host", "import { createPortal } from 'react-dom';\n\nexport function Modal({ children }: { children: React.ReactNode }) {\n  return createPortal(\n    <div role=\"dialog\" className=\"modal\">{children}</div>,\n    document.body\n  );\n}\n", "The modal DOM nodes live under `body`, but the component that renders `Modal` still owns the tree in React’s model.", "tsx")],
+        "tip": "Pair portals with a **focus trap** and `aria-*` for accessible dialogs; the portal only solves **layering** in the DOM.",
+        "links": L("React: createPortal", "https://react.dev/reference/react-dom/createPortal"),
+    },
+    {
+        "id": "react-030",
+        "question": "What is the difference between a stateless and a stateful component?",
+        "difficulty": "beginner",
+        "category": "components",
+        "tags": ["state", "useState", "props"],
+        "answer": "People usually mean: **stateless (presentational)** — the visible output is a **function of props** and maybe **context**, without **local** `useState` / `useReducer` for UI concerns—**vs** **stateful** — the component **owns** a piece of UI state, subscriptions, or a reducer to drive the screen.\n\nThe line is not sharp: a “stateless” card might call **`useContext`**. The useful interview test is: **where is the source of truth?** If the **parent** or a **data hook** owns the values and the component just **styles** and **fires callbacks**, you are in the *presentational* style.\n",
+        "examples": [E("Stateful child", "import { useState } from 'react';\n\nfunction Counter() {\n  const [n, setN] = useState(0);\n  return <button onClick={() => setN(n + 1)}>{n}</button>;\n}\n", "This component is stateful: `n` lives inside it.", "tsx")],
+        "tip": "Avoid the word **dumb** in code review; “presentational” and “state owner” are clearer to teammates.",
+        "links": L("React: State: a component’s memory", "https://react.dev/learn/state-a-components-memory"),
+    },
+]
+
+if __name__ == "__main__":
+    Path(ROOT / "seed_21_30.json").write_text(json.dumps(ITEMS, indent=2) + "\n", encoding="utf-8")
+    print("wrote", len(ITEMS))

@@ -11,28 +11,31 @@ interface QuestionModuleSectionProps {
 }
 
 export const QuestionModuleSection = ({
-  items,
+  items: itemsProp,
 }: QuestionModuleSectionProps) => {
+  const items = useMemo(
+    () => (Array.isArray(itemsProp) ? itemsProp : []),
+    [itemsProp],
+  )
   const [activeDifficulty, setActiveDifficulty] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<'none' | 'category' | 'difficulty'>(
     'none',
   )
 
   const difficultyOptions = useMemo(
-    () =>
-      [
-        { key: 'all', label: 'All' },
-        ...Array.from(
-          new Set(
-            items
-              .map((item) => item.difficulty.trim().toLowerCase())
-              .filter(Boolean),
-          ),
-        ).map((difficulty) => ({
-          key: difficulty,
-          label: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
-        })),
-      ],
+    () => [
+      { key: 'all', label: 'All' },
+      ...Array.from(
+        new Set(
+          items
+            .map((item) => item.difficulty.trim().toLowerCase())
+            .filter(Boolean),
+        ),
+      ).map((difficulty) => ({
+        key: difficulty,
+        label: difficulty.charAt(0).toUpperCase() + difficulty.slice(1),
+      })),
+    ],
     [items],
   )
 
@@ -56,7 +59,8 @@ export const QuestionModuleSection = ({
           advanced: 3,
           expert: 4,
         }
-        const leftRank = difficultyOrder[left.difficulty.trim().toLowerCase()] ?? 999
+        const leftRank =
+          difficultyOrder[left.difficulty.trim().toLowerCase()] ?? 999
         const rightRank =
           difficultyOrder[right.difficulty.trim().toLowerCase()] ?? 999
         if (leftRank !== rightRank) return leftRank - rightRank

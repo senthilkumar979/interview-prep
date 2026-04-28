@@ -4,12 +4,12 @@
     "icon": "react",
     "title": "React",
     "description": "Build modern UI systems with component architecture, hooks, rendering strategies, and performance tuning.",
-    "questionCount": 120,
+    "questionCount": 300,
     "exerciseCount": 38,
     "difficultyBreakdown": {
-      "easy": 38,
-      "medium": 54,
-      "hard": 28
+      "easy": 74,
+      "medium": 215,
+      "hard": 11
     }
   },
   {
@@ -17,12 +17,12 @@
     "icon": "javascript",
     "title": "JavaScript",
     "description": "Master language fundamentals, async patterns, browser internals, and practical problem solving.",
-    "questionCount": 145,
+    "questionCount": 300,
     "exerciseCount": 52,
     "difficultyBreakdown": {
-      "easy": 50,
-      "medium": 67,
-      "hard": 28
+      "easy": 166,
+      "medium": 134,
+      "hard": 0
     }
   },
   {

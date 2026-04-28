@@ -1,0 +1,2519 @@
+[
+  {
+    "id": "react-208",
+    "question": "What is MobX?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "mobx",
+      "reactive",
+      "observables"
+    ],
+    "answer": "MobX is a **reactive** state library: you mark data as **observable**, change it in **actions**, derive values with **computed**, and any **reaction** (including an **observer** component body) re-runs when the observables it read change.\n\nCompared to **Redux**'s single dispatch log, MobX is more **opinionated** about object graphs and local reactions; for **server** data, pair it with a cache layer (for example **TanStack Query**).\n\nIn apps, actions keep updates **testable**; reactions stay **synchronous** unless you add async in clearly separated layers.",
+    "examples": [
+      {
+        "title": "MobX: observable, action, observer",
+        "language": "tsx",
+        "code": "import { makeObservable, observable, action, computed } from \"mobx\";\nimport { observer } from \"mobx-react-lite\";\n\nclass CounterStore {\n  n = 0;\n  constructor() {\n    makeObservable(this, { n: observable, increment: action, doubled: computed });\n  }\n  increment = () => {\n    this.n += 1;\n  };\n  get doubled() {\n    return this.n * 2;\n  }\n}\n\nconst store = new CounterStore();\n\nexport const Demo = observer(function Demo() {\n  return (\n    <button type=\"button\" onClick={() => store.increment()}>\n      n={store.n} (doubled={store.doubled})\n    </button>\n  );\n});\n",
+        "explanation": "The class holds **observable** `n` and an **action**; the component is wrapped in **observer** so it re-renders when `n` (or `doubled`) is read in render."
+      }
+    ],
+    "tip": "Relate **mobx** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "MobX: introduction",
+        "href": "https://mobx.js.org/README.html#introduction"
+      }
+    ]
+  },
+  {
+    "id": "react-209",
+    "question": "What are the key differences between Redux and MobX?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "redux",
+      "mobx",
+      "contrast"
+    ],
+    "answer": "Compare them by **update model** and **mental overhead**. **Redux** keeps a single **store**; you send explicit **actions** and pure **reducers** produce the next state—good for **time-travel**, logging, and strict unidirectional flow.\n\n**MobX** uses **observables** and **actions**; **computed** values and **observer** components **track** which data they read, so only affected subtrees update—often less boilerplate for rich local UI state.\n\nBoth can scale; teams pick Redux for **auditability** and ecosystem conventions, MobX for **reactive** object graphs, often plus **RTK Query** or **TanStack Query** for server data.",
+    "examples": [
+      {
+        "title": "Redux: action + reducer",
+        "language": "ts",
+        "code": "type S = { n: number };\nconst initial: S = { n: 0 };\n\nfunction counter(state: S = initial, a: { type: \"inc\" }): S {\n  if (a.type === \"inc\") return { n: state.n + 1 };\n  return state;\n}\n",
+        "explanation": "A single state snapshot changes only through **named actions** described as plain objects."
+      },
+      {
+        "title": "MobX: action mutates observables",
+        "language": "ts",
+        "code": "import { makeObservable, observable, action } from \"mobx\";\n\nclass Box {\n  n = 0;\n  constructor() {\n    makeObservable(this, { n: observable, inc: action });\n  }\n  inc = () => {\n    this.n += 1;\n  };\n}\n",
+        "explanation": "MobX tracks **observable** fields; **actions** batch updates; subscribers (including `observer` views) read the new graph."
+      }
+    ],
+    "tip": "Relate **redux** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "Redux: core concepts",
+        "href": "https://redux.js.org/tutorials/essentials/part-1-overview-concepts"
+      }
+    ]
+  },
+  {
+    "id": "react-210",
+    "question": "Should you learn modern JavaScript (ES6+) before React?",
+    "difficulty": "beginner",
+    "category": "javascript",
+    "tags": [
+      "es6",
+      "learning",
+      "fundamentals"
+    ],
+    "answer": "You do not need to master every **ES6+** feature first, but **comfort with modules**, **const/let**, **arrow functions**, **destructuring**, and **async/await** will match almost every **React** tutorial and codebase.\n\nLearn **components** and **hooks** in parallel; when types matter, add **TypeScript** next so **props** and **APIs** stay honest.",
+    "examples": [
+      {
+        "title": "Patterns React code assumes",
+        "language": "ts",
+        "code": "// modules, destructuring, shorthand, default params\nimport { useState, type ReactNode } from \"react\";\n\ninterface RowProps {\n  title: string;\n  children?: ReactNode;\n}\n\nexport function Row({ title, children = null }: RowProps) {\n  const [open, setOpen] = useState(false);\n  return (\n    <section>\n      <button type=\"button\" onClick={() => setOpen((v) => !v)}>\n        {title}\n      </button>\n      {open ? children : null}\n    </section>\n  );\n}\n",
+        "explanation": "This combines **destructuring** props, a **functional** `setState` updater, and **conditional** render—typical in modern app code."
+      }
+    ],
+    "tip": "Relate **es6** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "MDN: JavaScript modules",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
+      }
+    ]
+  },
+  {
+    "id": "react-211",
+    "question": "What is concurrent rendering in React?",
+    "difficulty": "advanced",
+    "category": "rendering",
+    "tags": [
+      "concurrent",
+      "fiber",
+      "scheduler"
+    ],
+    "answer": "**Concurrent** rendering means React can **interrupt**, **split**, and **schedule** work so urgent updates (typing, hover) are not blocked by a large tree. The **scheduler** and **Fiber** make that possible.\n\nUser-facing pieces include **Suspense**, **transitions** (`useTransition`, `startTransition`), and **deferred** values, so the UI stays responsive while heavier work or lower-priority updates finish in the background.",
+    "examples": [
+      {
+        "title": "startTransition for lower-priority state",
+        "language": "tsx",
+        "code": "import { useState, startTransition } from \"react\";\n\nexport function SearchBox() {\n  const [q, setQ] = useState(\"\");\n\n  function onChange(s: string) {\n    setQ(s);\n    startTransition(() => {\n      /* e.g. update heavy list filter */\n    });\n  }\n\n  return <input value={q} onChange={(e) => onChange(e.target.value)} aria-label=\"search\" />;\n}\n",
+        "explanation": "Urgent `q` updates the input; work inside **startTransition** can be treated as a **lower** priority update by React."
+      }
+    ],
+    "tip": "Relate **concurrent** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-212",
+    "question": "What is the difference between the older 'async mode' and concurrent features in React?",
+    "difficulty": "advanced",
+    "category": "rendering",
+    "tags": [
+      "async-mode",
+      "concurrent",
+      "history"
+    ],
+    "answer": "Older **async mode** previews described **time-slicing** and **interruptible** work before the public **concurrent** model stabilized. The supported story today is **concurrent** features on **react.dev**—**Suspense**, **transitions**, and **deferred** values with clear scheduler semantics.\n\nSame design goal: **do not** let slow work **starve** fast interactions—now with **stable** APIs and framework documentation.",
+    "examples": [
+      {
+        "title": "useTransition marks non-urgent tab switch",
+        "language": "tsx",
+        "code": "import { useState, useTransition } from \"react\";\n\nexport function Tabs() {\n  const [tab, setTab] = useState<\"a\" | \"b\">(\"a\");\n  const [isPending, startTransition] = useTransition();\n\n  return (\n    <button type=\"button\" onClick={() => startTransition(() => setTab(\"b\"))}>\n      Go B {isPending ? \"…\" : \"\"}\n    </button>\n  );\n}\n",
+        "explanation": "**isPending** surfaces when a **transition** is still in flight, a concrete concurrent UI affordance."
+      }
+    ],
+    "tip": "Relate **async-mode** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-213",
+    "question": "What changed in React 16.9 regarding deprecated JavaScript URLs in DOM attributes?",
+    "difficulty": "intermediate",
+    "category": "security",
+    "tags": [
+      "xss",
+      "javascript-urls",
+      "dom"
+    ],
+    "answer": "React 16.9 made **javascript:** URL usage in many DOM properties **noisier** because that pattern is a classic **XSS** vector. In real HTML, a **javascript:** **href** or similar can run **attacker** code; in JSX, avoid relying on that mechanism.\n\nPrefer real URLs, **onClick** handlers, **CSP**, **validation**, and vetted string policies. Think **defense in depth** across React, the **browser**, and your **HTTP** layer.",
+    "examples": [
+      {
+        "title": "Button + handler instead of javascript: href",
+        "language": "tsx",
+        "code": "export function OpenHelp() {\n  return (\n    <button type=\"button\" onClick={() => window.open(\"/help\", \"_blank\", \"noopener,noreferrer\")}>\n      Help\n    </button>\n  );\n}\n",
+        "explanation": "The **browser** never interprets a user-controlled string as **executable** URL content for this action."
+      }
+    ],
+    "tip": "Relate **xss** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-214",
+    "question": "What does the official ESLint plugin for React Hooks enforce?",
+    "difficulty": "intermediate",
+    "category": "tooling",
+    "tags": [
+      "eslint",
+      "hooks",
+      "exhaustive-deps"
+    ],
+    "answer": "The official plugin enforces **rules-of-hooks** (hooks only at the top level, consistent order) and, with common presets, **exhaustive-deps** (dependency arrays should list values read from the outer render). Those catch **conditional hooks** and **stale** or **missing** effect dependencies.\n\nWire it in **ESLint** for editor + **CI** so issues surface as you type.",
+    "examples": [
+      {
+        "title": "Enable react-hooks in ESLint",
+        "language": "json",
+        "code": "{\n  \"extends\": [\"plugin:react-hooks/recommended\"]\n}\n",
+        "explanation": "The shared preset turns on the **rules-of-hooks** and **exhaustive-deps** rules with sensible severities."
+      }
+    ],
+    "tip": "Relate **eslint** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "eslint-plugin-react-hooks",
+        "href": "https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/README.md"
+      }
+    ]
+  },
+  {
+    "id": "react-215",
+    "question": "What is the difference between imperative and declarative React code?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "declarative",
+      "imperative",
+      "ui"
+    ],
+    "answer": "Declarative React describes **what** the tree should be for a given `props`+`state` combination; the library **reconciles** the UI. Imperative code tells the **DOM** each step. Declarative components are easier to test and read; you reach for **refs** and native APIs for narrow imperative work.",
+    "examples": [
+      {
+        "title": "State drives the tree (declarative)",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nexport function Greeting() {\n  const [name, setName] = useState(\"World\");\n  return (\n    <p>\n      Hello, {name}\n      <button type=\"button\" onClick={() => setName(\"React\")}>\n        set\n      </button>\n    </p>\n  );\n}\n",
+        "explanation": "You do not manually set **textContent**; **state** change triggers the **re-render** that updates the real DOM."
+      }
+    ],
+    "tip": "Relate **declarative** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-216",
+    "question": "What are the main benefits of using TypeScript with React?",
+    "difficulty": "intermediate",
+    "category": "types",
+    "tags": [
+      "typescript",
+      "safety",
+      "refactor"
+    ],
+    "answer": "TypeScript gives **static** checks for **component props**, **event** handlers, and **reducer** state. Refactors are safer; the editor can **find references** and catch **null** paths early.\n\nOn boundaries, use **Zod** or **OpenAPI** types so your React client matches **server** contracts.",
+    "examples": [
+      {
+        "title": "Props typed, form event typed",
+        "language": "tsx",
+        "code": "import type { FormEvent, ReactNode } from \"react\";\n\nexport function MyForm({ onSubmit, children }: { onSubmit: (v: string) => void; children?: ReactNode }) {\n  function handleSubmit(e: FormEvent<HTMLFormElement>) {\n    e.preventDefault();\n    const data = new FormData(e.currentTarget);\n    onSubmit(String(data.get(\"q\") ?? \"\"));\n  }\n  return (\n    <form onSubmit={handleSubmit}>\n      {children}\n      <input name=\"q\" />\n      <button type=\"submit\">Go</button>\n    </form>\n  );\n}\n",
+        "explanation": "Types make **onSubmit** and the **form** `handleSubmit` contract explicit to callers."
+      }
+    ],
+    "tip": "Relate **typescript** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "TypeScript: React in TS",
+        "href": "https://www.typescriptlang.org/docs/handbook/react.html"
+      }
+    ]
+  },
+  {
+    "id": "react-217",
+    "question": "How can you share an authentication session and implement token refresh using React context?",
+    "difficulty": "intermediate",
+    "category": "auth",
+    "tags": [
+      "auth",
+      "context",
+      "refresh"
+    ],
+    "answer": "Store **access** and **refresh** tokens in whatever secure storage your product uses; expose a **Context** (or a dedicated module) with `session`, `login`, and `logout`. Run **token refresh** in one place: the **Provider**’s `useEffect`, your **HTTP** client’s **401** handler, or your auth library’s **refresh** callback.\n\nKeep the **value** object **stable** where possible to avoid re-rendering the whole tree on every **tick**; split volatile session fields from other global data.",
+    "examples": [
+      {
+        "title": "Session context + effect placeholder for refresh",
+        "language": "tsx",
+        "code": "import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from \"react\";\n\ntype Session = { accessToken: string; expiresAt: number } | null;\n\nconst Auth = createContext<{ session: Session; signOut: () => void } | null>(null);\n\nexport function AuthProvider({ children }: { children: ReactNode }) {\n  const [session, setSession] = useState<Session>(null);\n  useEffect(() => {\n    if (!session) return;\n    const t = setTimeout(() => {\n      /* refresh: POST /auth/refresh, then setSession */\n    }, session.expiresAt - Date.now() - 30_000);\n    return () => clearTimeout(t);\n  }, [session]);\n  const v = useMemo(\n    () => ({ session, signOut: () => setSession(null) }),\n    [session]\n  );\n  return <Auth.Provider value={v}>{children}</Auth.Provider>;\n}\n\nexport function useAuth() {\n  const c = useContext(Auth);\n  if (!c) throw new Error(\"useAuth: missing provider\");\n  return c;\n}\n",
+        "explanation": "**Context** provides **read** of session; a single **effect** (or an HTTP wrapper) is the right layer for **refresh** scheduling."
+      }
+    ],
+    "tip": "Relate **auth** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-218",
+    "question": "What are the main benefits of the new JSX transform?",
+    "difficulty": "intermediate",
+    "category": "build",
+    "tags": [
+      "jsx-transform",
+      "babel",
+      "runtime"
+    ],
+    "answer": "The new **JSX transform** compiles to **`jsx` / `jsxs` from `react/jsx-runtime`**, so you often omit a blanket `import React` when a file is JSX-only. **TypeScript** `jsx: \"react-jsx\"` and modern **Babel** defaults align on this model.\n\nYou still import exactly what you use: **hooks** and type-only imports become clearer.",
+    "examples": [
+      {
+        "title": "tsconfig automatic JSX",
+        "language": "json",
+        "code": "{ \"compilerOptions\": { \"jsx\": \"react-jsx\", \"jsxImportSource\": \"react\" } }\n",
+        "explanation": "This **jsx** value selects the **automatic** factory from **react/jsx-runtime**."
+      }
+    ],
+    "tip": "Relate **jsx-transform** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-219",
+    "question": "How does the new JSX transform differ from the classic `React.createElement` style?",
+    "difficulty": "intermediate",
+    "category": "build",
+    "tags": [
+      "createelement",
+      "import-jsx",
+      "runtime"
+    ],
+    "answer": "Classic: `<div />` → `React.createElement('div', …)` so **`React` must be in scope**. New: compiler emits **`_jsx` from 'react/jsx-runtime'`**, and you no longer need a default **React** import for purely JSX **factory** work.\n\nThe JSX you type is the same; only the **emit** and **import** list change with your build.",
+    "examples": [
+      {
+        "title": "Conceptual (same input, different emit)",
+        "language": "tsx",
+        "code": "// Source\nexport function Hi() {\n  return <span>hi</span>;\n}\n\n// New runtime (simplified)\n// import { jsx as _jsx } from \"react/jsx-runtime\";\n// return _jsx(\"span\", { children: \"hi\" });\n",
+        "explanation": "The **source** is unchanged; your **tsconfig** / Babel **preset** pick **classic** vs **automatic** output."
+      }
+    ],
+    "tip": "Relate **createelement** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-220",
+    "question": "What are React Server Components (RSC)?",
+    "difficulty": "advanced",
+    "category": "server-components",
+    "tags": [
+      "rsc",
+      "server",
+      "client"
+    ],
+    "answer": "**RSC** run on the **server** (often **async**), can read private resources, and send a **serialized** component tree. **Client** components handle **onClick** and other **browser** APIs. Frameworks define **“use client”** boundaries, bundling, and what props may cross the wire—follow your **App Router** or framework docs in addition to **react.dev**.",
+    "examples": [
+      {
+        "title": "Async server component (framework-specific)",
+        "language": "tsx",
+        "code": "async function load() {\n  return \"Hello RSC\";\n}\n\nexport default async function Page() {\n  const t = await load();\n  return <h1>{t}</h1>;\n}\n",
+        "explanation": "I/O and **async** can happen on the **server** before streaming UI; the client does not ship this function’s code as interactive JS unless marked **client** by the framework."
+      }
+    ],
+    "tip": "Relate **rsc** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-221",
+    "question": "What is prop drilling, and when is it a problem?",
+    "difficulty": "beginner",
+    "category": "state",
+    "tags": [
+      "props",
+      "composition",
+      "context"
+    ],
+    "answer": "Prop **drilling** is passing a prop through many layers that do not use it, only to reach a deep child. It is a trade-off: it is **explicit** but can get **verbose** and cause extra **re-renders** if intermediate nodes pass new **object** identities every time.\n\nAlleviate with **composition** (pass **children**), **Context** for broad values, or a **local** store when many leaves need the same data.",
+    "examples": [
+      {
+        "title": "Composition avoids useless middle props",
+        "language": "tsx",
+        "code": "import type { ReactNode } from \"react\";\n\nexport function Shell({ main }: { main: ReactNode }) {\n  return <div className=\"shell\">{main}</div>;\n}\n\n// Usage: <Shell main={<UserPanel id=\"1\" />} />  — no prop for UserPanel on Shell\n",
+        "explanation": "**Shell** need not list every child’s **props**; you **place** the leaf where it belongs."
+      }
+    ],
+    "tip": "Relate **props** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-222",
+    "question": "When do you use useState versus useRef in function components?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usestate",
+      "useref",
+      "render"
+    ],
+    "answer": "Use **`useState`** when a new value should **re-render** the component for the user. Use **`useRef`** for a **mutable** box whose `.current` changes should **not** drive UI—e.g. **DOM** nodes, **timer** handles, or holding **previous** props for comparison. Don’t use refs to hide data that is supposed to be **visible** on screen.",
+    "examples": [
+      {
+        "title": "State vs ref",
+        "language": "tsx",
+        "code": "import { useRef, useState } from \"react\";\n\nexport function Demo() {\n  const [n, setN] = useState(0);\n  const lastClick = useRef(0);\n  return (\n    <button\n      type=\"button\"\n      onClick={() => {\n        lastClick.current = Date.now();\n        setN(n + 1);\n      }}\n    >\n      n={n}\n    </button>\n  );\n}\n",
+        "explanation": "Updating **lastClick.current** does not re-render; **`setN`** does—choose based on what must **show** in the next paint."
+      }
+    ],
+    "tip": "Relate **usestate** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-223",
+    "question": "What is a wrapper (or HOC) component pattern, and when is it useful?",
+    "difficulty": "intermediate",
+    "category": "patterns",
+    "tags": [
+      "hoc",
+      "wrapper",
+      "composition"
+    ],
+    "answer": "A **wrapper** (often an **HOC**) takes a **component** and returns a new one, typically to add **data**, **error** boundaries, or **layout**. Many patterns moved to **custom hooks** and **composition**; HOCs remain valid when you need a **type-level** or **library** pattern that wraps a **component** with extra **props**.",
+    "examples": [
+      {
+        "title": "HOC injects a prop",
+        "language": "tsx",
+        "code": "import type { ComponentType } from \"react\";\n\nexport function withTheme<P>(C: ComponentType<P & { theme: string }>, theme: string) {\n  return function Themed(props: P) {\n    return <C {...(props as P & { theme: string })} theme={theme} />;\n  };\n}\n",
+        "explanation": "The returned component **injects** `theme` so callers of the inner `C` need not thread it at every use site."
+      }
+    ],
+    "tip": "Relate **hoc** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-224",
+    "question": "What is the difference between useEffect and useLayoutEffect?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "useeffect",
+      "uselayout",
+      "dom"
+    ],
+    "answer": "Both run **after** render, in commit order. **`useLayoutEffect`** runs **before the browser paints** the update—use to **measure** or adjust layout so the user never sees a wrong frame, but keep work short because it **blocks** paint. **`useEffect`** runs **after** paint—best default for data and subscriptions.\n\nOn the server, `useLayoutEffect` warns; follow **SSR** guidance from your stack.",
+    "examples": [
+      {
+        "title": "Measure in layout effect",
+        "language": "tsx",
+        "code": "import { useLayoutEffect, useRef, useState } from \"react\";\n\nexport function Measured() {\n  const ref = useRef<HTMLDivElement>(null);\n  const [w, setW] = useState(0);\n  useLayoutEffect(() => {\n    if (ref.current) setW(ref.current.getBoundingClientRect().width);\n  });\n  return <div ref={ref}>width={w}</div>;\n}\n",
+        "explanation": "You read **geometry** **before** display so the first painted frame can already show a consistent **width**."
+      }
+    ],
+    "tip": "Relate **useeffect** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-225",
+    "question": "How do functional and class components differ in modern React?",
+    "difficulty": "intermediate",
+    "category": "components",
+    "tags": [
+      "classes",
+      "hooks",
+      "legacy"
+    ],
+    "answer": "Function components use **hooks** for state, memoization, and side effects. Class components use **`this.state`/`setState`** and **lifecycle** methods. React supports both; new code in app repos is almost always **functions**+**hooks** for simpler composition and no **`this` binding** issues; classes remain in older third-party code.",
+    "examples": [
+      {
+        "title": "State in class vs function",
+        "language": "tsx",
+        "code": "import { Component, useState } from \"react\";\n\nclass C extends Component<unknown, { n: number }> {\n  state = { n: 0 };\n  render() {\n    return <button onClick={() => this.setState({ n: this.state.n + 1 })}>{this.state.n}</button>;\n  }\n}\n\nfunction F() {\n  const [n, setN] = useState(0);\n  return <button onClick={() => setN(n + 1)}>{n}</button>;\n}\n",
+        "explanation": "The **function**+**hooks** version is the default style for new **React 18+** work."
+      }
+    ],
+    "tip": "Relate **classes** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-226",
+    "question": "What is React Strict Mode?",
+    "difficulty": "beginner",
+    "category": "strict-mode",
+    "tags": [
+      "strict",
+      "dev",
+      "double-invoke"
+    ],
+    "answer": "Strict Mode is a **development** wrapper (often around `createRoot`) that **replays** some renders and **effects** to help you find **impure** render logic, missing **cleanups**, and **unsafe** patterns. It does not duplicate that behavior the same way in **production**.\n\nIt is especially valuable as **concurrent** features make assumptions about idempotent **effects** more important.",
+    "examples": [
+      {
+        "title": "Wrap the root",
+        "language": "tsx",
+        "code": "import { StrictMode } from \"react\";\nimport { createRoot } from \"react-dom/client\";\nimport { App } from \"./App\";\n\ncreateRoot(document.getElementById(\"root\")!).render(\n  <StrictMode>\n    <App />\n  </StrictMode>\n);\n",
+        "explanation": "In **React 18** dev, children may see **strict** double **effect** invocations; production behavior follows normal single-pass rules."
+      }
+    ],
+    "tip": "Relate **strict** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-227",
+    "question": "What is the main benefit of enabling Strict Mode during development?",
+    "difficulty": "beginner",
+    "category": "strict-mode",
+    "tags": [
+      "side-effects",
+      "purity",
+      "dev"
+    ],
+    "answer": "It surfaces bugs **earlier** in development: **double** effect invocations and extra renders help you find **forgotten** `cleanup`, **assumptions** that break on **remount**, and **non-idempotent** side effects that would be fragile in **concurrent** rendering. That saves **production** incidents at the cost of a bit of dev **noise** you learn to read.",
+    "examples": [
+      {
+        "title": "Effect with cleanup (Strict Mode–friendly)",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function Ticker() {\n  const [n, setN] = useState(0);\n  useEffect(() => {\n    const id = setInterval(() => setN((c) => c + 1), 1000);\n    return () => clearInterval(id);\n  }, []);\n  return <output>{n}</output>;\n}\n",
+        "explanation": "Cleanup **removes** the interval if React re-runs the effect in **Strict Mode** dev, avoiding duplicate **timers**."
+      }
+    ],
+    "tip": "Relate **side-effects** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-228",
+    "question": "Why can Strict Mode intentionally double-render components in development?",
+    "difficulty": "intermediate",
+    "category": "strict-mode",
+    "tags": [
+      "double-render",
+      "development",
+      "bugs"
+    ],
+    "answer": "In **React 18+** with Strict Mode, development **replays** `mount` → `unmount` → `mount` to model future **Offscreen** and recovery flows. The goal is to ensure **setup/cleanup** pairs are **symmetric** and **idempotent**—a requirement that grows as **concurrent** features and **Suspense** become common.",
+    "examples": [
+      {
+        "title": "Abort fetches in cleanup",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function X() {\n  const [d, setD] = useState<string | null>(null);\n  useEffect(() => {\n    const ac = new AbortController();\n    void fetch(\"/api/x\", { signal: ac.signal })\n      .then((r) => r.text())\n      .then(setD);\n    return () => ac.abort();\n  }, []);\n  return <pre>{d}</pre>;\n}\n",
+        "explanation": "When the effect **re-runs**, the previous **request** is **canceled** so a stale response does not **set state** after tear-down."
+      }
+    ],
+    "tip": "Relate **double-render** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-229",
+    "question": "What are the core rules of writing JSX in React?",
+    "difficulty": "beginner",
+    "category": "jsx",
+    "tags": [
+      "rules",
+      "expressions",
+      "return"
+    ],
+    "answer": "JSX is an expression: one **return** root, often a **Fragment**. Use **className** (not `class` in most setups), **camelCase** props, and **curly braces** to embed JavaScript expressions. **`style`** takes an object. **List** children need a stable **`key` per** row; **index** keys are a poor fit when the list **reorders** or **filters** in ways that change **identity**.",
+    "examples": [
+      {
+        "title": "Fragment, map, key",
+        "language": "tsx",
+        "code": "type Row = { id: string; label: string };\nexport function Rows({ items }: { items: Row[] }) {\n  return (\n    <ul>\n      {items.map((i) => (\n        <li key={i.id}>{i.label}</li>\n      ))}\n    </ul>\n  );\n}\n",
+        "explanation": "Each **li** is keyed for **reconciliation** when the **items** array changes order or content."
+      }
+    ],
+    "tip": "Relate **rules** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-230",
+    "question": "How do you return multiple root elements in JSX, and what wrap do you use?",
+    "difficulty": "beginner",
+    "category": "jsx",
+    "tags": [
+      "fragment",
+      "keys",
+      "return"
+    ],
+    "answer": "Return a **Fragment** `<>…</>` or named `<Fragment key={k}>` when you need a **key** on the fragment list item. You can also wrap in a **parent** `div` or layout component. Only one top-level **expression** is allowed in `return`—the shorthand Fragment `<>…</>` does not add an extra DOM **node**.",
+    "examples": [
+      {
+        "title": "Two siblings with Fragment",
+        "language": "tsx",
+        "code": "import { Fragment } from \"react\";\n\nexport function Titles() {\n  return (\n    <Fragment>\n      <h1>App</h1>\n      <p>Sub</p>\n    </Fragment>\n  );\n}\n",
+        "explanation": "**Fragment** groups **h1** and **p** under one return value without a wrapper **div**."
+      }
+    ],
+    "tip": "Relate **fragment** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-231",
+    "question": "How do you update lists in useState without mutating the array in place?",
+    "difficulty": "intermediate",
+    "category": "state",
+    "tags": [
+      "immutability",
+      "arrays",
+      "setstate"
+    ],
+    "answer": "Treat **arrays** in state as **immutable** snapshots: when you add, remove, or map over items, return a **new** array (spread, `filter`, `map`, `concat`) so React and memoized children see a **reference** change. **Never** call `push`/`splice` on the array in state; clone first or build a new array and **`set` it in one** update.",
+    "examples": [
+      {
+        "title": "Add item immutably",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nexport function ListEditor() {\n  const [ids, setIds] = useState<string[]>([]);\n  return (\n    <button type=\"button\" onClick={() => setIds((prev) => [...prev, crypto.randomUUID()])}>\n      add ({ids.length})\n    </button>\n  );\n}\n",
+        "explanation": "The **functional** updater **spreads** the previous list and appends, without mutating `prev` in place."
+      }
+    ],
+    "tip": "Relate **immutability** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-232",
+    "question": "What is the capture phase in the DOM event model, and can React set capture listeners?",
+    "difficulty": "intermediate",
+    "category": "events",
+    "tags": [
+      "capture",
+      "bubbling",
+      "synthetic"
+    ],
+    "answer": "DOM events flow **capture** → **target** → **bubble**. Most React event props listen in the **bubble** phase; the **`on*Capture` props** (for example `onClickCapture`) listen in the **capture** phase. That matters for **portals** and **overlays** when you need a parent to see the event first.",
+    "examples": [
+      {
+        "title": "Capture vs bubble",
+        "language": "tsx",
+        "code": "export function CaptureDemo() {\n  return (\n    <div onClick={() => console.log(\"outer bubble\")} onClickCapture={() => console.log(\"outer capture\")}>\n      <button type=\"button\" onClick={() => console.log(\"button\")}>\n        click\n      </button>\n    </div>\n  );\n}\n",
+        "explanation": "Open the console: **capture** on the **outer** runs before the **button**; **bubble** runs after, unless **stopPropagation** is used."
+      }
+    ],
+    "tip": "Relate **capture** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "MDN: JavaScript modules",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
+      }
+    ]
+  },
+  {
+    "id": "react-233",
+    "question": "At a high level, how does React update the screen after a state change?",
+    "difficulty": "intermediate",
+    "category": "reconciliation",
+    "tags": [
+      "fiber",
+      "reconcile",
+      "commit"
+    ],
+    "answer": "On state change, React **re-renders** the component that owned the `set` call, then **reconciles** its child trees against the previous **virtual DOM** output. **Fiber** can interrupt or prioritize work. The browser then **commits** DOM updates, and **useEffect** runs after **paint** (layout effect before paint in `useLayoutEffect`).",
+    "examples": [
+      {
+        "title": "State in parent, child updates",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nfunction Child({ n }: { n: number }) {\n  return <output>{n}</output>;\n}\n\nexport function Parent() {\n  const [n, setN] = useState(0);\n  return (\n    <button type=\"button\" onClick={() => setN((c) => c + 1)}>\n      <Child n={n} />\n    </button>\n  );\n}\n",
+        "explanation": "After **`setN`**, **Parent** re-renders; **Child** receives new `n` and React updates the real **DOM** in the **commit** phase."
+      }
+    ],
+    "tip": "Relate **fiber** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-234",
+    "question": "What is state update batching in React?",
+    "difficulty": "intermediate",
+    "category": "batching",
+    "tags": [
+      "batching",
+      "setstate",
+      "react18"
+    ],
+    "answer": "React **batches** multiple `setState` calls that happen in the same **synchronous** event turn into a **single** re-render. **React 18+** also batches inside **async** work more often (e.g. after **await** in an event) without you calling special APIs, whereas older React could leave you with more **unbatched** updates in some **async** paths.\n\n**Exceptions** to batching and **flush** APIs exist in advanced use cases; see **react** docs and release notes for your version.",
+    "examples": [
+      {
+        "title": "Double set in one handler = one re-render (typically)",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nexport function B() {\n  const [a, setA] = useState(0);\n  const [b, setB] = useState(0);\n  return (\n    <button\n      type=\"button\"\n      onClick={() => {\n        setA((x) => x + 1);\n        setB((x) => x + 1);\n      }}\n    >\n      a={a} b={b}\n    </button>\n  );\n}\n",
+        "explanation": "The click handler can apply **two** state updates, but you usually see a **single** re-render for both—**batching** at work."
+      }
+    ],
+    "tip": "Relate **batching** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-235",
+    "question": "In older React, how was batching different from React 18 automatic batching in async handlers?",
+    "difficulty": "intermediate",
+    "category": "batching",
+    "tags": [
+      "react-17",
+      "react-18",
+      "async"
+    ],
+    "answer": "Before **React 18**, batching in **native** and **synthetic** events was very reliable, but after **`await`**, **setTimeout**, or other **async** continuations, you could get **unbatched** sets unless you used **`unstable_batchedUpdates`**. **React 18+ automatic batching** groups more of those in one render by default, reducing the need to lean on the escape hatch, though **flush** APIs exist when you truly need a **sync** read of the **DOM** between updates.",
+    "examples": [
+      {
+        "title": "Async after await (batched in React 18+)",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nexport function AsyncB() {\n  const [a, setA] = useState(0);\n  return (\n    <button\n      type=\"button\"\n      onClick={async () => {\n        await Promise.resolve();\n        setA((x) => x + 1);\n        setA((x) => x + 1);\n      }}\n    >\n      a={a}\n    </button>\n  );\n}\n",
+        "explanation": "In **18+**, the two `setA` calls in the same async continuation are typically still **batched** into one render."
+      }
+    ],
+    "tip": "Relate **react-17** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-236",
+    "question": "What is hydration, and when is it used in SSR/SSG React apps?",
+    "difficulty": "intermediate",
+    "category": "ssr",
+    "tags": [
+      "hydration",
+      "ssr",
+      "ssg"
+    ],
+    "answer": "**Hydration** is the client’s step that attaches event listeners and **activates** the React tree on top of **HTML** that was **rendered on the server** (or static export). A **mismatch** between server and client **props** or **time**-dependent output causes a warning and visible bugs, so the first client render should match the **server** **HTML** (or the framework’s documented recovery story for streaming).",
+    "examples": [
+      {
+        "title": "SSR HTML then hydrate (conceptual client entry)",
+        "language": "tsx",
+        "code": "import { createRoot, hydrateRoot } from \"react-dom/client\";\nimport { App } from \"./App\";\n\n// CSR\ncreateRoot(document.getElementById(\"root\")!).render(<App />);\n\n// SSR: server sends HTML, client\n// hydrateRoot(document.getElementById(\"root\")!, <App />);\n",
+        "explanation": "**createRoot** mounts into empty DOM; **hydrateRoot** reuses **existing** **HTML** and wires events—match server/client output to avoid **hydration** errors."
+      }
+    ],
+    "tip": "Relate **hydration** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-237",
+    "question": "How do you update object state immutably in React?",
+    "difficulty": "beginner",
+    "category": "state",
+    "tags": [
+      "object",
+      "spread",
+      "immutability"
+    ],
+    "answer": "For **object** state, always replace the object with a **shallow** copy and change the fields you need: `setS((p) => ({ ...p, name: n }))`. For nested one-level, build new objects for each level you change. **Immer** is fine when the tree is **deep** and manual spreads are noisy, but the idea stays **immutability** of each snapshot.",
+    "examples": [
+      {
+        "title": "Shallow object update",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\ntype S = { name: string; age: number };\nexport function Form() {\n  const [p, setP] = useState<S>({ name: \"Ada\", age: 0 });\n  return (\n    <input\n      value={p.name}\n      onChange={(e) => setP((x) => ({ ...x, name: e.target.value }))}\n    />\n  );\n}\n",
+        "explanation": "**Spread** copies the old **object**; only **name** changes so React and memo can detect the update by **reference**."
+      }
+    ],
+    "tip": "Relate **object** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-238",
+    "question": "How do you update deeply nested state without direct mutation?",
+    "difficulty": "intermediate",
+    "category": "state",
+    "tags": [
+      "nested",
+      "immer",
+      "normalization"
+    ],
+    "answer": "Copy each **level** you touch. For `{ user: { profile: { city } } }`, update with nested spreads: `set((s) => ({ ...s, user: { ...s.user, profile: { ...s.user.profile, city: next } } }))`. For large trees, **Immer**’s `produce` keeps the **immutable** contract while you write a **mutative** draft. Avoid **in-place** mutation of nested objects held in state.",
+    "examples": [
+      {
+        "title": "Two-level update",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\ntype S = { user: { profile: { city: string } } };\nexport function N() {\n  const [s, setS] = useState<S>({ user: { profile: { city: \"NYC\" } } });\n  return (\n    <input\n      value={s.user.profile.city}\n      onChange={(e) =>\n        setS((p) => ({\n          ...p,\n          user: { ...p.user, profile: { ...p.user.profile, city: e.target.value } },\n        }))\n      }\n    />\n  );\n}\n",
+        "explanation": "Each **nested** object on the path is **recreated**; untouched branches can share old **references** where safe."
+      }
+    ],
+    "tip": "Relate **nested** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-239",
+    "question": "What patterns are common for arrays stored in useState (add/remove/update)?",
+    "difficulty": "intermediate",
+    "category": "state",
+    "tags": [
+      "arrays",
+      "map-filter",
+      "lists"
+    ],
+    "answer": "Common patterns: **append** with `concat` or spread; **remove** with `filter`; **map** to update one id; **sort** on a **copy** (`[...arr].sort(…)`) before `set` so you do not **mutate** the stored array. If items are **objects**, return **new** object references for changed items so **`memo` children** and **reconciliation** behave predictably.",
+    "examples": [
+      {
+        "title": "filter + map (immutable)",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\ntype Item = { id: string; done: boolean };\nexport function Todos() {\n  const [items, setItems] = useState<Item[]>([]);\n  function toggle(id: string) {\n    setItems((xs) => xs.map((i) => (i.id === id ? { ...i, done: !i.done } : i)));\n  }\n  function remove(id: string) {\n    setItems((xs) => xs.filter((i) => i.id !== id));\n  }\n  return null;\n}\n",
+        "explanation": "**map** and **filter** return **new** arrays; changed items are **replaced** with fresh objects."
+      }
+    ],
+    "tip": "Relate **arrays** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-240",
+    "question": "What is Immer, and when is it used with React state updates?",
+    "difficulty": "intermediate",
+    "category": "state",
+    "tags": [
+      "immer",
+      "draft",
+      "patches"
+    ],
+    "answer": "**Immer** (typically `immer` + `useImmer` or a **reducer** with `produce`) lets you **write** draft-mutating code that **produces** an immutable next state via **structural sharing**. It shines for **deep** or **frequent** updates (nested forms) where hand-written spreads are error-prone, while keeping a **single** `setState` update **pure** and **sync**.",
+    "examples": [
+      {
+        "title": "produce: draft looks mutable, result is not",
+        "language": "ts",
+        "code": "import { produce } from \"immer\";\n\nconst next = produce({ a: { b: 1 } }, (d) => {\n  d.a.b = 2;\n});\n",
+        "explanation": "**produce** takes a **recipe**; it returns a new root while **sharing** unchanged branches."
+      }
+    ],
+    "tip": "Relate **immer** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "Redux: core concepts",
+        "href": "https://redux.js.org/tutorials/essentials/part-1-overview-concepts"
+      }
+    ]
+  },
+  {
+    "id": "react-241",
+    "question": "Why do React and Redux style guides favor avoiding direct mutation of state trees?",
+    "difficulty": "intermediate",
+    "category": "state",
+    "tags": [
+      "mutation",
+      "debugging",
+      "time-travel"
+    ],
+    "answer": "React’s **reconciliation** compares **element** `type` and `key` and then **reuses** or **replaces** subtrees. If you **mutate** a nested object in place, **reference** identity may be unchanged, so child **memos** or **bailout** heuristics can skip work incorrectly and you can hide real changes from the render phase. **Redux** and **time-travel** also assume **old** vs **new** snapshots are **distinct** references.",
+    "examples": [
+      {
+        "title": "Mutation hides updates (bug pattern)",
+        "language": "tsx",
+        "code": "// bad: if items is in state, do not\n// items[0].done = true; setItems(items);\n\n// good\nsetItems((xs) => {\n  const ys = [...xs];\n  ys[0] = { ...ys[0], done: true };\n  return ys;\n});\n",
+        "explanation": "A **new** top-level **array** and **row** object signal React that the **tree** should update."
+      }
+    ],
+    "tip": "Relate **mutation** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-242",
+    "question": "Which array operations are usually preferred in immutable list updates in React state?",
+    "difficulty": "beginner",
+    "category": "state",
+    "tags": [
+      "map",
+      "filter",
+      "slice"
+    ],
+    "answer": "Prefer **non-mutating** `map`, `filter`, `reduce`, `concat`, and spread, or a **for** loop that **builds** a new array. **Sort** on a **copy** first. If you use **splice**-style logic, **copy** the array, then work on the copy, and **`set` the new** array. Each pattern keeps **immutability** and predictable **reconciliation**.",
+    "examples": [
+      {
+        "title": "Filter + add without mutating",
+        "language": "ts",
+        "code": "const xs = [1, 2, 3];\nconst without2 = xs.filter((n) => n !== 2);\nconst with4 = [...without2, 4];\n",
+        "explanation": "**filter** and **spread** return **new** arrays; the original `xs` is unchanged."
+      }
+    ],
+    "tip": "Relate **map** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-243",
+    "question": "What is the pitfall of defining a nested function component inside another component's body?",
+    "difficulty": "intermediate",
+    "category": "patterns",
+    "tags": [
+      "perf",
+      "identity",
+      "remount"
+    ],
+    "answer": "A **function component** defined **inside** another’s body is a **new component type** on every **parent** render, so child **state** is **reset** and **`memo` breaks** (new type each time). It also does extra work. **Move** the child to **module** scope, or if it is tiny and must stay inline, accept that you lose state identity between parent renders; usually **extract** the component or pass **JSX** as **children** instead.",
+    "examples": [
+      {
+        "title": "Extract the inner component",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\n// bad: `Inner` re-created on every `Parent` render\n// function Parent() { function Inner() { return <span />; } return <Inner/> }\n\nfunction Inner({ n }: { n: number }) {\n  return <span>{n}</span>;\n}\nexport function Parent() {\n  const [n, setN] = useState(0);\n  return (\n    <button type=\"button\" onClick={() => setN(n + 1)}>\n      <Inner n={n} />\n    </button>\n  );\n}\n",
+        "explanation": "Defining `Inner` at **module** scope makes it a **stable** type so local **state** inside `Inner` would **persist** across `Parent` re-renders."
+      }
+    ],
+    "tip": "Relate **perf** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-244",
+    "question": "When is a `key` useful for reconciliation even outside a simple `.map` of items?",
+    "difficulty": "intermediate",
+    "category": "reconciliation",
+    "tags": [
+      "keys",
+      "reset",
+      "identity"
+    ],
+    "answer": "Keys identify **siblings** in a list, but a **`key` on a non-list** sub-tree (for example wrapping a form) can **force** React to **remount** that subtree, resetting local **state** and **uncontrolled** inputs—useful when a route param or `userId` changes and you need a “fresh” component instance without a manual **reset** function.",
+    "examples": [
+      {
+        "title": "Reset a subtree with key",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nfunction Editor() {\n  const [txt, setTxt] = useState(\"\");\n  return <input value={txt} onChange={(e) => setTxt(e.target.value)} />;\n}\n\nexport function Page({ userId }: { userId: string }) {\n  return <Editor key={userId} />;\n}\n",
+        "explanation": "When **userId** changes, a **new** **Editor** mounts with **fresh** state because the **key** changed."
+      }
+    ],
+    "tip": "Relate **keys** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-245",
+    "question": "What are good guidelines for a reducer you pass to useReducer?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "reducer",
+      "pure",
+      "actions"
+    ],
+    "answer": "Keep the **reducer** **pure** and **synchronous**: `(state, action) => newState` with no **fetch** or **Math.random** inside. **Model actions** with a small **union** or string **tag**; **one responsibility** per action type. In **TypeScript**, type `action` as a **discriminated union** so the compiler checks **exhaustiveness**.\n\nPut **I/O** in **thunks** or `useEffect`, not the reducer function.",
+    "examples": [
+      {
+        "title": "Tagged actions + default branch",
+        "language": "ts",
+        "code": "type S = { n: number };\ntype A = { type: \"inc\" } | { type: \"add\"; m: number };\n\nfunction r(s: S, a: A): S {\n  switch (a.type) {\n    case \"inc\":\n      return { n: s.n + 1 };\n    case \"add\":\n      return { n: s.n + a.m };\n    default:\n      return s;\n  }\n}\n",
+        "explanation": "A **default** return keeps the function **total**; **action** shapes stay explicit."
+      }
+    ],
+    "tip": "Relate **reducer** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-246",
+    "question": "What is useReducer, and when would you pick it over useState?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usereducer",
+      "usestate",
+      "transitions"
+    ],
+    "answer": "Use `useReducer` when several **transitions** share **related** state, or the next state is easier to read as a **reducer** with **named actions** than a cluster of `useState` calls. You still return **immutability**-friendly updates. **useState** stays ideal for a **single** value or a **tiny** object.\n\nPair **reducer**+**Context** for a **small** shared client store; avoid that pattern for every piece of app data without thought.",
+    "examples": [
+      {
+        "title": "useReducer counter",
+        "language": "tsx",
+        "code": "import { useReducer } from \"react\";\n\nfunction c(s: number, a: { type: \"inc\" } | { type: \"dec\" }): number {\n  if (a.type === \"inc\") return s + 1;\n  return s - 1;\n}\n\nexport function C() {\n  const [n, d] = useReducer(c, 0);\n  return <button onClick={() => d({ type: \"inc\" })}>{n}</button>;\n}\n",
+        "explanation": "**dispatch** sends **action** objects; the **reducer** is the only place that computes the next `n` from the previous."
+      }
+    ],
+    "tip": "Relate **usereducer** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-247",
+    "question": "How does useReducer help with several related state fields in one object?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usereducer",
+      "related-state",
+      "actions"
+    ],
+    "answer": "Store **one** state object in `useReducer` and **dispatch** actions that change **slices** of that object, so you never have to coordinate multiple `setX` calls that might be **inconsistent** between renders. A single **reducer** update is **atomic** for that object.\n\nThe reducer still only updates **synchronously**; use **effects** for side effects that react to state.",
+    "examples": [
+      {
+        "title": "One object, many fields",
+        "language": "tsx",
+        "code": "import { useReducer } from \"react\";\n\ntype S = { user: string; err: string | null };\ntype A = { type: \"setUser\"; u: string } | { type: \"fail\"; e: string };\n\nfunction r(s: S, a: A): S {\n  if (a.type === \"setUser\") return { ...s, user: a.u, err: null };\n  return { ...s, err: a.e };\n}\n\nexport function F() {\n  const [s, d] = useReducer(r, { user: \"\", err: null });\n  return null;\n}\n",
+        "explanation": "Each **action** **merges** into the same **S** so **user** and **err** stay **consistent** in one transition."
+      }
+    ],
+    "tip": "Relate **usereducer** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-248",
+    "question": "How do you use context together with the useContext hook in modern code?",
+    "difficulty": "intermediate",
+    "category": "context",
+    "tags": [
+      "usecontext",
+      "provider",
+      "subscribe"
+    ],
+    "answer": "Call **`const x = useContext(MyCtx)`** in any function component that is a **child** of the matching **`<MyCtx.Provider value={v}>`**. When **`v` changes** (by reference, per parent render rules), **consumers re-render** unless you optimize with **split contexts** or **selectors** patterns.\n\nThe provider must be **above** the consumer in the **React** tree, not the **DOM** tree (portals can still be under the same React **provider** if structured correctly).",
+    "examples": [
+      {
+        "title": "Theme context",
+        "language": "tsx",
+        "code": "import { createContext, useContext } from \"react\";\n\nconst Theme = createContext<\"light\" | \"dark\">(\"light\");\nexport const ThemeProvider = Theme.Provider;\n\nexport function useTheme() {\n  return useContext(Theme);\n}\n",
+        "explanation": "**useContext(Theme)** reads the **nearest** **Provider** value; default applies if none is found."
+      }
+    ],
+    "tip": "Relate **usecontext** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-249",
+    "question": "What are solid use cases for useContext in application architecture (theme, auth, and so on)?",
+    "difficulty": "intermediate",
+    "category": "context",
+    "tags": [
+      "theme",
+      "auth",
+      "locale"
+    ],
+    "answer": "Good **Context** values: **theme**, **locale**/**i18n**, **routing** context from your framework, **current user** identity (id + roles) when updated **rarely**, or **accessibility** settings. **Avoid** a giant ever-changing object as **value**—that **re-renders** all consumers. For **frequently** changing remote lists, use **query** cache libraries or a **slice**-oriented state library instead of one mega-context.",
+    "examples": [
+      {
+        "title": "Split “who am I” from volatile cart",
+        "language": "tsx",
+        "code": "// sketch: static-ish identity in AuthCtx; use TanStack Query for cart\nimport { createContext, useContext } from \"react\";\n\nconst Auth = createContext<{ userId: string } | null>(null);\nexport function useUserId() {\n  return useContext(Auth)?.userId ?? null;\n}\n",
+        "explanation": "**Context** for **broad, slow** identity; **query** for **server**-backed, **fast** refetching data."
+      }
+    ],
+    "tip": "Relate **theme** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-250",
+    "question": "What is the idea of 'client' versus 'server' components in a React RSC model?",
+    "difficulty": "advanced",
+    "category": "server-components",
+    "tags": [
+      "rsc",
+      "client",
+      "server"
+    ],
+    "answer": "**Server** components (framework-defined) can run on the **server** with **no** client **bundle** for their logic, **stream** to the client, and pass **props** to **client** **components** for **interactivity** (`onClick` and similar). The split reduces **JS** on the client but requires clear **serialization** and **caching** rules—**see your framework and react.dev**.",
+    "examples": [
+      {
+        "title": "“use client” vs server (illustrative)",
+        "language": "tsx",
+        "code": "// Server RSC: async, no \"use client\" (framework applies)\n// async function Greet() { return <p>{await db()}</p>; }\n\n// Client component: interactive, ships to the browser\n\"use client\";\nimport { useState } from \"react\";\nexport function Button() {\n  const [c, setC] = useState(0);\n  return <button onClick={() => setC(c + 1)}>{c}</button>;\n}\n",
+        "explanation": "Only the **Client** part ships interactive JS; the **server** part’s rules depend on the **Next** (or other) RSC model."
+      }
+    ],
+    "tip": "Relate **rsc** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-251",
+    "question": "What is the difference between Next.js Pages Router and the App Router at a high level?",
+    "difficulty": "intermediate",
+    "category": "nextjs",
+    "tags": [
+      "nextjs",
+      "app-router",
+      "pages-router"
+    ],
+    "answer": "The **Pages** router in **Next** maps **file paths** in `pages/` to routes and uses a **`getServerSideProps`/`getStaticProps`**-centric data story (with incremental updates over time). The **App** router (Next 13+ **app/**) is built on **RSC** by default, **nested** layouts, and **route groups**; **data** fetching colocates in **server** **components** and **caching** is first-class, though the exact APIs evolve—always read the **current** **Next** docs for your version.",
+    "examples": [
+      {
+        "title": "Mental: pages vs app directory",
+        "language": "ts",
+        "code": "// pages/about.tsx  →  /about\n// app/about/page.tsx  →  /about  (App Router, layouts in app/layout.tsx)\n",
+        "explanation": "The **file system** and **RSC** defaults differ; **migrations** are guided by the **Next** upgrade guides."
+      }
+    ],
+    "tip": "Relate **nextjs** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "Next.js: App Router",
+        "href": "https://nextjs.org/docs/app"
+      }
+    ]
+  },
+  {
+    "id": "react-252",
+    "question": "What is useMemo, and when should you actually use it (versus fixing real causes of work)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usememo",
+      "expensive",
+      "deps"
+    ],
+    "answer": "Use `useMemo` to **cache** a **value** that is **expensive** to **compute** from deps, or to **stabilize** a **reference** (object/array) you pass to **`memo` children. Do **not** use it to paper over a **giant** render; **fix structure** and **data flow** first. If deps are **wrong**, you can ship **stale** values—treat the linter seriously.\n\nMeasure before memoizing; many apps need little beyond **lists** in the right place.",
+    "examples": [
+      {
+        "title": "Expensive derived value",
+        "language": "tsx",
+        "code": "import { useMemo, useState } from \"react\";\n\nfunction heavy(n: number) {\n  return n * n;\n}\nexport function V({ n }: { n: number }) {\n  const v = useMemo(() => heavy(n), [n]);\n  return <p>{v}</p>;\n}\n",
+        "explanation": "**useMemo** avoids recomputing `heavy` when **unrelated** state in the parent changes but **`n` does not**."
+      }
+    ],
+    "tip": "Relate **usememo** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-253",
+    "question": "Can you use Hooks inside a React class component?",
+    "difficulty": "beginner",
+    "category": "hooks",
+    "tags": [
+      "classes",
+      "invalid",
+      "refactor"
+    ],
+    "answer": "**Hooks** only work in **function** components and **custom** hooks, not in **class** `render` (and not in **callbacks** defined outside a component in random modules). You can wrap a class with a **function** child that **uses** hooks, or migrate the class to **function**+**hooks**; there is no `useState` on `this` in a class’s body.",
+    "examples": [
+      {
+        "title": "Bridge with wrapper function",
+        "language": "tsx",
+        "code": "import { useState, Component, type ReactNode } from \"react\";\n\nfunction WithCount({ children }: { children: (c: number) => ReactNode }) {\n  const [c, setC] = useState(0);\n  return <>{children(c)}<button onClick={() => setC(c + 1)}>+</button></>;\n}\n\nexport class Old extends Component {\n  render() {\n    return <WithCount>{(c) => <span>{c}</span>}</WithCount>;\n  }\n}\n",
+        "explanation": "The **class** does not call **hooks**; a **function** child component does."
+      }
+    ],
+    "tip": "Relate **classes** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-254",
+    "question": "What is the useState functional updater, and when is it better than a plain value set?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usestate",
+      "updater",
+      "stale"
+    ],
+    "answer": "The **functional** updater is `setN((p) => p + 1)` using the **latest** `p` at apply time, which matters when you **queue** several updates in one event or the next `n` must depend on the **last** state, not a **stale** closure. For **batches** and **asynchronous** flows, the functional form is the safe default for **counters and toggles** that might multiple-update.",
+    "examples": [
+      {
+        "title": "Double increment, safe with updater",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nexport function D() {\n  const [n, setN] = useState(0);\n  return (\n    <button type=\"button\" onClick={() => {\n      setN((p) => p + 1);\n      setN((p) => p + 1);\n    }}>\n      {n}\n    </button>\n  );\n}\n",
+        "explanation": "Each **updater** receives the **latest** `p` from the **queue**; the final **n** increases by two."
+      }
+    ],
+    "tip": "Relate **usestate** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-255",
+    "question": "How does a function initializer in useState work, and when do you use it?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "lazy-initial",
+      "usestate",
+      "expensive"
+    ],
+    "answer": "Pass a **function** to `useState`: `useState(() => initialValue)` and React calls it **only on initial mount** to get the first state, which matters when **initial** work is **expensive** or must read **localStorage** **once**—it avoids re-running on every **render** like `useState(expensive())` would.",
+    "examples": [
+      {
+        "title": "Lazy init",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nfunction read() {\n  return Number(localStorage.getItem(\"c\") ?? \"0\");\n}\nexport function C() {\n  const [c, setC] = useState(() => read());\n  return <button onClick={() => setC(c + 1)}>{c}</button>;\n}\n",
+        "explanation": "`read()` runs **once**; without the **function** form it would read **storage** on every **render** if written as `useState(read())` when `read` is inlined."
+      }
+    ],
+    "tip": "Relate **lazy-initial** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-256",
+    "question": "How do you type useState in TypeScript for unions, tuples, and objects?",
+    "difficulty": "intermediate",
+    "category": "types",
+    "tags": [
+      "typescript",
+      "generics",
+      "usestate"
+    ],
+    "answer": "Pass **type arguments** or rely on **inference**: `useState<string | null>(null)`, `useState(0 as 0 | 1)`, `useState<[string, string]>(['a','b'])` for **tuples**, and for **objects** use an **interface** or `as const` for literal unions. **Narrow** with **type guards** when reading from **localStorage** or **APIs**; avoid **`any` at boundaries** by using `unknown` + parse.",
+    "examples": [
+      {
+        "title": "Union, tuple, object",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\ntype Tab = \"a\" | \"b\";\ntype Pair = [string, string];\n\nexport function T() {\n  const [t, setT] = useState<Tab>(\"a\");\n  const [p, setP] = useState<Pair>([\"x\", \"y\"]);\n  return null;\n}\n",
+        "explanation": "Generics and **union** `Tab` keep **setT** and **t** in sync; **tuples** can model **key-value** pairs."
+      }
+    ],
+    "tip": "Relate **typescript** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "TypeScript: React in TS",
+        "href": "https://www.typescriptlang.org/docs/handbook/react.html"
+      }
+    ]
+  },
+  {
+    "id": "react-257",
+    "question": "Is it valid to call useState in only some code paths (conditionally)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "rules-of-hooks",
+      "conditional",
+      "branches"
+    ],
+    "answer": "**You cannot** call hooks **conditionally** (`if`/`return` before hooks) or in **loops** with changing order, because the internal **hook** list is indexed by **call order** each render. **Extract** a child component, or **call all hooks** unconditionally and use **if** in the **logic** of `useState`’s value or in **return** JSX. **ESLint** will flag violations.",
+    "examples": [
+      {
+        "title": "Invalid vs valid",
+        "language": "tsx",
+        "code": "// invalid if you ever return before useState\n// if (x) return null;\n// const [n, setN] = useState(0);\n\n// valid: always run hooks, branch in JSX\nimport { useState } from \"react\";\nexport function Ok({ x }: { x: boolean }) {\n  const [n, setN] = useState(0);\n  if (!x) return null;\n  return <button onClick={() => setN(n + 1)}>{n}</button>;\n}\n",
+        "explanation": "Hooks run **first** every time; the **early return** happens only after `useState` has been called, which is valid."
+      }
+    ],
+    "tip": "Relate **rules-of-hooks** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-258",
+    "question": "Is setState in React 'async', and what does that imply for reading state immediately after set?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "batching",
+      "asynchronous",
+      "closures"
+    ],
+    "answer": "State updates are **async** in the sense that the **new** `useState` value is not visible in the same **synchronous** block **after** you call `setN`—you still read the **old** `n` in that function until the next **render**. For immediate **logic**, use a **ref**, **functional** `set` queue, or **useEffect** to react to the **new** value after commit.",
+    "examples": [
+      {
+        "title": "Stale read after set",
+        "language": "tsx",
+        "code": "import { useState } from \"react\";\n\nexport function S() {\n  const [n, setN] = useState(0);\n  function bad() {\n    setN(1);\n    console.log(n); // still 0 in this run\n  }\n  return <button onClick={bad}>go</button>;\n}\n",
+        "explanation": "The **log** uses the **render**-closure `n`; the **update** is scheduled for a **future** render."
+      }
+    ],
+    "tip": "Relate **batching** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-259",
+    "question": "At a high level, how can useState be modeled internally in React (hooks list + per-fiber state)?",
+    "difficulty": "advanced",
+    "category": "hooks",
+    "tags": [
+      "fiber",
+      "queue",
+      "dispatcher"
+    ],
+    "answer": "Conceptually, each function component that uses hooks is linked to a **Fiber**; React keeps a **per-fiber** **linked** list of **hook state** cells in the order you called the hooks. On each render, that list is **walked** in the same order, so **conditional** or **variable**-length hook calls would break the alignment between **index** and **meaning**—hence the **rules of hooks**.",
+    "examples": [
+      {
+        "title": "Same call order every render (conceptual)",
+        "language": "ts",
+        "code": "// Pseudocode: React stores hook state by index 0,1,2,… per component.\n// render1: useState, useEffect, useMemo\n// render2: same order -> state lines up with the same cells\n",
+        "explanation": "If a hook were **skipped** on one render, index **2** might read the wrong **memorized** cell—hence **no conditional** hook calls."
+      }
+    ],
+    "tip": "Relate **fiber** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-260",
+    "question": "Why do teams use useReducer for more complex, action-driven state transitions?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usereducer",
+      "state-machine",
+      "actions"
+    ],
+    "answer": "A **reducer** keeps **related** transitions in one **pure** function, which is easier to **test** and **log** than several `setState` calls that must stay in sync. **Action** types give a **clear** vocabulary (`ADD`, `RESET`) and scale to **discriminated unions** in TypeScript. Side effects still belong in **effects** or your **data** layer, not inside the reducer.",
+    "examples": [
+      {
+        "title": "Machine-like flow in one reducer",
+        "language": "ts",
+        "code": "type S = { step: 1 | 2 | 3 };\ntype A = { type: \"next\" } | { type: \"back\" };\nfunction r(s: S, a: A): S {\n  if (a.type === \"back\" && s.step > 1) return { step: (s.step - 1) as 1 | 2 | 3 };\n  if (a.type === \"next\" && s.step < 3) return { step: (s.step + 1) as 1 | 2 | 3 };\n  return s;\n}\n",
+        "explanation": "All **step** rules live in **one** place; **dispatch** stays the only entry point for those rules."
+      }
+    ],
+    "tip": "Relate **usereducer** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-261",
+    "question": "What is a simple useReducer example (counter) that clarifies `dispatch`?",
+    "difficulty": "beginner",
+    "category": "hooks",
+    "tags": [
+      "usereducer",
+      "example",
+      "dispatch"
+    ],
+    "answer": "A counter with `useReducer` clarifies **`dispatch`**: you send `{ type: 'increment' }` (or a field) and the **reducer** returns the next integer. Multiple **event** sources can **dispatch** the same actions; the **reducer** stays the single **source of truth** for how state evolves.",
+    "examples": [
+      {
+        "title": "Counter with dispatch",
+        "language": "tsx",
+        "code": "import { useReducer } from \"react\";\n\nfunction countReducer(s: number, a: { type: \"inc\" | \"dec\" }) {\n  if (a.type === \"inc\") return s + 1;\n  return s - 1;\n}\n\nexport function Counter() {\n  const [n, dispatch] = useReducer(countReducer, 0);\n  return (\n    <>\n      <button type=\"button\" onClick={() => dispatch({ type: \"inc\" })}>\n        +\n      </button>\n      <output>{n}</output>\n    </>\n  );\n}\n",
+        "explanation": "`dispatch` **sends** actions; the **reducer** computes the next **n** from the previous `n`."
+      }
+    ],
+    "tip": "Relate **usereducer** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-262",
+    "question": "How can useReducer pair with context to make a small client-side 'store' pattern?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usereducer",
+      "context",
+      "provider"
+    ],
+    "answer": "Combine **`useReducer`** for state with **`createContext`**/**`useContext`** for **read** access: the **Provider** holds `state` and **`dispatch`**, or passes **callbacks** that wrap `dispatch` for a narrower API. This approximates a **lightweight store** for a subtree. Split **Context** if **`dispatch` identity** and **`state`** churn cause wide **re-renders**; consider **Jotai**/**Zustand** when the tree grows.",
+    "examples": [
+      {
+        "title": "Reducer + context (sketch)",
+        "language": "tsx",
+        "code": "import { createContext, useContext, useReducer, type ReactNode, type Dispatch } from \"react\";\n\ntype A = { type: \"inc\" };\nfunction r(s: number, a: A) {\n  return a.type === \"inc\" ? s + 1 : s;\n}\nconst Ctx = createContext<{ n: number; d: Dispatch<A> } | null>(null);\nexport function RProvider({ children }: { children: ReactNode }) {\n  const [n, d] = useReducer(r, 0);\n  return <Ctx.Provider value={{ n, d }}>{children}</Ctx.Provider>;\n}\nexport function useN() {\n  const v = useContext(Ctx);\n  if (!v) throw new Error(\"provider\");\n  return v;\n}\n",
+        "explanation": "Children call **`useN()`** to read `n` and `d` without **prop** drilling, while the **reducer** still owns the transition rules."
+      }
+    ],
+    "tip": "Relate **usereducer** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-263",
+    "question": "What happens to batched `dispatch` calls on the same tick with useReducer?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usereducer",
+      "batching",
+      "actions"
+    ],
+    "answer": "React **batches** multiple `dispatch` calls in the same **event** (or within the same **batching** window in **React 18+**) so the **reducer** can run with **each** action in order, **or** React may pass them as separate reducer invocations in one commit depending on the internal batching—**either way** you get **one re-render** per batch with the final **state**. Do not rely on **intermediate** render outputs between batched `dispatch` calls for **side** effects; read **state** in **`useEffect`** or after **`flushSync`** in rare cases.",
+    "examples": [
+      {
+        "title": "Double dispatch, one update batch",
+        "language": "tsx",
+        "code": "import { useReducer } from \"react\";\n\nfunction r(n: number, a: { type: \"add\"; m: number }) {\n  return n + a.m;\n}\nexport function T() {\n  const [n, d] = useReducer(r, 0);\n  return (\n    <button type=\"button\" onClick={() => { d({ type: \"add\", m: 1 }); d({ type: \"add\", m: 1 }); }}>\n      {n}\n    </button>\n  );\n}\n",
+        "explanation": "Two `dispatch` calls in one **handler** typically produce **one** re-render with `n` increased by `2` for the batching rules in **React 18+**."
+      }
+    ],
+    "tip": "Relate **usereducer** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-264",
+    "question": "Where should side effects and async I/O go when you use useReducer (hint: not inside the reducer)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "side-effects",
+      "useeffect",
+      "thunks"
+    ],
+    "answer": "The **reducer** must stay **synchronous** and **pure**: no `fetch`, `setTimeout`, or logging that must run once per business action. Put **data loading** in **`useEffect`**, event handlers, or your **query** client; **dispatch** the **result** (or a **load/error** action) when the request completes. The **reducer** only maps **(state, action) → state** so **tests** and **devtools** stay predictable.",
+    "examples": [
+      {
+        "title": "Effect fetches, reducer applies result",
+        "language": "tsx",
+        "code": "import { useEffect, useReducer } from \"react\";\n\ntype S = { data: string | null };\ntype A = { type: \"ok\"; data: string };\nfunction r(_s: S, a: A): S {\n  return { data: a.data };\n}\n\nexport function Use({ url }: { url: string }) {\n  const [s, d] = useReducer(r, { data: null });\n  useEffect(() => {\n    void fetch(url)\n      .then((x) => x.text())\n      .then((t) => d({ type: \"ok\", data: t }));\n  }, [url]);\n  return <pre>{s.data}</pre>;\n}\n",
+        "explanation": "`useEffect` owns the **async** fetch; the **reducer** only **records** the loaded **string**."
+      }
+    ],
+    "tip": "Relate **side-effects** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-265",
+    "question": "What is a small but realistic useContext + Provider + consumer example in modern code?",
+    "difficulty": "intermediate",
+    "category": "context",
+    "tags": [
+      "example",
+      "provider",
+      "value"
+    ],
+    "answer": "Wrap part of the tree in **`<MyCtx.Provider value={…}>`**; descendants call **`useContext(MyCtx)`** to read **theme**, **user**, or a **reducer** pair. The **value** should be **stable** when possible (`useMemo` the object, or pass **`dispatch`** from **useReducer** which is **stable**), so you do not re-render the whole tree every parent render. Document **default** from `createContext` for **unmatched** **Providers** in dev.",
+    "examples": [
+      {
+        "title": "Theme provider + consumer",
+        "language": "tsx",
+        "code": "import { createContext, useContext, useState, type ReactNode } from \"react\";\n\nconst T = createContext<{ name: \"light\" | \"dark\" } | null>(null);\nexport function ThemeRoot({ children }: { children: ReactNode }) {\n  const [name, setName] = useState<\"light\" | \"dark\">(\"light\");\n  return <T.Provider value={{ name }}>{children}</T.Provider>;\n}\nexport function useTheme2() {\n  const x = useContext(T);\n  if (!x) throw new Error(\"ThemeRoot missing\");\n  return x;\n}\n",
+        "explanation": "`useTheme2` is the **read** path; the **object** `value` should often be **memo**ized if the parent re-renders often."
+      }
+    ],
+    "tip": "Relate **example** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-266",
+    "question": "How can you structure multiple context providers, and when should you split them?",
+    "difficulty": "intermediate",
+    "category": "context",
+    "tags": [
+      "split",
+      "performance",
+      "providers"
+    ],
+    "answer": "**Nest** **Providers** in the order you need: `Auth` outside `Theme` if theme can depend on user, and so on. **Split** contexts so **frequent** updates (cart line items) are not in the same **value** as **slow**-changing **user** id—otherwise every cart tick **re-renders** **theme** consumers. Some teams use a **Provider** per domain **module**; others co-locate a **reducer** store per feature.",
+    "examples": [
+      {
+        "title": "Nested providers",
+        "language": "tsx",
+        "code": "import { createContext, type ReactNode } from \"react\";\nconst A = createContext(0);\nconst B = createContext(0);\nexport function Roots({ children }: { children: ReactNode }) {\n  return (\n    <A.Provider value={1}>\n      <B.Provider value={2}>{children}</B.Provider>\n    </A.Provider>\n  );\n}\n",
+        "explanation": "Inner **useContext** queries find the **nearest** **Provider** for each **Context** type."
+      }
+    ],
+    "tip": "Relate **split** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-267",
+    "question": "What is a common pitfall when a new `value` object is created every render for context?",
+    "difficulty": "intermediate",
+    "category": "context",
+    "tags": [
+      "rerender",
+      "usememo",
+      "stability"
+    ],
+    "answer": "If **`<Provider value={{ ... }}`>** **creates a new object** every **render**, **reference** **equality** changes, so every **consumer** of that **Context** re-renders, even if the **fields** are **shallow**-equal. **Fix** with **`useMemo`** for the value object, **split** contexts, or store **primitive** **values** when possible. **`dispatch`** from **useReducer** is **reference**-stable, which helps.",
+    "examples": [
+      {
+        "title": "Memoize the value object",
+        "language": "tsx",
+        "code": "import { createContext, useContext, useMemo, useState, type ReactNode } from \"react\";\n\nconst C = createContext<{ n: number } | null>(null);\nexport function P({ children }: { children: ReactNode }) {\n  const [n, setN] = useState(0);\n  const v = useMemo(() => ({ n, setN }), [n]);\n  return <C.Provider value={v}>{children}</C.Provider>;\n}\nexport function useC() {\n  return useContext(C);\n}\n",
+        "explanation": "Without **`useMemo`**, `{ n, setN }` would be a **new** object each time **`P` re-renders**, waking every **consumer** every time—here **`v`** only changes when **`n` changes** (setN identity should be **stable** from **useState**)."
+      }
+    ],
+    "tip": "Relate **rerender** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-268",
+    "question": "What do consumers get if a Provider is missing, or a default is undefined?",
+    "difficulty": "intermediate",
+    "category": "context",
+    "tags": [
+      "default",
+      "optional",
+      "errors"
+    ],
+    "answer": "If a **consumer** renders **without** a matching **Provider** above, **`useContext`** returns the **default** you passed to **`createContext(defaultValue)`**—often **`undefined`**, which is why teams throw in a custom hook. **TypeScript** can model **`null` vs undefined**; document **Error** boundaries and **dev**-only **warnings** in your `useX` hook when the **provider** is **missing**.",
+    "examples": [
+      {
+        "title": "default + safe hook",
+        "language": "tsx",
+        "code": "import { createContext, useContext } from \"react\";\n\nconst X = createContext<string | undefined>(undefined);\nexport function useMustX() {\n  const v = useContext(X);\n  if (v === undefined) throw new Error(\"X Provider missing\");\n  return v;\n}\n",
+        "explanation": "The **default** is **`undefined`**, so a **dedicated** hook can **throw** a clear error instead of **silently** returning garbage."
+      }
+    ],
+    "tip": "Relate **default** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-269",
+    "question": "What does the `useEffect` dependency array mean, and what does an empty `[]` mean?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "dependencies",
+      "useeffect",
+      "stale"
+    ],
+    "answer": "The **dependency** array in **`useEffect(fn, [a, b])`** means: **re-run** `fn` (after the previous `cleanup`) when **`a` or `b`** (by **`Object.is`**) **changes** from the last commit. An **empty** **`[]`** means **run `fn` after first mount** and run **`cleanup` on unmount**—`fn` is not re-run for **re-renders** unless the component **remounts**.\n\nList **every** value from the component **scope** that `fn` **reads** and that can **change**; the **exhaustive-deps** rule helps.",
+    "examples": [
+      {
+        "title": "Deps and empty array",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function D({ id }: { id: string }) {\n  const [x, setX] = useState(0);\n  useEffect(() => {\n    void id;\n  }, [id]);\n  useEffect(() => {\n    setX(1);\n  }, []);\n  return null;\n}\n",
+        "explanation": "First effect **re-subscribes** to **`id` changes; second effect runs **once** on mount and never again for plain re-renders."
+      }
+    ],
+    "tip": "Relate **dependencies** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-270",
+    "question": "When are effect setup and cleanup functions run, and when does `cleanup` run between updates?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "cleanup",
+      "resubscribe",
+      "deps"
+    ],
+    "answer": "After **commit** (DOM updated for that render), **useEffect** runs the **new** `fn` in order; if **dependencies** **changed** from the previous time this effect was committed, **React** first runs the **previous** `cleanup` (if you returned one from `fn`), then the **new** `fn`. On **unmount**, **all** `cleanup` functions run. **`useLayoutEffect` runs before paint, `useEffect` after paint**—cleanup ordering follows the same **tree** order rules.",
+    "examples": [
+      {
+        "title": "Cleanup on dep change",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function T({ id }: { id: string }) {\n  const [, setS] = useState(0);\n  useEffect(() => {\n    const t = setInterval(() => setS((c) => c + 1), 1000);\n    return () => clearInterval(t);\n  }, [id]);\n  return null;\n}\n",
+        "explanation": "When **`id` changes,** the old **interval** is **cleared** first, then a **new** one starts for the new **`id`**."
+      }
+    ],
+    "tip": "Relate **cleanup** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-271",
+    "question": "What is a correct pattern to call an async IIFE or Promise inside useEffect (race-safe)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "async",
+      "useeffect",
+      "aborted"
+    ],
+    "answer": "Declare **`useEffect(() => { let cancelled = false; (async () => { const r = await fetch(...); if (!cancelled) setD(await r.text()); })(); return () => { cancelled = true; }; }, [url]);`** or use **`AbortController`**. The pattern prevents **setState** on **unmount** and **stale** **responses** when **`url` changes** or the **strict** effect **re-runs** in dev. Do not mark the **`useEffect` callback** itself **`async`** (you need sync return of **cleanup**).",
+    "examples": [
+      {
+        "title": "Race-safe effect",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function F({ id }: { id: string }) {\n  const [d, setD] = useState<string | null>(null);\n  useEffect(() => {\n    let alive = true;\n    void (async () => {\n      const r = await fetch(`/x/${id}`);\n      const t = await r.text();\n      if (alive) setD(t);\n    })();\n    return () => {\n      alive = false;\n    };\n  }, [id]);\n  return <pre>{d}</pre>;\n}\n",
+        "explanation": "A late **response** is ignored if **`id` changed** and **`alive` is false** for that run."
+      }
+    ],
+    "tip": "Relate **async** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-272",
+    "question": "Why is splitting logic across multiple `useEffect` calls often better than one giant effect?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "separation",
+      "clarity",
+      "deps"
+    ],
+    "answer": "Several **small** `useEffect` calls each **declare** a separate **concern** (subscription, `document` title, analytics) with **its own** **deps** and **cleanup**—readers can **test** and **remove** one without breaking others. One **giant** effect that mixes many concerns and **broad** deps is a **frequent** source of **stale** bugs and **infinite** loops.",
+    "examples": [
+      {
+        "title": "Split by concern",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function P({ id }: { id: string }) {\n  const [t, setT] = useState(\"\");\n  useEffect(() => {\n    document.title = t;\n  }, [t]);\n  useEffect(() => {\n    return () => void id;\n  }, [id]);\n  return <input value={t} onChange={(e) => setT(e.target.value)} />;\n}\n",
+        "explanation": "**Title** sync and **`id` cleanup** are **independent** effects with their own **dependency** lists."
+      }
+    ],
+    "tip": "Relate **separation** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-273",
+    "question": "How can wrong dependencies cause an infinite re-render or effect loop, and what prevents it?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "infinite",
+      "stability",
+      "eslint"
+    ],
+    "answer": "A **`useEffect`** that **setState**s without a **guard** in **deps** can re-trigger itself: e.g. **effect** runs → **setN** → **render** → **effect** if **`n` is a **dep** and the **effect** always **sets** `n` again. **Fix** by **narrowing** the condition, using **refs** to break cycles, or **removing** **unnecessary** **deps** when the value should not **subscribe** the effect. The **linter** + **code review** catch many cases.",
+    "examples": [
+      {
+        "title": "Loop pattern (to avoid)",
+        "language": "tsx",
+        "code": "// anti-pattern: effect sets state that is also a dep, unconditionally\n// useEffect(() => { setC(c+1) }, [c]);\n",
+        "explanation": "This **fights** the **stability** you need—**only** `setC` when an **external** fact **changes** or **gate** with **ifs** and **refs**."
+      }
+    ],
+    "tip": "Relate **infinite** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "eslint-plugin-react-hooks",
+        "href": "https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/README.md"
+      }
+    ]
+  },
+  {
+    "id": "react-274",
+    "question": "What are good useLayoutEffect use cases, and when should you avoid it?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "uselayouteffect",
+      "measure",
+      "mutations"
+    ],
+    "answer": "Use **`useLayoutEffect`** when you must read **layout** (geometry, scroll) and **synchronously** write the DOM or state **before** the browser **paints**, so the user never sees a **flicker**. **Measuring** a ref’s **size** to position a **tooltip** is a classic. **Avoid** for **data fetching** and heavy work—it **blocks** **paint**.",
+    "examples": [
+      {
+        "title": "Measure before paint",
+        "language": "tsx",
+        "code": "import { useLayoutEffect, useRef, useState } from \"react\";\n\nexport function Box() {\n  const r = useRef<HTMLDivElement>(null);\n  const [h, setH] = useState(0);\n  useLayoutEffect(() => {\n    if (r.current) setH(r.current.getBoundingClientRect().height);\n  });\n  return <div ref={r} style={{ height: h || undefined }} />;\n}\n",
+        "explanation": "The **height** you read and apply in the same **frame** is **consistent** for the first **paint** after the update."
+      }
+    ],
+    "tip": "Relate **uselayouteffect** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-275",
+    "question": "What is the SSR story for useLayoutEffect (server warning) and the typical workaround?",
+    "difficulty": "intermediate",
+    "category": "ssr",
+    "tags": [
+      "uselayouteffect",
+      "ssr",
+      "useeffect"
+    ],
+    "answer": "There is **no** **layout** or **real DOM** for **`useLayoutEffect` on the server** in the same way, so **React** warns. Patterns: use **`useEffect`** on the **client** for **measure**-after-**mount**, a **`useIsomorphicLayoutEffect`** alias that is **`useLayoutEffect` in the browser and `useEffect` on the server**, or split **SSR**-**safe** markup so the first **client** pass **matches** the **server** and then you **correct** in **`useEffect`** after **hydration**.",
+    "examples": [
+      {
+        "title": "Isomorphic layout effect helper",
+        "language": "ts",
+        "code": "import { useEffect, useLayoutEffect } from \"react\";\n\nconst u = typeof document !== \"undefined\";\nexport const useIsomorphicLayoutEffect = u ? useLayoutEffect : useEffect;\n",
+        "explanation": "The **server** **falls back** to **`useEffect`** to avoid the **useLayoutEffect** warning where **layout** does not exist."
+      }
+    ],
+    "tip": "Relate **uselayouteffect** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-276",
+    "question": "When should you avoid useLayoutEffect for business logic (non layout side effects)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "uselayouteffect",
+      "blocking",
+      "separation"
+    ],
+    "answer": "If you do **data fetching** or **business** rules in **`useLayoutEffect`**, you **block** **paint** for **long** or **failing** work and hurt **INP**/**TTI**. Reserve **`useLayoutEffect`** for **synchronous** **visual** **correctness** (measure, scroll, focus). For **I/O** and most **app** logic, **`useEffect`** (or a **data** **library** hook) is the right place.",
+    "examples": [
+      {
+        "title": "Fetch in useEffect, not useLayoutEffect",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function D() {\n  const [d, setD] = useState<string | null>(null);\n  useEffect(() => {\n    void fetch(\"/x\").then((r) => r.text()).then(setD);\n  }, []);\n  return <p>{d}</p>;\n}\n",
+        "explanation": "The user can **paint** a **loading** state while **fetch** runs **after** **paint**—better than blocking first **paint** with **layout** effect."
+      }
+    ],
+    "tip": "Relate **uselayouteffect** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-277",
+    "question": "What is layout thrashing in the browser, and how can batching and layout tools reduce it?",
+    "difficulty": "intermediate",
+    "category": "performance",
+    "tags": [
+      "layout",
+      "read-write",
+      "dom"
+    ],
+    "answer": "**Layout thrashing** is reading **layout** (e.g. `offsetWidth`) then **mutating** style in a way that **invalidates** layout, then **reading** again, **looping** and forcing the browser to recalculate **layout** many times per frame. **Batch** **reads** and **writes** (read all **geometry** first, then apply **writes**), use **`useLayoutEffect`** for **synchronous** **measure-then-apply** once, and **avoid** per-frame read/write in **render** (use **`requestAnimationFrame`** for **animations** when needed).",
+    "examples": [
+      {
+        "title": "Batch reads then writes (conceptual)",
+        "language": "ts",
+        "code": "// slow: in a loop, read then write for each\n// fast: const widths = els.map((e) => e.offsetWidth);\n//         els.forEach((e, i) => { e.style.width = `${widths[i]}px`; });\n",
+        "explanation": "**Separating** read and **write** phases matches browser **optimization** advice for **reflow** cost."
+      }
+    ],
+    "tip": "Relate **layout** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "MDN: JavaScript modules",
+        "href": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"
+      }
+    ]
+  },
+  {
+    "id": "react-278",
+    "question": "What is a common useRef example for direct DOM access (for example, focusing an input)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "useref",
+      "dom",
+      "imperative"
+    ],
+    "answer": "Store a **`ref`** from **`useRef<HTMLInputElement | null>(null)`**, attach **`ref={ref}`** to the **input**, and call **`ref.current?.focus()`** in **`useEffect`** on mount, or in a **click** **handler** for **focus** on demand. The **ref** is **stable** across **renders**; **focus** is an **imperative** **DOM** side, not **state**.",
+    "examples": [
+      {
+        "title": "Focus on mount",
+        "language": "tsx",
+        "code": "import { useEffect, useRef } from \"react\";\n\nexport function A() {\n  const r = useRef<HTMLInputElement>(null);\n  useEffect(() => {\n    r.current?.focus();\n  }, []);\n  return <input ref={r} defaultValue=\"hi\" />;\n}\n",
+        "explanation": "After the **input** is in the **document**, the effect can call **`focus()`** on the **node**."
+      }
+    ],
+    "tip": "Relate **useref** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-279",
+    "question": "What is the difference between ref-as-instance-variable versus state for mutable values that should not re-render?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "useref",
+      "mutable",
+      "stale"
+    ],
+    "answer": "A **`ref`** is a **mutable** box; changing **`.current`** does not schedule a **re-render**. **`useState`** is for **values** that should **drive** the next **paint**. Use **refs** for **previous** props, **animation** frame ids, or **caches**; use **state** for **counts** and **form** fields the user **sees**.",
+    "examples": [
+      {
+        "title": "Ref for mutable, state for display",
+        "language": "tsx",
+        "code": "import { useRef, useState } from \"react\";\n\nexport function T() {\n  const [n, setN] = useState(0);\n  const last = useRef(0);\n  return (\n    <button\n      onClick={() => {\n        last.current = n;\n        setN(n + 1);\n      }}\n    >\n      {n} (last was {last.current})\n    </button>\n  );\n}\n",
+        "explanation": "The **ref** can store **arbitrary** data without **extra** re-renders; **n** in **state** is what **drives** the **label** (after the click, **last** lags by design in this tiny demo)."
+      }
+    ],
+    "tip": "Relate **useref** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-280",
+    "question": "How can you keep the previous prop or state value in a function component (ref + effect pattern)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "previous",
+      "useref",
+      "useeffect"
+    ],
+    "answer": "Keep a **`ref`**, and in **`useEffect`** (after every **render** or on specific **deps**), set **`ref.current` to the **current** `props` and copy the **previous** from what you stored before **update**—a common snippet is **`const prev = useRef(); useEffect(() => { prev.current = p });`** or a **`useEffect` that only updates** the **ref** for **the next** read. **Libraries** also expose **`usePrevious`** hooks. Do not read the **old** `props` during **render** if you need **strict** **mode**-safe behavior in all cases; **effect** timing is **clearer**.",
+    "examples": [
+      {
+        "title": "Previous value in ref + effect",
+        "language": "tsx",
+        "code": "import { useEffect, useRef, useState } from \"react\";\n\nexport function Track() {\n  const [c, setC] = useState(0);\n  const prev = useRef<number | undefined>(undefined);\n  useEffect(() => {\n    prev.current = c;\n  });\n  return <button onClick={() => setC((x) => x + 1)}>was {prev.current} now {c}</button>;\n}\n",
+        "explanation": "After the **first** **render,** **`prev` updates**; on the next **click,** the **ref** had the **old** `c` from the last **commit** (timing nuances apply—`useEffect` runs **after** **paint**)."
+      }
+    ],
+    "tip": "Relate **previous** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-281",
+    "question": "What are the caveats of reading and writing to `ref.current` during render versus in effects?",
+    "difficulty": "advanced",
+    "category": "hooks",
+    "tags": [
+      "useref",
+      "render",
+      "side-effect"
+    ],
+    "answer": "Reading **`.current` in render to decide **visible** behavior is **risky** with **concurrent** features because some **renders** may be **discarded**—**refs** can be out of **sync** with what **commits**. Writing **`.current` during** render to sync with **state** is an advanced **library** pattern and easy to get wrong. Prefer **`useEffect`** or **`useLayoutEffect`** to **mutate** **refs** that should feed **back** into **state** the user **sees**.",
+    "examples": [
+      {
+        "title": "Ref updated in effect (not render) for follow-up",
+        "language": "tsx",
+        "code": "import { useEffect, useRef, useState } from \"react\";\n\nexport function S() {\n  const [c, setC] = useState(0);\n  const t = useRef(0);\n  useEffect(() => {\n    t.current = Date.now();\n  }, [c]);\n  return <button onClick={() => setC(c + 1)}>{c}</button>;\n}\n",
+        "explanation": "The **ref** is **touched** after **commit** when `c` is **stable** for that **paint**."
+      }
+    ],
+    "tip": "Relate **useref** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-282",
+    "question": "What are the most common production `useRef` use cases (DOM, intervals, and previous values)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "useref",
+      "real-world",
+      "timers"
+    ],
+    "answer": "Typical **refs** in **production:** **DOM** access (**focus**, **scroll**, **integrate** **third**-**party** **imperative** `APIs`), **interval** and **`requestAnimationFrame` ids, **caches** for **in-flight** work, **previous** `props`/`state`, and **storing** a **value** you must read in an **event** without **re-renders. Avoid **storing** **visible** **UI** data only in a **ref** if it should **re-render** the tree.",
+    "examples": [
+      {
+        "title": "Interval id in ref for cleanup",
+        "language": "tsx",
+        "code": "import { useEffect, useRef } from \"react\";\n\nexport function I() {\n  const id = useRef<ReturnType<typeof setInterval> | null>(null);\n  useEffect(() => {\n    id.current = setInterval(() => {}, 1000);\n    return () => {\n      if (id.current) clearInterval(id.current);\n    };\n  }, []);\n  return null;\n}\n",
+        "explanation": "The **ref** preserves the **handle** for **clearInterval** in **cleanup** without a **re-render** when you store it."
+      }
+    ],
+    "tip": "Relate **useref** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-283",
+    "question": "What is useImperativeHandle, and how does it work with `forwardRef`?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "useimperativehandle",
+      "forwardref",
+      "imperative"
+    ],
+    "answer": "`useImperativeHandle` pairs with **`forwardRef`**: the **parent** gets a **ref** to your **custom** `API` (e.g. **`focus`**, **`scrollTo`**) that you build from **internal** `refs` and **state**—it **does not** replace **`props` for** normal **data** **flow. **`useImperativeHandle( ref, () => ( { focus: () =>… } ) , [deps] )` returns a **stable** **object** of **imperative** **methods** when **deps** allow.",
+    "examples": [
+      {
+        "title": "Expose focus through ref",
+        "language": "tsx",
+        "code": "import { useImperativeHandle, useRef, forwardRef } from \"react\";\n\ntype H = { focus: () => void };\nexport const In = forwardRef<H>(function In(_, f) {\n  const r = useRef<HTMLInputElement>(null);\n  useImperativeHandle(\n    f,\n    () => ({\n      focus: () => r.current?.focus(),\n    }),\n    []\n  );\n  return <input ref={r} />;\n});\n",
+        "explanation": "The **parent** with **`ref={x}`** on **`In`** can call **`x.current?.focus()`** even though the **raw** `input` is **encapsulated**."
+      }
+    ],
+    "tip": "Relate **useimperativehandle** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-284",
+    "question": "When is useImperativeHandle a good design choice, and when should you prefer declarative props?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "leaky-abstraction",
+      "api",
+      "components"
+    ],
+    "answer": "Use `useImperativeHandle` when you need a **small** **imperative** **surface** for a **reusable** **input** or **map** that **hides** **internals**—integration with **non**-**React** **libs** and **managing** **focus/scroll** are common. Prefer **declarative** `props` when the **UI** is **driven** by **data**; reserve **imperative** for **genuine** **escape** hatches. **Over**-using **imperative** `refs` **hides** **data** **flow** from **readers**.",
+    "examples": [
+      {
+        "title": "When props are enough",
+        "language": "tsx",
+        "code": "export function C({ open }: { open: boolean }) {\n  return open ? <p>on</p> : null;\n}\n",
+        "explanation": "A boolean **open** `prop` fully describes this small **UI**; a **ref** is unnecessary."
+      }
+    ],
+    "tip": "Relate **leaky-abstraction** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-285",
+    "question": "What patterns replace imperative ref wiring when you do not use `forwardRef` (callback refs, composition)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "ref",
+      "callback-ref",
+      "composition"
+    ],
+    "answer": "Alternatives: **callback ref** `ref={(el) => …}` to receive the **node**; **parent** **passes** a **ref**-like object you fill; or **children** that **call** a **`register`** **function** from **context**. For **encapsulation** of **imperative** `API`, **`forwardRef` + `useImperativeHandle` remains the first-class** pattern. When you **own** the **subtree** fully, you might **lift** the **imperative** `operation` as a **prop** (`onReady(api)`).",
+    "examples": [
+      {
+        "title": "Callback ref",
+        "language": "tsx",
+        "code": "import { useCallback, useState } from \"react\";\n\nexport function M() {\n  const [h, setH] = useState(0);\n  const r = useCallback((el: HTMLDivElement | null) => {\n    if (el) setH(el.getBoundingClientRect().height);\n  }, []);\n  return <div ref={r} />;\n}\n",
+        "explanation": "The **callback** runs when the **node** is attached or set back to **null**—no `forwardRef` required."
+      }
+    ],
+    "tip": "Relate **ref** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-286",
+    "question": "What is the difference between useMemo and useCallback (return value vs stable function ref)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usememo",
+      "usecallback",
+      "identity"
+    ],
+    "answer": "`useMemo` caches a **computed value**; `useCallback(fn, deps)` is effectively `useMemo(() => fn, deps)` and keeps a **stable function** reference. Neither one skips a child **re-render** by itself: you need `React.memo` (or a bailout) on the child, and **unchanged** props including **stable** object identities when you memoize on reference.",
+    "examples": [
+      {
+        "title": "useMemo vs useCallback",
+        "language": "tsx",
+        "code": "import { useCallback, useMemo, useState } from \"react\";\n\nexport function P() {\n  const [a, setA] = useState(0);\n  const s = useMemo(() => a * 2, [a]);\n  const f = useCallback(() => setA((x) => x + 1), []);\n  return (\n    <button onClick={f}>\n      {s}\n    </button>\n  );\n}\n",
+        "explanation": "`s` is a **number**; `f` is a **stable** callback (empty **deps**), which helps **`memo` children** that take an **`onClick` handler**."
+      }
+    ],
+    "tip": "Relate **usememo** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-287",
+    "question": "When does `useMemo` *not* stop a child from re-rendering, and what else do you need (for example, `memo`)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "memo",
+      "children",
+      "props"
+    ],
+    "answer": "`useMemo` on a prop does not stop a **child** from re-rendering if the child is not **`memo`ized** or if **other** props still change. It only **stabilizes** a **value’s reference**; siblings still re-render when the **parent** re-renders, unless they implement their own bailouts.",
+    "examples": [
+      {
+        "title": "memo + useMemo together",
+        "language": "tsx",
+        "code": "import { memo, useMemo, useState } from \"react\";\n\nconst Row = memo(function Row({ p }: { p: { x: number } }) {\n  return <p>{p.x}</p>;\n});\n\nexport function U() {\n  const [a, setA] = useState(0);\n  const [b, setB] = useState(0);\n  const p = useMemo(() => ({ x: a }), [a]);\n  return (\n    <>\n      <Row p={p} />\n      <button onClick={() => setB(b + 1)}>b {b}</button>\n    </>\n  );\n}\n",
+        "explanation": "Changing `b` re-renders `U`, but `Row` may **bail** out when `a` is unchanged and `p` is the **same** object from **`useMemo`**."
+      }
+    ],
+    "tip": "Relate **memo** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-288",
+    "question": "What problem does useCallback try to solve for object identity and dependency arrays?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usecallback",
+      "identity",
+      "deps"
+    ],
+    "answer": "`useCallback` returns a **function** with **shallow**-stable `identity` when **deps** are **unchanged**—fixing a **new function every render** problem for `onClick` passed to `memo` children or listed in `useEffect` deps. If a **function** is **inlined** and **recreated** each time, you **bypass** `memo` and re-run child **effects** that list it.",
+    "examples": [
+      {
+        "title": "Stable callback for memo child",
+        "language": "tsx",
+        "code": "import { memo, useCallback, useState, type ReactNode } from \"react\";\n\nconst C = memo(function C({ onClick, children }: { onClick: () => void; children: ReactNode }) {\n  return <button onClick={onClick}>{children}</button>;\n});\n\nexport function P() {\n  const [c, setC] = useState(0);\n  const f = useCallback(() => setC((x) => x + 1), []);\n  return <C onClick={f}>x</C>;\n}\n",
+        "explanation": "`f` keeps a **stable** reference, so `memo` on **C** can skip a **re-render** when that is the only **prop** that changed."
+      }
+    ],
+    "tip": "Relate **usecallback** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-289",
+    "question": "What is a custom hook, and what naming and Rules-of-Hooks rules apply to it?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "custom-hook",
+      "reuse",
+      "rules"
+    ],
+    "answer": "A **custom hook** is a function named `useSomething` that calls other hooks and shares **stateful** logic. The same **Rules of Hooks** apply: only call hooks at the top level of function components or other custom hooks. Prefer this over HOCs when you want composition without wrapper components.",
+    "examples": [
+      {
+        "title": "useWindowWidth sketch",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function useWindowWidth() {\n  const [w, setW] = useState(() => window.innerWidth);\n  useEffect(() => {\n    const h = () => setW(window.innerWidth);\n    window.addEventListener(\"resize\", h);\n    return () => window.removeEventListener(\"resize\", h);\n  }, []);\n  return w;\n}\n",
+        "explanation": "Any **component** can **`useWindowWidth()`**; the **window** effect lives in **one** place."
+      }
+    ],
+    "tip": "Relate **custom-hook** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-290",
+    "question": "What is React Fiber at a high, interview-appropriate level?",
+    "difficulty": "intermediate",
+    "category": "rendering",
+    "tags": [
+      "fiber",
+      "scheduler",
+      "incremental"
+    ],
+    "answer": "At a high level, **Fiber** is React’s unit of work: an in-memory **node** for a **component** or **host** (DOM) element. The reconciler walks this tree **incrementally**, schedules by **priority**, and can **interrupt** work—supporting **Suspense**, **concurrent** features, and recoverable updates. App code uses **hooks** and components; you do not touch Fiber directly.",
+    "examples": [
+      {
+        "title": "What you write vs what the reconciler uses",
+        "language": "ts",
+        "code": "// You write a component and hooks — React compiles/executes a Fiber tree of work.\n// Each Fiber = one component instance, DOM node, or other unit: child/sibling/parent links, priority, pending props/state, etc.\n// The scheduler can pause, resume, and discard in-progress work so urgent updates (input) are not starved by heavy subtrees—without importing Fiber in app code.\n\ntype FiberLike = {\n  tag: string; // e.g. host (DOM) vs function (component) — real tags are internal\n  child: unknown;\n  sibling: unknown;\n};\n// Pseudocode; real types live in react-reconciler.\n",
+        "explanation": "**Fiber** is the reconciler’s internal work unit: linked tree, effect lists, and priorities. You still call **`useState`** and return JSX; the engine maps that to **Fiber** updates."
+      }
+    ],
+    "tip": "Relate **fiber** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-291",
+    "question": "What is `useId` for, and why is a counter in render not equivalent for accessibility + SSR ids?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "useid",
+      "ssr",
+      "a11y"
+    ],
+    "answer": "`useId` returns a **stable, unique** string per component **instance** for pairing `id`, `htmlFor`, and `aria-*` in **SSR** and client. A hand-rolled counter in render can **diverge** between server and client; `useId` uses React’s internal tree so **IDs** stay **matched** after **hydration**.",
+    "examples": [
+      {
+        "title": "Label + id",
+        "language": "tsx",
+        "code": "import { useId } from \"react\";\n\nexport function F() {\n  const id = useId();\n  return (\n    <>\n      <label htmlFor={id}>Name</label>\n      <input id={id} />\n    </>\n  );\n}\n",
+        "explanation": "The returned id pairs **label** and **input**; it is designed to **match** across **server** and **client** renders."
+      }
+    ],
+    "tip": "Relate **useid** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-292",
+    "question": "What is `useDeferredValue` and when is it a good way to keep typing responsive under heavy work?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "deferred",
+      "concurrent",
+      "input"
+    ],
+    "answer": "`useDeferredValue(live)` keeps a **slightly older** snapshot for **expensive** children so the **live** state (e.g. typing in a search box) stays responsive. Pair with **memo**ized slow lists. It complements **`useTransition`**: transitions mark **urgent** vs **non-urgent** updates; deferred value lags a **value** used for heavy **rendering**.",
+    "examples": [
+      {
+        "title": "Deferred str for heavy child",
+        "language": "tsx",
+        "code": "import { useDeferredValue, useState } from \"react\";\n\nexport function S() {\n  const [q, setQ] = useState(\"\");\n  const dq = useDeferredValue(q);\n  return <input value={q} onChange={(e) => setQ(e.target.value)} data-deferred={dq} />;\n}\n",
+        "explanation": "Downstream UI that reads only **`dq`** can re-render **after** the **controlled** input updates **`q`**."
+      }
+    ],
+    "tip": "Relate **deferred** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-293",
+    "question": "How do `useTransition` and `useDeferredValue` relate in concurrent UIs (urgent vs deferred)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usetransition",
+      "deferred",
+      "urgent"
+    ],
+    "answer": "`useTransition` gives **`startTransition`** and **`isPending`**: you wrap a **state** update to mark it as a **non-urgent** transition (e.g. tab or route change). **`useDeferredValue`** does not drive an action; it **holds** a **deferred** snapshot of a **value** so **children** can render one step behind an urgent **input**.",
+    "examples": [
+      {
+        "title": "Side by side (conceptual)",
+        "language": "tsx",
+        "code": "import { useDeferredValue, useState, useTransition } from \"react\";\n\nexport function U() {\n  const [v, setV] = useState(\"\");\n  const [pend, sT] = useTransition();\n  const d = useDeferredValue(v);\n  return (\n    <>\n      {pend && \"…\"}\n      <input value={v} onChange={(e) => sT(() => setV(e.target.value))} data-d={d} />\n    </>\n  );\n}\n",
+        "explanation": "Here **`startTransition`** wraps the **input** update; **`useDeferredValue`** mirrors **`v`** for readers that can afford a **lag**."
+      }
+    ],
+    "tip": "Relate **usetransition** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-294",
+    "question": "What is `useSyncExternalStore` for (subscriptions, avoiding tearing with concurrent rendering)?",
+    "difficulty": "advanced",
+    "category": "hooks",
+    "tags": [
+      "usesyncexternalstore",
+      "tearing",
+      "store"
+    ],
+    "answer": "`useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot?)` is the **supported** way to read a **store** that lives **outside** React and stay **tearing**-free with **concurrent** rendering. **`getSnapshot` must** return a **value** for the **current** store in **O(1)**, and be **unchanging** for the same **committed** store state. **Redux 9**, **TanStack** stores, and others wrap this hook.",
+    "examples": [
+      {
+        "title": "External counter store",
+        "language": "tsx",
+        "code": "import { useSyncExternalStore } from \"react\";\n\nlet c = 0;\nconst subs = new Set<() => void>();\n\nfunction subscribe(onChange: () => void) {\n  subs.add(onChange);\n  return () => subs.delete(onChange);\n}\nfunction getSnapshot() {\n  return c;\n}\nfunction increment() {\n  c += 1;\n  subs.forEach((f) => f());\n}\n\nexport function Demo() {\n  const n = useSyncExternalStore(subscribe, getSnapshot);\n  return (\n    <button type=\"button\" onClick={increment}>\n      {n}\n    </button>\n  );\n}\n",
+        "explanation": "The **store** is outside React; `subscribe` notifies listeners, `getSnapshot` reads a **consistent** value so concurrent renders do not **tear**."
+      }
+    ],
+    "tip": "Relate **usesyncexternalstore** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-295",
+    "question": "What is `useInsertionEffect` and why do CSS-in-JS libraries use it?",
+    "difficulty": "advanced",
+    "category": "hooks",
+    "tags": [
+      "useinsertioneffect",
+      "css-in-js",
+      "injection"
+    ],
+    "answer": "`useInsertionEffect` runs **before** `useLayoutEffect`, **after** the DOM is ready for your component but **before** the browser has applied other layout effects. **CSS-in-JS** libraries that **inject** `<style>` tags at runtime use it to avoid **flicker** and **mismatches** between **class** **names** and what **has** been **painted**.",
+    "examples": [
+      {
+        "title": "Insert style (library pattern)",
+        "language": "tsx",
+        "code": "import { useInsertionEffect, useState } from \"react\";\n\nlet sheet = \"\";\nexport function Styled() {\n  const [c] = useState(\".x{color:red}\");\n  useInsertionEffect(() => {\n    sheet = c;\n  }, [c]);\n  return <div className=\"x\" />;\n}\n",
+        "explanation": "Runs in the same phase **libraries** use to **write** to **sheets** before other layout reads—your app code rarely needs this **unless** you build **CSS** injection."
+      }
+    ],
+    "tip": "Relate **useinsertioneffect** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-296",
+    "question": "How can custom hooks help share stateful logic and composition in larger apps?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "custom-hook",
+      "composition",
+      "split"
+    ],
+    "answer": "Custom **hooks** package reusable **state** and **effects** (or other hooks) as **`useSomething`** so features share the same **invariants** and **tests** without HOCs. You **compose** them in parent hooks or **components**, keep **I/O** behind clear boundaries, and keep **view** code thin. Use the **`use*`** name and keep **dependency** lists **accurate**.",
+    "examples": [
+      {
+        "title": "Compose: media + debounced value",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nfunction useMedia(q: string) {\n  const [m, setM] = useState(false);\n  useEffect(() => {\n    const mq = matchMedia(q);\n    setM(mq.matches);\n    const h = () => setM(mq.matches);\n    mq.addEventListener(\"change\", h);\n    return () => mq.removeEventListener(\"change\", h);\n  }, [q]);\n  return m;\n}\n\nfunction useDebounced<T>(v: T, ms: number) {\n  const [d, setD] = useState(v);\n  useEffect(() => {\n    const t = setTimeout(() => setD(v), ms);\n    return () => clearTimeout(t);\n  }, [v, ms]);\n  return d;\n}\n",
+        "explanation": "A **custom** `useSearchUi` (not shown) could call **`useMedia`** and **`useDebounced`** to share the same **behavior** across **screens**."
+      }
+    ],
+    "tip": "Relate **custom-hook** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-297",
+    "question": "What is `useDebugValue` and when is it most helpful for custom hook development?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "usedebugvalue",
+      "devtools",
+      "labels"
+    ],
+    "answer": "`useDebugValue` **labels** custom hook state in **React DevTools**; pass a string or a lazy **formatter** when the value is not trivial **JSON** (e.g. **Maps** or class instances) so the panel stays **readable**; avoid in **hot** paths.",
+    "examples": [
+      {
+        "title": "Debug label in DevTools",
+        "language": "tsx",
+        "code": "import { useDebugValue, useState } from \"react\";\n\nfunction fmt(d: boolean) { return d ? \"on\" : \"off\"; }\n\nexport function useFlag(initial: boolean) {\n  const [on, setOn] = useState(initial);\n  useDebugValue(on, fmt);\n  return [on, setOn] as const;\n}\n",
+        "explanation": "**useDebugValue** shows **on**/**off** in the DevTools custom-hook panel; the second argument is an optional **formatter** for non-trivial values."
+      }
+    ],
+    "tip": "Relate **usedebugvalue** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-298",
+    "question": "What belongs in a `useEffect` cleanup (subscriptions, timers) versus a component-wide singleton?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "cleanup",
+      "teardown",
+      "subscriptions"
+    ],
+    "answer": "In `useEffect` **cleanup**, tear down **per-instance** work this effect **started**—**subscriptions**, **timers**, **listeners**. Do not tear down a **shared** app **singleton** (global analytics, bus) in one **child**’s unmount. Keep those in **module** scope or a **top**-level service with a deliberate **logout** or **shutdown** path.",
+    "examples": [
+      {
+        "title": "Subscription in cleanup",
+        "language": "tsx",
+        "code": "import { useEffect, useState } from \"react\";\n\nexport function S() {\n  const [c, setC] = useState(0);\n  useEffect(() => {\n    const t = setInterval(() => setC((x) => x + 1), 2000);\n    return () => clearInterval(t);\n  }, []);\n  return <span>{c}</span>;\n}\n",
+        "explanation": "The **return** function clears only this effect’s `setInterval`; a **separate** global service would use its own **lifecycle**."
+      }
+    ],
+    "tip": "Relate **cleanup** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-299",
+    "question": "What is the (experimental) 'use event' or stable-callback style pattern trying to improve for hooks code?",
+    "difficulty": "advanced",
+    "category": "hooks",
+    "tags": [
+      "experimental",
+      "stable",
+      "event"
+    ],
+    "answer": "Experimental **React** ideas (e.g. stable “**event**”-style **callbacks** in past RFCs) aim to keep **function** identity stable while still reading the **latest** `props` and `state` without long **dependency** lists on `useEffect`. Treat any such **API** as **unstable** until it ships in a **stable** `react` release; follow the **current** `react` or framework **docs** for your version.",
+    "examples": [
+      {
+        "title": "Stability is the goal: compare with useCallback + deps",
+        "language": "tsx",
+        "code": "import { useCallback, useState } from \"react\";\n\nexport function G({ inc }: { inc: number }) {\n  const [c, setC] = useState(0);\n  const f = useCallback(() => setC((x) => x + inc), [inc]);\n  return <button onClick={f}>{c}</button>;\n}\n",
+        "explanation": "Today, **`useCallback` +** **`inc` in** **deps** is the **supported** way to get a **stable** **handler** that **sees** **fresh** `inc`; experimental **alternatives** try to **reduce** the **deps** **noise** for **certain** patterns."
+      }
+    ],
+    "tip": "Relate **experimental** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  },
+  {
+    "id": "react-300",
+    "question": "What are solid best practices for using React hooks in production (linting, design, and performance)?",
+    "difficulty": "intermediate",
+    "category": "hooks",
+    "tags": [
+      "best-practices",
+      "review",
+      "quality"
+    ],
+    "answer": "Enable **exhaustive-deps** and **rules-of-hooks** in **ESLint** and **CI**, model **state** by **domain**, use **TypeScript** or **Zod** on **I/O** boundaries, write **race**-free **async** in **effects**, and **measure** before adding **`memo`/`useMemo`**. Test with **React Testing Library**; use **Strict** **Mode** in **dev** to catch **non**-idempotent **effects** early.",
+    "examples": [
+      {
+        "title": "Hooks checklist (snippet)",
+        "language": "json",
+        "code": "{\n  \"lint\": \"eslint with react-hooks\",\n  \"strictMode\": \"wrap root in dev\",\n  \"types\": \"tsconfig + zod for IO\"\n}\n",
+        "explanation": "A **boring** **ops** list matters as much as **any** one **trick** for **sustainable** **hooks** in **pro**d."
+      }
+    ],
+    "tip": "Relate **best-practices** in your most recent app and name one test or user-visible outcome you would monitor.",
+    "links": [
+      {
+        "label": "React: docs home",
+        "href": "https://react.dev"
+      }
+    ]
+  }
+]

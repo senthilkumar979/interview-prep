@@ -1,6 +1,7 @@
-import Link from 'next/link'
+import { TechnologyCategory } from '@/components/home/technology.types'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import {
-  ArrowRight,
   Atom,
   Braces,
   Coffee,
@@ -10,9 +11,7 @@ import {
   LucideIcon,
   Sparkles,
 } from 'lucide-react'
-import { TechnologyCategory } from '@/components/home/technology.types'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import Link from 'next/link'
 
 const iconMap: Record<string, LucideIcon> = {
   angular: Layers3,

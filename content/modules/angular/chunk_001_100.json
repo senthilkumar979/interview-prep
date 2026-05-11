@@ -1,0 +1,2715 @@
+[
+  {
+    "id": "angular-001",
+    "question": "What is Angular Framework?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "spa"
+    ],
+    "answer": "What is Angular Framework? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-002",
+    "question": "What is the difference between AngularJS and Angular?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "angularjs"
+    ],
+    "answer": "What is the difference between AngularJS and Angular? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Modern Angular component example",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-user\", template: \"<p>{{name}}</p>\" })\nexport class UserComponent {\n  name = \"Ada\";\n}",
+        "explanation": "Modern Angular uses component classes and decorators instead of AngularJS controller + `$scope` style."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-003",
+    "question": "What is TypeScript?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "typescript"
+    ],
+    "answer": "What is TypeScript? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Typed model example",
+        "language": "ts",
+        "code": "interface User { id: number; name: string }\nconst user: User = { id: 1, name: \"Nila\" };",
+        "explanation": "Interfaces enforce object shape and improve Angular refactor safety."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-004",
+    "question": "Write a pictorial diagram of Angular architecture?",
+    "difficulty": "beginner",
+    "category": "architecture",
+    "tags": [
+      "angular",
+      "architecture",
+      "frontend"
+    ],
+    "answer": "Write a pictorial diagram of Angular architecture? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Architecture flow diagram",
+        "language": "md",
+        "code": "graph TD\n  UI[Component + Template] --> SVC[Service]\n  SVC --> HTTP[HttpClient]\n  HTTP --> API[(Backend API)]",
+        "explanation": "The diagram shows how UI, service layer, and API calls connect in Angular."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular architecture",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-005",
+    "question": "What are the key components of Angular?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "components"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-006",
+    "question": "What are directives?",
+    "difficulty": "beginner",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "directives"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Attribute directive snippet",
+        "language": "ts",
+        "code": "@Directive({ selector: \"[appHighlight]\" })\nexport class HighlightDirective {}",
+        "explanation": "Directive adds behavior without defining a component template."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-007",
+    "question": "What are components?",
+    "difficulty": "beginner",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "components"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Attribute directive snippet",
+        "language": "ts",
+        "code": "@Directive({ selector: \"[appHighlight]\" })\nexport class HighlightDirective {}",
+        "explanation": "Directive adds behavior without defining a component template."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-008",
+    "question": "What are the differences between Component and Directive?",
+    "difficulty": "beginner",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "directives",
+      "components"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Attribute directive snippet",
+        "language": "ts",
+        "code": "@Directive({ selector: \"[appHighlight]\" })\nexport class HighlightDirective {}",
+        "explanation": "Directive adds behavior without defining a component template."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-009",
+    "question": "What is a template?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "templates"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-010",
+    "question": "What is a module?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "ngmodule"
+    ],
+    "answer": "What is a module? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-011",
+    "question": "What are lifecycle hooks available?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "lifecycle-hooks"
+    ],
+    "answer": "What are lifecycle hooks available? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-012",
+    "question": "What is a data binding?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "data-binding"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-013",
+    "question": "What is metadata?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-014",
+    "question": "What is Angular CLI?",
+    "difficulty": "beginner",
+    "category": "tooling-cli",
+    "tags": [
+      "angular",
+      "tooling-cli",
+      "angular-cli"
+    ],
+    "answer": "What is Angular CLI? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "CLI directive generation",
+        "language": "bash",
+        "code": "ng generate directive shared/highlight",
+        "explanation": "Angular CLI scaffolds directive files with standard structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular CLI",
+        "href": "https://angular.dev/tools/cli"
+      }
+    ]
+  },
+  {
+    "id": "angular-015",
+    "question": "What is the difference between constructor and ngOnInit?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "What is the difference between constructor and ngOnInit? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-016",
+    "question": "What is a service",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "services"
+    ],
+    "answer": "Dependency injection lets Angular provide class instances through injector hierarchies instead of manual object creation. Components declare dependencies in constructors, keeping code loosely coupled.\n\nProvider scope controls lifecycle and sharing, so interview answers should mention root-level singletons versus component-scoped instances.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Use constructor injection and avoid creating dependency instances manually with `new`.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-017",
+    "question": "What is dependency injection in Angular?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "dependency-injection"
+    ],
+    "answer": "Dependency injection lets Angular provide class instances through injector hierarchies instead of manual object creation. Components declare dependencies in constructors, keeping code loosely coupled.\n\nProvider scope controls lifecycle and sharing, so interview answers should mention root-level singletons versus component-scoped instances.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Use constructor injection and avoid creating dependency instances manually with `new`.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-018",
+    "question": "How is Dependency Hierarchy formed?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "How is Dependency Hierarchy formed? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-019",
+    "question": "What is the purpose of async pipe?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "pipes"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Pipe transformation",
+        "language": "html",
+        "code": "<p>{{ createdAt | date:\"yyyy-MM-dd\" }}</p>",
+        "explanation": "Pipes format data in templates without cluttering component logic."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-020",
+    "question": "What is the option to choose between inline and external template file?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "templates"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-021",
+    "question": "What is the purpose of *ngFor directive?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "directives",
+      "ngfor"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "ngFor with trackBy",
+        "language": "html",
+        "code": "<li *ngFor=\"let user of users; trackBy: trackById\">{{ user.name }}</li>",
+        "explanation": "trackBy avoids unnecessary DOM recreation when list items update."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-022",
+    "question": "What is the purpose of ngIf directive?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "directives",
+      "ngif"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "ngIf with fallback",
+        "language": "html",
+        "code": "<section *ngIf=\"isLoaded; else loading\">Loaded content</section>\n<ng-template #loading>Loading...</ng-template>",
+        "explanation": "The directive conditionally creates or destroys DOM nodes."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-023",
+    "question": "What happens if you use script tag inside template?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "templates"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-024",
+    "question": "What is interpolation?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "interpolation"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-025",
+    "question": "What are template expressions?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "templates"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-026",
+    "question": "What are template statements?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "templates"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-027",
+    "question": "How do you categorize data binding types?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "data-binding"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-028",
+    "question": "What are pipes?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "pipes"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Pipe transformation",
+        "language": "html",
+        "code": "<p>{{ createdAt | date:\"yyyy-MM-dd\" }}</p>",
+        "explanation": "Pipes format data in templates without cluttering component logic."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-029",
+    "question": "What is a parameterized pipe?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "pipes"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Pipe transformation",
+        "language": "html",
+        "code": "<p>{{ createdAt | date:\"yyyy-MM-dd\" }}</p>",
+        "explanation": "Pipes format data in templates without cluttering component logic."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-030",
+    "question": "How do you chain pipes?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "pipes"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Pipe transformation",
+        "language": "html",
+        "code": "<p>{{ createdAt | date:\"yyyy-MM-dd\" }}</p>",
+        "explanation": "Pipes format data in templates without cluttering component logic."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-031",
+    "question": "What is a custom pipe?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "pipes"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Pipe transformation",
+        "language": "html",
+        "code": "<p>{{ createdAt | date:\"yyyy-MM-dd\" }}</p>",
+        "explanation": "Pipes format data in templates without cluttering component logic."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-032",
+    "question": "Give an example of custom pipe?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "pipes"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Pipe transformation",
+        "language": "html",
+        "code": "<p>{{ createdAt | date:\"yyyy-MM-dd\" }}</p>",
+        "explanation": "Pipes format data in templates without cluttering component logic."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-033",
+    "question": "What is the difference between pure and impure pipe?",
+    "difficulty": "beginner",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "pipes"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Pipe transformation",
+        "language": "html",
+        "code": "<p>{{ createdAt | date:\"yyyy-MM-dd\" }}</p>",
+        "explanation": "Pipes format data in templates without cluttering component logic."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-034",
+    "question": "What is a bootstrapping module?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "ngmodule"
+    ],
+    "answer": "What is a bootstrapping module? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-035",
+    "question": "What are observables?",
+    "difficulty": "beginner",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "observables"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-036",
+    "question": "What is HttpClient and its benefits?",
+    "difficulty": "beginner",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "httpclient",
+      "angular-cli"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Typed HttpClient call",
+        "language": "ts",
+        "code": "getUsers() {\n  return this.http.get<User[]>(\"/api/users\");\n}",
+        "explanation": "HttpClient returns a typed observable stream from the backend."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-037",
+    "question": "Explain on how to use HttpClient with an example?",
+    "difficulty": "beginner",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "httpclient",
+      "angular-cli"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Typed HttpClient call",
+        "language": "ts",
+        "code": "getUsers() {\n  return this.http.get<User[]>(\"/api/users\");\n}",
+        "explanation": "HttpClient returns a typed observable stream from the backend."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-038",
+    "question": "How can you read full response?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "How can you read full response? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Observe full HTTP response",
+        "language": "ts",
+        "code": "this.http.get<User[]>(\"/api/users\", { observe: \"response\" })\n  .subscribe(res => console.log(res.status, res.headers.get(\"x-total-count\"), res.body));",
+        "explanation": "observe: response gives status and headers along with payload."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev"
+      }
+    ]
+  },
+  {
+    "id": "angular-039",
+    "question": "How do you perform Error handling?",
+    "difficulty": "beginner",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "frontend"
+    ],
+    "answer": "How do you perform Error handling? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "RxJS error mapping",
+        "language": "ts",
+        "code": "return this.http.get<User>(\"/api/me\").pipe(\n  catchError(() => throwError(() => new Error(\"Failed to load profile\")))\n);",
+        "explanation": "Service converts transport-level errors into user-facing messages."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-040",
+    "question": "What is RxJS?",
+    "difficulty": "beginner",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "rxjs"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-041",
+    "question": "What is subscribing?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "frontend"
+    ],
+    "answer": "What is subscribing? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-042",
+    "question": "What is an observable?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "observables"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-043",
+    "question": "What is an observer?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "observer-pattern"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-044",
+    "question": "What is the difference between promise and observable?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "observables"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-045",
+    "question": "What is multicasting?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "frontend"
+    ],
+    "answer": "What is multicasting? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-046",
+    "question": "How do you perform error handling in observables?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "observables"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "RxJS error mapping",
+        "language": "ts",
+        "code": "return this.http.get<User>(\"/api/me\").pipe(\n  catchError(() => throwError(() => new Error(\"Failed to load profile\")))\n);",
+        "explanation": "Service converts transport-level errors into user-facing messages."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-047",
+    "question": "What is the shorthand notation for subscribe method?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "frontend"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-048",
+    "question": "What are the utility functions provided by RxJS?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "rxjs"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-049",
+    "question": "What are observable creation functions?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "observables"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Keep stream operators in services and expose typed observables to presentation components.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-050",
+    "question": "What will happen if you do not supply handler for the observer?",
+    "difficulty": "intermediate",
+    "category": "rxjs-http",
+    "tags": [
+      "angular",
+      "rxjs-http",
+      "observer-pattern"
+    ],
+    "answer": "RxJS streams are central in Angular for HTTP, events, and async UI state. Observables support composition, cancellation, and multiple emissions over time.\n\nA strong answer mentions practical operators such as `switchMap`, `catchError`, or `shareReplay`, and explains when to prefer `async` pipe over manual subscriptions.",
+    "examples": [
+      {
+        "title": "Observable subscription",
+        "language": "ts",
+        "code": "users$.subscribe({\n  next: users => this.users = users,\n  error: err => this.toast.error(err.message)\n});",
+        "explanation": "Observer object form handles next and error cases clearly."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "RxJS docs",
+        "href": "https://rxjs.dev/guide/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-051",
+    "question": "What are Angular elements?",
+    "difficulty": "intermediate",
+    "category": "web-components",
+    "tags": [
+      "angular",
+      "web-components",
+      "angular-elements"
+    ],
+    "answer": "Angular Elements lets Angular components be packaged as browser-standard custom elements. This enables sharing UI widgets across Angular and non-Angular hosts.\n\nInputs and outputs map to element properties and DOM events, so integration works through standard web APIs.",
+    "examples": [
+      {
+        "title": "Register Angular custom element",
+        "language": "ts",
+        "code": "const widget = createCustomElement(WidgetComponent, { injector });\ncustomElements.define(\"app-widget\", widget);",
+        "explanation": "Registers an Angular component as a browser custom element."
+      }
+    ],
+    "tip": "Document each input/output mapping so non-Angular consumers can integrate safely.",
+    "links": [
+      {
+        "label": "Angular elements",
+        "href": "https://angular.dev/guide/elements"
+      }
+    ]
+  },
+  {
+    "id": "angular-052",
+    "question": "What is the browser support of Angular Elements?",
+    "difficulty": "intermediate",
+    "category": "web-components",
+    "tags": [
+      "angular",
+      "web-components",
+      "angular-elements"
+    ],
+    "answer": "Angular Elements lets Angular components be packaged as browser-standard custom elements. This enables sharing UI widgets across Angular and non-Angular hosts.\n\nInputs and outputs map to element properties and DOM events, so integration works through standard web APIs.",
+    "examples": [
+      {
+        "title": "Register Angular custom element",
+        "language": "ts",
+        "code": "const widget = createCustomElement(WidgetComponent, { injector });\ncustomElements.define(\"app-widget\", widget);",
+        "explanation": "Registers an Angular component as a browser custom element."
+      }
+    ],
+    "tip": "Document each input/output mapping so non-Angular consumers can integrate safely.",
+    "links": [
+      {
+        "label": "Angular elements",
+        "href": "https://angular.dev/guide/elements"
+      }
+    ]
+  },
+  {
+    "id": "angular-053",
+    "question": "What are custom elements?",
+    "difficulty": "intermediate",
+    "category": "web-components",
+    "tags": [
+      "angular",
+      "web-components",
+      "angular-elements",
+      "custom-elements"
+    ],
+    "answer": "Angular Elements lets Angular components be packaged as browser-standard custom elements. This enables sharing UI widgets across Angular and non-Angular hosts.\n\nInputs and outputs map to element properties and DOM events, so integration works through standard web APIs.",
+    "examples": [
+      {
+        "title": "Register Angular custom element",
+        "language": "ts",
+        "code": "const widget = createCustomElement(WidgetComponent, { injector });\ncustomElements.define(\"app-widget\", widget);",
+        "explanation": "Registers an Angular component as a browser custom element."
+      }
+    ],
+    "tip": "Document each input/output mapping so non-Angular consumers can integrate safely.",
+    "links": [
+      {
+        "label": "Angular elements",
+        "href": "https://angular.dev/guide/elements"
+      }
+    ]
+  },
+  {
+    "id": "angular-054",
+    "question": "Do I need to bootstrap custom elements?",
+    "difficulty": "intermediate",
+    "category": "web-components",
+    "tags": [
+      "angular",
+      "web-components",
+      "angular-elements",
+      "custom-elements"
+    ],
+    "answer": "Angular Elements lets Angular components be packaged as browser-standard custom elements. This enables sharing UI widgets across Angular and non-Angular hosts.\n\nInputs and outputs map to element properties and DOM events, so integration works through standard web APIs.",
+    "examples": [
+      {
+        "title": "Register Angular custom element",
+        "language": "ts",
+        "code": "const widget = createCustomElement(WidgetComponent, { injector });\ncustomElements.define(\"app-widget\", widget);",
+        "explanation": "Registers an Angular component as a browser custom element."
+      }
+    ],
+    "tip": "Document each input/output mapping so non-Angular consumers can integrate safely.",
+    "links": [
+      {
+        "label": "Angular elements",
+        "href": "https://angular.dev/guide/elements"
+      }
+    ]
+  },
+  {
+    "id": "angular-055",
+    "question": "Explain how custom elements works internally?",
+    "difficulty": "intermediate",
+    "category": "web-components",
+    "tags": [
+      "angular",
+      "web-components",
+      "angular-elements",
+      "custom-elements"
+    ],
+    "answer": "Angular Elements lets Angular components be packaged as browser-standard custom elements. This enables sharing UI widgets across Angular and non-Angular hosts.\n\nInputs and outputs map to element properties and DOM events, so integration works through standard web APIs.",
+    "examples": [
+      {
+        "title": "Register Angular custom element",
+        "language": "ts",
+        "code": "const widget = createCustomElement(WidgetComponent, { injector });\ncustomElements.define(\"app-widget\", widget);",
+        "explanation": "Registers an Angular component as a browser custom element."
+      }
+    ],
+    "tip": "Document each input/output mapping so non-Angular consumers can integrate safely.",
+    "links": [
+      {
+        "label": "Angular elements",
+        "href": "https://angular.dev/guide/elements"
+      }
+    ]
+  },
+  {
+    "id": "angular-056",
+    "question": "How to transfer components to custom elements?",
+    "difficulty": "intermediate",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "components",
+      "angular-elements",
+      "custom-elements"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Register Angular custom element",
+        "language": "ts",
+        "code": "const widget = createCustomElement(WidgetComponent, { injector });\ncustomElements.define(\"app-widget\", widget);",
+        "explanation": "Registers an Angular component as a browser custom element."
+      }
+    ],
+    "tip": "Document each input/output mapping so non-Angular consumers can integrate safely.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-057",
+    "question": "What are the mapping rules between Angular component and custom element?",
+    "difficulty": "intermediate",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "components"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Attribute directive snippet",
+        "language": "ts",
+        "code": "@Directive({ selector: \"[appHighlight]\" })\nexport class HighlightDirective {}",
+        "explanation": "Directive adds behavior without defining a component template."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-058",
+    "question": "How do you define typings for custom elements?",
+    "difficulty": "intermediate",
+    "category": "web-components",
+    "tags": [
+      "angular",
+      "web-components",
+      "angular-elements",
+      "custom-elements"
+    ],
+    "answer": "Angular Elements lets Angular components be packaged as browser-standard custom elements. This enables sharing UI widgets across Angular and non-Angular hosts.\n\nInputs and outputs map to element properties and DOM events, so integration works through standard web APIs.",
+    "examples": [
+      {
+        "title": "Register Angular custom element",
+        "language": "ts",
+        "code": "const widget = createCustomElement(WidgetComponent, { injector });\ncustomElements.define(\"app-widget\", widget);",
+        "explanation": "Registers an Angular component as a browser custom element."
+      }
+    ],
+    "tip": "Document each input/output mapping so non-Angular consumers can integrate safely.",
+    "links": [
+      {
+        "label": "Angular elements",
+        "href": "https://angular.dev/guide/elements"
+      }
+    ]
+  },
+  {
+    "id": "angular-059",
+    "question": "What are dynamic components?",
+    "difficulty": "intermediate",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "components"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Attribute directive snippet",
+        "language": "ts",
+        "code": "@Directive({ selector: \"[appHighlight]\" })\nexport class HighlightDirective {}",
+        "explanation": "Directive adds behavior without defining a component template."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-060",
+    "question": "What are the various kinds of directives?",
+    "difficulty": "intermediate",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "directives"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Attribute directive snippet",
+        "language": "ts",
+        "code": "@Directive({ selector: \"[appHighlight]\" })\nexport class HighlightDirective {}",
+        "explanation": "Directive adds behavior without defining a component template."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-061",
+    "question": "How do you create directives using CLI?",
+    "difficulty": "intermediate",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "directives",
+      "angular-cli"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "CLI directive generation",
+        "language": "bash",
+        "code": "ng generate directive shared/highlight",
+        "explanation": "Angular CLI scaffolds directive files with standard structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-062",
+    "question": "Give an example for attribute directives?",
+    "difficulty": "intermediate",
+    "category": "directives-components",
+    "tags": [
+      "angular",
+      "directives-components",
+      "directives"
+    ],
+    "answer": "Components define view + behavior units, while directives attach reusable behavior to existing elements. This split helps teams avoid large monolithic components.\n\nWhen comparing them, explain intent: components render screens; directives modify or extend DOM behavior without owning a full view.",
+    "examples": [
+      {
+        "title": "Attribute directive snippet",
+        "language": "ts",
+        "code": "@Directive({ selector: \"[appHighlight]\" })\nexport class HighlightDirective {}",
+        "explanation": "Directive adds behavior without defining a component template."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular directives",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-063",
+    "question": "What is Angular Router?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "router"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-064",
+    "question": "What is the purpose of base href tag?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "frontend"
+    ],
+    "answer": "What is the purpose of base href tag? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-065",
+    "question": "What are the router imports?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "router"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-066",
+    "question": "What is router outlet?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "router"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-067",
+    "question": "What are router links?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "router"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-068",
+    "question": "What are active router links?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "router"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-069",
+    "question": "What is router state?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "router"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-070",
+    "question": "What are router events?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "router"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-071",
+    "question": "What is activated route?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "frontend"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-072",
+    "question": "How do you define routes?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "frontend"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-073",
+    "question": "What is the purpose of Wildcard route?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "frontend"
+    ],
+    "answer": "Angular routing maps URLs to component trees and keeps browser history in sync. Route configs can include guards, resolvers, nested children, and lazy-loaded modules.\n\nIn interviews, explain both configuration and runtime behavior: URL matching order, parameter extraction, and wildcard fallback handling.",
+    "examples": [
+      {
+        "title": "Route configuration",
+        "language": "ts",
+        "code": "export const routes: Routes = [\n  { path: \"\", component: HomeComponent },\n  { path: \"users/:id\", component: UserDetailComponent },\n  { path: \"**\", component: NotFoundComponent }\n];",
+        "explanation": "The wildcard route is last so known routes match first."
+      }
+    ],
+    "tip": "Place wildcard routes last and lazy-load heavy feature routes to keep first load fast.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-074",
+    "question": "Do I need a Routing Module always?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "ngmodule"
+    ],
+    "answer": "Do I need a Routing Module always? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular routing",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-075",
+    "question": "What is Angular Universal?",
+    "difficulty": "intermediate",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "frontend"
+    ],
+    "answer": "What is Angular Universal? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-076",
+    "question": "What are different types of compilation in Angular?",
+    "difficulty": "intermediate",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "compiler"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-077",
+    "question": "What is JIT?",
+    "difficulty": "intermediate",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "jit"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-078",
+    "question": "What is AOT?",
+    "difficulty": "intermediate",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "aot"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-079",
+    "question": "Why do we need compilation process?",
+    "difficulty": "intermediate",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "compiler"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-080",
+    "question": "What are the advantages with AOT?",
+    "difficulty": "intermediate",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "aot"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-081",
+    "question": "What are the ways to control AOT compilation?",
+    "difficulty": "advanced",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "aot",
+      "compiler"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-082",
+    "question": "What are the restrictions of metadata?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-083",
+    "question": "What are the three phases of AOT?",
+    "difficulty": "advanced",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "aot"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-084",
+    "question": "Can I use arrow functions in AOT?",
+    "difficulty": "advanced",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "aot"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-085",
+    "question": "What is the purpose of metadata json files?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-086",
+    "question": "Can I use any javascript feature for expression syntax in AOT?",
+    "difficulty": "advanced",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "aot"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-087",
+    "question": "What is folding?",
+    "difficulty": "advanced",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "frontend"
+    ],
+    "answer": "What is folding? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-088",
+    "question": "What are macros?",
+    "difficulty": "advanced",
+    "category": "compilation-aot",
+    "tags": [
+      "angular",
+      "compilation-aot",
+      "frontend"
+    ],
+    "answer": "What are macros? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular AOT compiler",
+        "href": "https://angular.dev/tools/cli/aot-compiler"
+      }
+    ]
+  },
+  {
+    "id": "angular-089",
+    "question": "Give an example of few metadata errors?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-090",
+    "question": "What is metadata rewriting?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "Angular compilation converts templates and decorators into executable instructions. Build-time compilation catches errors earlier and reduces runtime compiler work.\n\nMost production pipelines use strict compiler settings to fail fast on template and metadata issues before deployment.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Enable strict template checks in CI to catch compiler issues before release.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-091",
+    "question": "How do you provide configuration inheritance?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "How do you provide configuration inheritance? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev"
+      }
+    ]
+  },
+  {
+    "id": "angular-092",
+    "question": "How do you specify angular template compiler options?",
+    "difficulty": "advanced",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "templates"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "AOT production build",
+        "language": "bash",
+        "code": "ng build --configuration production --aot",
+        "explanation": "Compile-time checks catch template issues before deployment."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-093",
+    "question": "How do you enable binding expression validation?",
+    "difficulty": "advanced",
+    "category": "templates-binding",
+    "tags": [
+      "angular",
+      "templates-binding",
+      "data-binding"
+    ],
+    "answer": "Angular templates connect component state to the DOM with declarative bindings and structural directives. This reduces imperative DOM code and keeps view logic readable.\n\nGood interview answers distinguish expression bindings from event statements and mention how pipes and directives keep templates maintainable.",
+    "examples": [
+      {
+        "title": "Template binding snippet",
+        "language": "html",
+        "code": "<button [disabled]=\"form.invalid\" (click)=\"submit()\">Save</button>",
+        "explanation": "Shows property and event binding in one template line."
+      }
+    ],
+    "tip": "Keep bindings simple and move heavy transformations into component code or custom pipes.",
+    "links": [
+      {
+        "label": "Angular templates",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-094",
+    "question": "What is the purpose of any type cast function?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "What is the purpose of any type cast function? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev"
+      }
+    ]
+  },
+  {
+    "id": "angular-095",
+    "question": "What is Non null type assertion operator?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "What is Non null type assertion operator? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev"
+      }
+    ]
+  },
+  {
+    "id": "angular-096",
+    "question": "What is type narrowing?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "frontend"
+    ],
+    "answer": "What is type narrowing? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev"
+      }
+    ]
+  },
+  {
+    "id": "angular-097",
+    "question": "How do you describe various dependencies in angular application?",
+    "difficulty": "advanced",
+    "category": "architecture",
+    "tags": [
+      "angular",
+      "architecture",
+      "frontend"
+    ],
+    "answer": "How do you describe various dependencies in angular application? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular architecture",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-098",
+    "question": "What is zone?",
+    "difficulty": "advanced",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "zonejs"
+    ],
+    "answer": "Zone.js patches asynchronous browser APIs so Angular can trigger change detection after async work completes. This is why UI updates happen after timers, HTTP calls, or events without manual refresh steps.\n\nUnderstanding zones helps optimize performance: run noisy non-UI tasks outside Angular zone and re-enter only when state changes affect the view.",
+    "examples": [
+      {
+        "title": "Run outside Angular zone",
+        "language": "ts",
+        "code": "this.ngZone.runOutsideAngular(() => {\n  window.addEventListener(\"scroll\", this.onHeavyScroll);\n});",
+        "explanation": "Avoids extra change detection for high-frequency browser events."
+      }
+    ],
+    "tip": "Use `runOutsideAngular` for noisy async work, then re-enter only when UI state changes.",
+    "links": [
+      {
+        "label": "Angular zones",
+        "href": "https://angular.dev/guide/zone"
+      }
+    ]
+  },
+  {
+    "id": "angular-099",
+    "question": "What is the purpose of common module?",
+    "difficulty": "advanced",
+    "category": "fundamentals",
+    "tags": [
+      "angular",
+      "fundamentals",
+      "ngmodule"
+    ],
+    "answer": "What is the purpose of common module? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Feature module imports",
+        "language": "ts",
+        "code": "@NgModule({\n  imports: [CommonModule],\n  declarations: [UsersComponent]\n})\nexport class UsersModule {}",
+        "explanation": "CommonModule enables NgIf/NgFor and common pipes in feature templates."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular docs",
+        "href": "https://angular.dev/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-100",
+    "question": "What is codelyzer?",
+    "difficulty": "advanced",
+    "category": "tooling-cli",
+    "tags": [
+      "angular",
+      "tooling-cli",
+      "frontend"
+    ],
+    "answer": "What is codelyzer? should be explained with definition, one practical use case, and one limitation in Angular projects. For interviews, connect the concept to components, templates, routing, or services instead of giving only a textbook line.\n\nA strong answer also includes how you would verify behavior in code or tests, because applied understanding is valued more than memorized wording.",
+    "examples": [
+      {
+        "title": "Angular component snippet",
+        "language": "ts",
+        "code": "@Component({ selector: \"app-demo\", template: \"<p>{{ title }}</p>\" })\nexport class DemoComponent {\n  title = \"Angular\";\n}",
+        "explanation": "Component snippet demonstrates Angular class + template structure."
+      }
+    ],
+    "tip": "Add one production use case when answering this question to show practical Angular experience.",
+    "links": [
+      {
+        "label": "Angular CLI",
+        "href": "https://angular.dev/tools/cli"
+      }
+    ]
+  }
+]

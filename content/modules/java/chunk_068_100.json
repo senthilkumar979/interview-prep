@@ -1,0 +1,894 @@
+[
+  {
+    "id": "java-068",
+    "question": "What is the difference between Array and ArrayList in Java?",
+    "difficulty": "beginner",
+    "category": "collections",
+    "tags": [
+      "array",
+      "arraylist",
+      "collections"
+    ],
+    "answer": "## Array vs ArrayList\n\n`Array` is a language feature with fixed length decided at creation time. `ArrayList` is a collection class from `java.util` that grows and shrinks dynamically.\n\n- Arrays can hold primitives (`int[]`) and objects.\n- `ArrayList` can only hold objects (use wrappers like `Integer`).\n- Arrays have better memory locality and lower overhead.\n- `ArrayList` provides rich APIs like `add`, `remove`, `contains`, and iterators.",
+    "examples": [
+      {
+        "title": "Fixed vs dynamic size",
+        "language": "java",
+        "code": "int[] scores = new int[3];\nList<Integer> marks = new ArrayList<>();\nmarks.add(90);\nmarks.add(95);",
+        "explanation": "The array size cannot change after creation, while `ArrayList` grows as elements are added."
+      }
+    ],
+    "tip": "Use arrays for fixed-size, performance-critical data; use `ArrayList` for dynamic collections and utility operations.",
+    "links": [
+      {
+        "label": "Java ArrayList documentation",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/ArrayList.html"
+      }
+    ]
+  },
+  {
+    "id": "java-069",
+    "question": "What is the difference between composition and inheritance?",
+    "difficulty": "intermediate",
+    "category": "oop",
+    "tags": [
+      "composition",
+      "inheritance",
+      "design"
+    ],
+    "answer": "## Composition vs Inheritance\n\nInheritance creates a tight coupling between parent and child (`Car extends Vehicle`). Composition builds behavior by combining objects (`Car has Engine`).\n\n- Inheritance supports polymorphism through subtype substitution.\n- Composition supports easier replacement and testing of parts.\n- Composition avoids deep class hierarchies and fragile base class issues.\n\nModern Java design usually prefers composition over inheritance unless a strong `is-a` relationship exists.",
+    "examples": [
+      {
+        "title": "Composition example",
+        "language": "java",
+        "code": "class Engine {}\nclass Car {\n  private final Engine engine = new Engine();\n}",
+        "explanation": "The `Car` reuses engine behavior by owning it instead of inheriting from it."
+      }
+    ],
+    "tip": "Start with composition; introduce inheritance only when subtype polymorphism is truly required.",
+    "links": [
+      {
+        "label": "Effective Java design guidance",
+        "href": "https://www.oreilly.com/library/view/effective-java-3rd/9780134686097/"
+      }
+    ]
+  },
+  {
+    "id": "java-070",
+    "question": "What is encapsulation in Java?",
+    "difficulty": "beginner",
+    "category": "oop",
+    "tags": [
+      "encapsulation",
+      "oop",
+      "access-modifiers"
+    ],
+    "answer": "## Encapsulation\n\nEncapsulation is the practice of keeping object state private and exposing operations through a clear API.\n\n- Fields are usually `private`.\n- Methods validate and protect invariants.\n- Consumers depend on behavior, not internal representation.\n\nThis improves maintainability and prevents invalid states.",
+    "examples": [
+      {
+        "title": "Private field with validation",
+        "language": "java",
+        "code": "class BankAccount {\n  private double balance;\n\n  public void deposit(double amount) {\n    if (amount <= 0) throw new IllegalArgumentException(\"amount\");\n    balance += amount;\n  }\n}",
+        "explanation": "Clients cannot modify `balance` directly; updates go through guarded methods."
+      }
+    ],
+    "tip": "Expose the minimum API needed and keep mutable fields private.",
+    "links": [
+      {
+        "label": "Java access control",
+        "href": "https://docs.oracle.com/javase/tutorial/java/javaOO/accesscontrol.html"
+      }
+    ]
+  },
+  {
+    "id": "java-071",
+    "question": "What is polymorphism in Java?",
+    "difficulty": "beginner",
+    "category": "oop",
+    "tags": [
+      "polymorphism",
+      "inheritance",
+      "interfaces"
+    ],
+    "answer": "## Polymorphism\n\nPolymorphism allows you to call the same method on different object types and get type-specific behavior.\n\n- Compile-time polymorphism: method overloading.\n- Runtime polymorphism: method overriding via inheritance/interfaces.\n- It enables extensible code that depends on abstractions.",
+    "examples": [
+      {
+        "title": "Runtime polymorphism with interface",
+        "language": "java",
+        "code": "interface Payment { void pay(); }\nclass CardPayment implements Payment { public void pay() {} }\nclass UpiPayment implements Payment { public void pay() {} }\n\nPayment p = new CardPayment();\np.pay();",
+        "explanation": "The caller uses the `Payment` abstraction, while the runtime type defines actual behavior."
+      }
+    ],
+    "tip": "Program to interfaces, not implementations, to maximize polymorphic flexibility.",
+    "links": [
+      {
+        "label": "Java interfaces tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html"
+      }
+    ]
+  },
+  {
+    "id": "java-072",
+    "question": "What is abstraction in Java?",
+    "difficulty": "beginner",
+    "category": "oop",
+    "tags": [
+      "abstraction",
+      "interfaces",
+      "abstract-class"
+    ],
+    "answer": "## Abstraction\n\nAbstraction exposes essential behavior and hides low-level implementation details.\n\n- Achieved using interfaces and abstract classes.\n- Reduces complexity for consumers.\n- Enables swapping implementations behind the same contract.",
+    "examples": [
+      {
+        "title": "Abstraction using interface",
+        "language": "java",
+        "code": "interface Storage {\n  void save(String value);\n}\n\nclass FileStorage implements Storage {\n  public void save(String value) { /* write to file */ }\n}",
+        "explanation": "Clients depend on the `Storage` contract without caring how persistence is done."
+      }
+    ],
+    "tip": "Design APIs around capabilities and contracts, not concrete classes.",
+    "links": [
+      {
+        "label": "Abstract classes in Java",
+        "href": "https://docs.oracle.com/javase/tutorial/java/IandI/abstract.html"
+      }
+    ]
+  },
+  {
+    "id": "java-073",
+    "question": "What is the difference between RuntimeException and Exception?",
+    "difficulty": "intermediate",
+    "category": "exceptions",
+    "tags": [
+      "exception",
+      "runtimeexception",
+      "checked-exception"
+    ],
+    "answer": "## RuntimeException vs Exception\n\n`Exception` is the base class for checked exceptions (except `RuntimeException` branch). Checked exceptions must be declared or handled at compile time.\n\n`RuntimeException` and its subclasses are unchecked:\n\n- Usually indicate programming errors or invalid state.\n- Not required in method signatures.\n- Can still be caught when appropriate.\n\nUse checked exceptions for recoverable business conditions, unchecked for programmer mistakes.",
+    "examples": [
+      {
+        "title": "Checked vs unchecked",
+        "language": "java",
+        "code": "void readFile() throws IOException { /* checked */ }\n\nint parse(String value) {\n  return Integer.parseInt(value); // can throw NumberFormatException (unchecked)\n}",
+        "explanation": "The compiler enforces `IOException` handling but not `NumberFormatException`."
+      }
+    ],
+    "tip": "Do not overuse checked exceptions for internal layers where callers cannot recover meaningfully.",
+    "links": [
+      {
+        "label": "Throwable hierarchy",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html"
+      }
+    ]
+  },
+  {
+    "id": "java-074",
+    "question": "What is the difference between ClassNotFoundException and NoClassDefFoundError?",
+    "difficulty": "intermediate",
+    "category": "jvm",
+    "tags": [
+      "classloading",
+      "exception",
+      "error"
+    ],
+    "answer": "## ClassNotFoundException vs NoClassDefFoundError\n\n`ClassNotFoundException` occurs when code explicitly loads a class (for example `Class.forName`) and the class is not on classpath.\n\n`NoClassDefFoundError` happens when JVM expected a class during runtime linking/initialization but could not find or initialize it.\n\n- Exception: recoverable caller scenario.\n- Error: serious runtime/classpath mismatch issue.\n- `NoClassDefFoundError` often appears after successful compile but broken runtime packaging.",
+    "examples": [
+      {
+        "title": "Explicit load failure",
+        "language": "java",
+        "code": "Class.forName(\"com.example.MissingDriver\"); // throws ClassNotFoundException",
+        "explanation": "This is a checked exception from reflective class loading."
+      }
+    ],
+    "tip": "When debugging `NoClassDefFoundError`, verify deployment artifacts and transitive dependencies first.",
+    "links": [
+      {
+        "label": "Class loading specification",
+        "href": "https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-5.html"
+      }
+    ]
+  },
+  {
+    "id": "java-075",
+    "question": "What is an enum in Java and when should you use it?",
+    "difficulty": "beginner",
+    "category": "language-basics",
+    "tags": [
+      "enum",
+      "typesafety",
+      "constants"
+    ],
+    "answer": "## Enum in Java\n\nAn `enum` is a special class representing a predefined finite set of values.\n\n- Type-safe compared to string constants.\n- Can have fields, methods, and constructors.\n- Works well with `switch` and collections like `EnumSet`/`EnumMap`.\n\nUse enums for closed domains such as status, role, or state machine values.",
+    "examples": [
+      {
+        "title": "Enum with behavior",
+        "language": "java",
+        "code": "enum OrderStatus {\n  CREATED, PAID, SHIPPED\n}\n\nOrderStatus status = OrderStatus.CREATED;",
+        "explanation": "The compiler prevents invalid values outside declared enum constants."
+      }
+    ],
+    "tip": "Prefer enum over string literals for domain constants that should not expand dynamically.",
+    "links": [
+      {
+        "label": "Java enum docs",
+        "href": "https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html"
+      }
+    ]
+  },
+  {
+    "id": "java-076",
+    "question": "What is autoboxing and unboxing in Java?",
+    "difficulty": "beginner",
+    "category": "language-basics",
+    "tags": [
+      "autoboxing",
+      "unboxing",
+      "wrapper-types"
+    ],
+    "answer": "## Autoboxing and Unboxing\n\nAutoboxing: primitive to wrapper (`int` -> `Integer`).\nUnboxing: wrapper to primitive (`Integer` -> `int`).\n\nThis is convenient with collections and generics, but it has costs:\n\n- Extra object allocations (unless cached values).\n- Potential `NullPointerException` during unboxing from `null`.\n- Hidden conversion overhead in tight loops.",
+    "examples": [
+      {
+        "title": "Implicit conversion",
+        "language": "java",
+        "code": "Integer boxed = 10;   // autoboxing\nint value = boxed;    // unboxing",
+        "explanation": "The compiler inserts `Integer.valueOf` and `intValue` calls behind the scenes."
+      }
+    ],
+    "tip": "Avoid unnecessary boxing in performance-critical code and guard nullable wrappers before unboxing.",
+    "links": [
+      {
+        "label": "Autoboxing tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/data/autoboxing.html"
+      }
+    ]
+  },
+  {
+    "id": "java-077",
+    "question": "What is the Java memory model (happens-before)?",
+    "difficulty": "advanced",
+    "category": "concurrency",
+    "tags": [
+      "jmm",
+      "happens-before",
+      "visibility"
+    ],
+    "answer": "## Java Memory Model and happens-before\n\nThe Java Memory Model (JMM) specifies when writes by one thread become visible to another.\n\nA `happens-before` relationship guarantees:\n\n- Ordering: earlier action is observed before later action.\n- Visibility: writes are seen by the reading thread.\n\nCommon happens-before edges include:\n\n- Monitor unlock -> subsequent lock on same monitor.\n- Write to `volatile` -> subsequent read of same variable.\n- `Thread.start()` and `Thread.join()` boundaries.",
+    "examples": [
+      {
+        "title": "Visibility via volatile",
+        "language": "java",
+        "code": "class Flag {\n  private volatile boolean running = true;\n  void stop() { running = false; }\n  boolean isRunning() { return running; }\n}",
+        "explanation": "The `volatile` write in `stop` becomes visible to other threads reading `running`."
+      }
+    ],
+    "tip": "Without happens-before guarantees, your concurrent code may appear to work in tests but fail under load.",
+    "links": [
+      {
+        "label": "JLS memory model",
+        "href": "https://docs.oracle.com/javase/specs/jls/se17/html/jls-17.html"
+      }
+    ]
+  },
+  {
+    "id": "java-078",
+    "question": "What is race condition in Java?",
+    "difficulty": "intermediate",
+    "category": "concurrency",
+    "tags": [
+      "race-condition",
+      "threads",
+      "shared-state"
+    ],
+    "answer": "## Race condition\n\nA race condition happens when multiple threads access shared mutable state without proper synchronization, and outcome depends on execution order.\n\nSymptoms:\n\n- Lost updates.\n- Inconsistent reads.\n- Rare, non-deterministic bugs.\n\nPrevent it using locks, atomic classes, immutable objects, or thread-confined state.",
+    "examples": [
+      {
+        "title": "Lost update example",
+        "language": "java",
+        "code": "count = count + 1; // not atomic when many threads run this",
+        "explanation": "Read-modify-write can interleave across threads and overwrite increments."
+      }
+    ],
+    "tip": "Assume every shared write can race unless protected by a proven synchronization strategy.",
+    "links": [
+      {
+        "label": "Java concurrency tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html"
+      }
+    ]
+  },
+  {
+    "id": "java-079",
+    "question": "What is thread safety in Java?",
+    "difficulty": "intermediate",
+    "category": "concurrency",
+    "tags": [
+      "thread-safety",
+      "synchronization",
+      "immutability"
+    ],
+    "answer": "## Thread safety\n\nA class is thread-safe if its invariants remain correct under concurrent access without external synchronization.\n\nCommon approaches:\n\n- Immutability.\n- Internal synchronization (`synchronized`, locks).\n- Concurrent data structures (`ConcurrentHashMap`).\n- Atomic variables (`AtomicInteger`).",
+    "examples": [
+      {
+        "title": "Atomic counter",
+        "language": "java",
+        "code": "class Counter {\n  private final AtomicInteger value = new AtomicInteger();\n  int incrementAndGet() { return value.incrementAndGet(); }\n}",
+        "explanation": "Atomic operations avoid race conditions on increment."
+      }
+    ],
+    "tip": "Document thread-safety guarantees explicitly in public APIs.",
+    "links": [
+      {
+        "label": "java.util.concurrent package",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/package-summary.html"
+      }
+    ]
+  },
+  {
+    "id": "java-080",
+    "question": "What is ReentrantLock and how is it different from synchronized?",
+    "difficulty": "advanced",
+    "category": "concurrency",
+    "tags": [
+      "reentrantlock",
+      "synchronized",
+      "locks"
+    ],
+    "answer": "## ReentrantLock vs synchronized\n\n`ReentrantLock` is an explicit lock implementation from `java.util.concurrent.locks`.\n\nCompared to `synchronized`, it adds:\n\n- `tryLock()` and timed lock attempts.\n- `lockInterruptibly()` support.\n- Optional fairness policy.\n- Multiple condition variables (`Condition`).\n\n`synchronized` is simpler and safer for straightforward mutual exclusion due to automatic lock release.",
+    "examples": [
+      {
+        "title": "tryLock usage",
+        "language": "java",
+        "code": "if (lock.tryLock()) {\n  try {\n    // critical section\n  } finally {\n    lock.unlock();\n  }\n}",
+        "explanation": "With `tryLock`, a thread can avoid blocking forever and implement fallback logic."
+      }
+    ],
+    "tip": "Prefer `synchronized` unless you specifically need advanced lock features.",
+    "links": [
+      {
+        "label": "ReentrantLock API",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html"
+      }
+    ]
+  },
+  {
+    "id": "java-081",
+    "question": "What is ConcurrentModificationException and how to avoid it?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "concurrentmodificationexception",
+      "iterator",
+      "collections"
+    ],
+    "answer": "## ConcurrentModificationException\n\nMost standard collection iterators are fail-fast. If you modify the collection directly while iterating, iterator detects mismatched modification count and throws `ConcurrentModificationException`.\n\nAvoid by:\n\n- Using iterator's `remove()` method.\n- Collecting changes and applying after loop.\n- Using concurrent collections when multi-threaded updates are required.",
+    "examples": [
+      {
+        "title": "Safe removal during iteration",
+        "language": "java",
+        "code": "Iterator<String> it = list.iterator();\nwhile (it.hasNext()) {\n  if (it.next().isBlank()) it.remove();\n}",
+        "explanation": "Using iterator removal keeps internal modification tracking consistent."
+      }
+    ],
+    "tip": "Fail-fast behavior is a bug detector, not a guaranteed concurrency control mechanism.",
+    "links": [
+      {
+        "label": "Iterator API",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Iterator.html"
+      }
+    ]
+  },
+  {
+    "id": "java-082",
+    "question": "What is the difference between HashMap, LinkedHashMap, and TreeMap?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "hashmap",
+      "linkedhashmap",
+      "treemap"
+    ],
+    "answer": "## HashMap vs LinkedHashMap vs TreeMap\n\n- `HashMap`: hash table, no predictable order, average O(1) get/put.\n- `LinkedHashMap`: extends hash map with linked list to preserve insertion order (or access order for LRU patterns).\n- `TreeMap`: red-black tree, sorted keys, O(log n) get/put.\n\nChoose based on ordering requirements and performance needs.",
+    "examples": [
+      {
+        "title": "Ordering differences",
+        "language": "java",
+        "code": "Map<Integer, String> map1 = new HashMap<>();\nMap<Integer, String> map2 = new LinkedHashMap<>();\nMap<Integer, String> map3 = new TreeMap<>();",
+        "explanation": "All implement `Map`, but their iteration order and complexity differ."
+      }
+    ],
+    "tip": "Default to `HashMap`; move to `LinkedHashMap` or `TreeMap` only for explicit ordering needs.",
+    "links": [
+      {
+        "label": "Map interface docs",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html"
+      }
+    ]
+  },
+  {
+    "id": "java-083",
+    "question": "What is Big-O complexity of common Java collection operations?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "big-o",
+      "complexity",
+      "collections"
+    ],
+    "answer": "## Common collection complexities\n\nTypical average complexities:\n\n- `ArrayList`: get O(1), append amortized O(1), insert/remove middle O(n).\n- `LinkedList`: add/remove ends O(1), index access O(n).\n- `HashMap`: get/put/remove average O(1), worst O(n) with heavy collisions.\n- `TreeMap`: get/put/remove O(log n).\n- `HashSet`: contains/add/remove average O(1).\n\nAlways discuss average vs worst-case and note constant factors.",
+    "examples": [
+      {
+        "title": "ArrayList middle insert cost",
+        "language": "java",
+        "code": "list.add(0, value); // shifts elements, O(n)",
+        "explanation": "Inserting at the start requires shifting many elements."
+      }
+    ],
+    "tip": "Do not optimize only by Big-O; memory, cache behavior, and data distribution also matter.",
+    "links": [
+      {
+        "label": "Java Collections Framework guide",
+        "href": "https://docs.oracle.com/javase/tutorial/collections/"
+      }
+    ]
+  },
+  {
+    "id": "java-084",
+    "question": "What is immutable vs unmodifiable collection in Java?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "immutable",
+      "unmodifiable",
+      "collections"
+    ],
+    "answer": "## Immutable vs Unmodifiable\n\nUnmodifiable collection (for example `Collections.unmodifiableList`) blocks mutation through that reference, but underlying collection can still change.\n\nImmutable collection (for example `List.of`) has no mutating operations and no writable backing source.\n\n- Unmodifiable view can reflect external modifications.\n- Immutable collections are safer for sharing and thread safety.",
+    "examples": [
+      {
+        "title": "View vs true immutability",
+        "language": "java",
+        "code": "List<String> base = new ArrayList<>();\nList<String> view = Collections.unmodifiableList(base);\nList<String> immutable = List.of(\"a\", \"b\");",
+        "explanation": "`view` changes if `base` changes; `immutable` never changes."
+      }
+    ],
+    "tip": "Use immutable collections for API boundaries and shared configuration data.",
+    "links": [
+      {
+        "label": "List.of documentation",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html#of()"
+      }
+    ]
+  },
+  {
+    "id": "java-085",
+    "question": "What is the difference between Arrays.asList() and List.of()?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "arrays-aslist",
+      "list-of",
+      "immutability"
+    ],
+    "answer": "## Arrays.asList vs List.of\n\n`Arrays.asList(array)` returns a fixed-size, array-backed list.\n\n- Allows `set`, disallows structural changes (`add`, `remove`).\n- Reflects changes to backing array.\n\n`List.of(...)` returns an immutable list.\n\n- Disallows all mutation.\n- Rejects `null` elements.\n- Not backed by caller array in mutable way.",
+    "examples": [
+      {
+        "title": "Mutation behavior",
+        "language": "java",
+        "code": "List<String> a = Arrays.asList(\"x\", \"y\");\nList<String> b = List.of(\"x\", \"y\");\n// a.add(\"z\") -> UnsupportedOperationException\n// b.set(0, \"z\") -> UnsupportedOperationException",
+        "explanation": "Both can throw for unsupported operations, but `List.of` is fully immutable."
+      }
+    ],
+    "tip": "Use `List.of` for constants and API returns; use `Arrays.asList` mainly for bridging arrays.",
+    "links": [
+      {
+        "label": "Arrays.asList API",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Arrays.html#asList(T...)"
+      }
+    ]
+  },
+  {
+    "id": "java-086",
+    "question": "What is the difference between map() and flatMap() in streams?",
+    "difficulty": "intermediate",
+    "category": "streams",
+    "tags": [
+      "streams",
+      "map",
+      "flatmap"
+    ],
+    "answer": "## map vs flatMap\n\n`map` applies a function to each element and keeps one output per input.\n\n`flatMap` applies a function that returns a stream/collection and then flattens nested structures into one stream.\n\nUse `flatMap` when each input can produce multiple outputs (for example list of lists).",
+    "examples": [
+      {
+        "title": "Flatten nested lists",
+        "language": "java",
+        "code": "List<List<String>> nested = List.of(List.of(\"a\"), List.of(\"b\", \"c\"));\nList<String> flat = nested.stream()\n  .flatMap(List::stream)\n  .toList();",
+        "explanation": "`flatMap` turns `Stream<List<String>>` into `Stream<String>`."
+      }
+    ],
+    "tip": "If your stream type becomes nested (like `Stream<Stream<T>>`), you likely need `flatMap`.",
+    "links": [
+      {
+        "label": "Stream API",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html"
+      }
+    ]
+  },
+  {
+    "id": "java-087",
+    "question": "What is lazy evaluation in Java Streams?",
+    "difficulty": "intermediate",
+    "category": "streams",
+    "tags": [
+      "streams",
+      "lazy-evaluation",
+      "terminal-operations"
+    ],
+    "answer": "## Lazy evaluation in Streams\n\nMost stream operations (`map`, `filter`, `sorted`) are intermediate and lazy. They build a pipeline without processing elements immediately.\n\nExecution starts only when a terminal operation runs (`collect`, `forEach`, `count`).\n\nBenefits:\n\n- Avoid unnecessary work.\n- Enable short-circuiting (`findFirst`, `anyMatch`).\n- Compose readable transformation pipelines.",
+    "examples": [
+      {
+        "title": "No terminal operation, no execution",
+        "language": "java",
+        "code": "Stream<Integer> s = List.of(1, 2, 3).stream()\n  .filter(n -> n > 1)\n  .map(n -> n * 2);\n// nothing runs yet",
+        "explanation": "The pipeline is defined but not consumed until a terminal call is made."
+      }
+    ],
+    "tip": "Use short-circuiting terminal operations when you only need partial results.",
+    "links": [
+      {
+        "label": "Stream operations guide",
+        "href": "https://docs.oracle.com/javase/tutorial/collections/streams/"
+      }
+    ]
+  },
+  {
+    "id": "java-088",
+    "question": "What are method references in Java?",
+    "difficulty": "beginner",
+    "category": "functional-programming",
+    "tags": [
+      "method-reference",
+      "lambda",
+      "streams"
+    ],
+    "answer": "## Method references\n\nMethod references use `::` to refer to existing methods where a functional interface is expected.\n\nForms:\n\n- Static method: `ClassName::staticMethod`\n- Instance method of specific object: `obj::instanceMethod`\n- Instance method of arbitrary object: `TypeName::instanceMethod`\n- Constructor reference: `ClassName::new`\n\nThey improve readability when lambda body only forwards arguments.",
+    "examples": [
+      {
+        "title": "Lambda replaced by method reference",
+        "language": "java",
+        "code": "names.stream()\n  .map(String::trim)\n  .forEach(System.out::println);",
+        "explanation": "Each method reference directly maps to a compatible functional interface target."
+      }
+    ],
+    "tip": "Use method references when they make intent clearer than explicit lambda parameters.",
+    "links": [
+      {
+        "label": "Method references tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/javaOO/methodreferences.html"
+      }
+    ]
+  },
+  {
+    "id": "java-089",
+    "question": "What is CompletableFuture and when to use it?",
+    "difficulty": "advanced",
+    "category": "concurrency",
+    "tags": [
+      "completablefuture",
+      "async",
+      "futures"
+    ],
+    "answer": "## CompletableFuture\n\n`CompletableFuture` represents a future result that can be completed asynchronously and composed with other stages.\n\nUse it when:\n\n- Running IO-bound tasks in parallel.\n- Combining independent async calls.\n- Building non-blocking pipelines with success/failure branches.\n\nIt supports chaining, combination, timeout handling, and fallback strategies.",
+    "examples": [
+      {
+        "title": "Async supply and transform",
+        "language": "java",
+        "code": "CompletableFuture<String> future = CompletableFuture\n  .supplyAsync(() -> service.fetch())\n  .thenApply(String::toUpperCase);",
+        "explanation": "The second stage runs after the first completes, without blocking caller thread."
+      }
+    ],
+    "tip": "Avoid calling `get()` too early; compose futures and block only at system boundaries.",
+    "links": [
+      {
+        "label": "CompletableFuture API",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CompletableFuture.html"
+      }
+    ]
+  },
+  {
+    "id": "java-090",
+    "question": "What is the difference between thenApply() and thenCompose()?",
+    "difficulty": "advanced",
+    "category": "concurrency",
+    "tags": [
+      "completablefuture",
+      "thenapply",
+      "thencompose"
+    ],
+    "answer": "## thenApply vs thenCompose\n\n`thenApply(fn)` transforms value `T -> U` and returns `CompletableFuture<U>`.\n\n`thenCompose(fn)` expects `T -> CompletableFuture<U>` and flattens it, similar to `flatMap`.\n\nUse `thenCompose` for dependent async calls to avoid nested futures.",
+    "examples": [
+      {
+        "title": "Dependent async call",
+        "language": "java",
+        "code": "CompletableFuture<User> user = fetchUser(id)\n  .thenCompose(u -> fetchManager(u.managerId()));",
+        "explanation": "Without `thenCompose`, this would become `CompletableFuture<CompletableFuture<User>>`."
+      }
+    ],
+    "tip": "If your mapping function returns a future, prefer `thenCompose`.",
+    "links": [
+      {
+        "label": "CompletionStage methods",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/CompletionStage.html"
+      }
+    ]
+  },
+  {
+    "id": "java-091",
+    "question": "What is Java NIO and how is it different from IO?",
+    "difficulty": "intermediate",
+    "category": "io",
+    "tags": [
+      "nio",
+      "io",
+      "channels",
+      "buffers"
+    ],
+    "answer": "## Java NIO vs classic IO\n\nClassic `java.io` uses stream-oriented blocking APIs (`InputStream`, `Reader`).\n\nNIO (`java.nio`) introduces:\n\n- Buffers and channels.\n- Non-blocking IO with selectors.\n- Better support for high-concurrency network servers.\n\nNIO.2 also adds improved file APIs (`Path`, `Files`) and async channels.",
+    "examples": [
+      {
+        "title": "Read file using NIO Files API",
+        "language": "java",
+        "code": "String text = Files.readString(Path.of(\"notes.txt\"));",
+        "explanation": "NIO.2 file utilities offer concise and modern file operations."
+      }
+    ],
+    "tip": "Use classic IO for simple blocking tasks and NIO when scalability or advanced file operations are needed.",
+    "links": [
+      {
+        "label": "NIO package summary",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/package-summary.html"
+      }
+    ]
+  },
+  {
+    "id": "java-092",
+    "question": "What is the difference between File and Path APIs?",
+    "difficulty": "intermediate",
+    "category": "io",
+    "tags": [
+      "file",
+      "path",
+      "nio2"
+    ],
+    "answer": "## File vs Path\n\n`File` (java.io) is older and mutable-like in usage with limited operations.\n\n`Path` (java.nio.file) is modern and works with `Files` utility methods for robust operations, better exceptions, symbolic links, and filesystem providers.\n\n`Path` is generally preferred in new code.",
+    "examples": [
+      {
+        "title": "Preferred modern approach",
+        "language": "java",
+        "code": "Path path = Path.of(\"data\", \"input.txt\");\nboolean exists = Files.exists(path);",
+        "explanation": "`Path` + `Files` is the recommended API pair for file operations."
+      }
+    ],
+    "tip": "When migrating legacy code, replace `File` APIs gradually with `Path`/`Files` for clearer semantics.",
+    "links": [
+      {
+        "label": "Path API docs",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html"
+      }
+    ]
+  },
+  {
+    "id": "java-093",
+    "question": "What are annotations in Java?",
+    "difficulty": "beginner",
+    "category": "language-basics",
+    "tags": [
+      "annotations",
+      "metadata",
+      "reflection"
+    ],
+    "answer": "## Annotations\n\nAnnotations provide structured metadata for classes, methods, fields, parameters, etc.\n\nCommon uses:\n\n- Compiler checks (`@Override`).\n- Framework configuration (`@Entity`, `@Autowired`).\n- Code generation and validation.\n\nAnnotations do not directly change business logic by themselves; tools/frameworks interpret them.",
+    "examples": [
+      {
+        "title": "Built-in annotation",
+        "language": "java",
+        "code": "class Child extends Parent {\n  @Override\n  void run() {}\n}",
+        "explanation": "`@Override` asks compiler to verify that a method actually overrides a parent method."
+      }
+    ],
+    "tip": "Prefer annotations when declarative metadata is clearer than boilerplate configuration code.",
+    "links": [
+      {
+        "label": "Java annotations tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/annotations/"
+      }
+    ]
+  },
+  {
+    "id": "java-094",
+    "question": "What are meta-annotations in Java?",
+    "difficulty": "intermediate",
+    "category": "language-basics",
+    "tags": [
+      "annotations",
+      "meta-annotations",
+      "retention"
+    ],
+    "answer": "## Meta-annotations\n\nMeta-annotations are annotations used on other annotation declarations.\n\nKey meta-annotations:\n\n- `@Target`: where the annotation can be used.\n- `@Retention`: source/class/runtime availability.\n- `@Documented`: include in Javadoc.\n- `@Inherited`: inheritance behavior for class annotations.\n- `@Repeatable`: allow multiple instances.",
+    "examples": [
+      {
+        "title": "Custom annotation with meta-annotations",
+        "language": "java",
+        "code": "@Target(ElementType.METHOD)\n@Retention(RetentionPolicy.RUNTIME)\npublic @interface Audited {}",
+        "explanation": "This annotation can be placed on methods and remains available through reflection at runtime."
+      }
+    ],
+    "tip": "Choose `RetentionPolicy.RUNTIME` only when reflection at runtime is required.",
+    "links": [
+      {
+        "label": "ElementType and RetentionPolicy",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/annotation/package-summary.html"
+      }
+    ]
+  },
+  {
+    "id": "java-095",
+    "question": "What is dependency inversion principle (DIP)?",
+    "difficulty": "advanced",
+    "category": "design-principles",
+    "tags": [
+      "solid",
+      "dip",
+      "architecture"
+    ],
+    "answer": "## Dependency Inversion Principle (DIP)\n\nDIP states:\n\n- High-level policies should not depend on low-level details.\n- Both should depend on abstractions.\n- Abstractions should not depend on details; details should depend on abstractions.\n\nIn Java, this is commonly implemented with interfaces and dependency injection.",
+    "examples": [
+      {
+        "title": "Depending on abstraction",
+        "language": "java",
+        "code": "interface MessageSender { void send(String message); }\nclass NotificationService {\n  private final MessageSender sender;\n  NotificationService(MessageSender sender) { this.sender = sender; }\n}",
+        "explanation": "The service can work with email, SMS, or push implementations without code changes."
+      }
+    ],
+    "tip": "Constructor injection is a simple and test-friendly way to enforce DIP.",
+    "links": [
+      {
+        "label": "SOLID principles overview",
+        "href": "https://en.wikipedia.org/wiki/SOLID"
+      }
+    ]
+  },
+  {
+    "id": "java-096",
+    "question": "What are SOLID principles in Java design?",
+    "difficulty": "advanced",
+    "category": "design-principles",
+    "tags": [
+      "solid",
+      "ood",
+      "design"
+    ],
+    "answer": "## SOLID principles\n\n- **S**ingle Responsibility Principle: one reason to change.\n- **O**pen/Closed Principle: open for extension, closed for modification.\n- **L**iskov Substitution Principle: subtypes must be safely substitutable.\n- **I**nterface Segregation Principle: prefer small, client-specific interfaces.\n- **D**ependency Inversion Principle: depend on abstractions.\n\nTogether they reduce coupling, improve testability, and support long-term maintainability.",
+    "examples": [
+      {
+        "title": "SOLID in practice",
+        "language": "java",
+        "code": "interface PaymentGateway { void pay(); }\nclass CheckoutService {\n  private final PaymentGateway gateway;\n  CheckoutService(PaymentGateway gateway) { this.gateway = gateway; }\n}",
+        "explanation": "This demonstrates dependency inversion and supports open extension through new gateway implementations."
+      }
+    ],
+    "tip": "Use SOLID as design heuristics, not rigid rules; trade-offs depend on context.",
+    "links": [
+      {
+        "label": "Clean Architecture concepts",
+        "href": "https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/"
+      }
+    ]
+  },
+  {
+    "id": "java-097",
+    "question": "What is Liskov substitution principle with Java example?",
+    "difficulty": "advanced",
+    "category": "design-principles",
+    "tags": [
+      "lsp",
+      "solid",
+      "inheritance"
+    ],
+    "answer": "## Liskov Substitution Principle (LSP)\n\nIf `S` is a subtype of `T`, objects of type `T` should be replaceable with `S` without breaking correctness.\n\nViolations typically happen when subclass tightens preconditions or breaks expected behavior.\n\nGood design often uses clear interfaces and avoids inheriting when behavior does not align.",
+    "examples": [
+      {
+        "title": "Subtype contract preserved",
+        "language": "java",
+        "code": "interface Bird { void move(); }\nclass Sparrow implements Bird { public void move() { /* fly */ } }\nclass Penguin implements Bird { public void move() { /* walk/swim */ } }",
+        "explanation": "Both subtypes satisfy the `move` contract without requiring unsupported operations."
+      }
+    ],
+    "tip": "Do not force subclasses to implement behavior they cannot fulfill; split abstractions when needed.",
+    "links": [
+      {
+        "label": "Liskov substitution principle",
+        "href": "https://en.wikipedia.org/wiki/Liskov_substitution_principle"
+      }
+    ]
+  },
+  {
+    "id": "java-098",
+    "question": "What is Open/Closed principle with Java example?",
+    "difficulty": "advanced",
+    "category": "design-principles",
+    "tags": [
+      "ocp",
+      "solid",
+      "extensibility"
+    ],
+    "answer": "## Open/Closed Principle (OCP)\n\nOCP means adding new behavior should mostly require new code, not risky edits to stable code.\n\nIn Java, common techniques:\n\n- Interface-based strategies.\n- Polymorphism instead of `if/else` type checks.\n- Plugin-style registration.",
+    "examples": [
+      {
+        "title": "Strategy extension",
+        "language": "java",
+        "code": "interface DiscountPolicy { double apply(double total); }\nclass NoDiscount implements DiscountPolicy { public double apply(double total) { return total; } }\nclass FestivalDiscount implements DiscountPolicy { public double apply(double total) { return total * 0.9; } }",
+        "explanation": "New discount types can be added without changing checkout core logic."
+      }
+    ],
+    "tip": "Focus OCP on volatile areas where new variants are expected.",
+    "links": [
+      {
+        "label": "Open-closed principle",
+        "href": "https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle"
+      }
+    ]
+  },
+  {
+    "id": "java-099",
+    "question": "What is Interface Segregation Principle with Java example?",
+    "difficulty": "advanced",
+    "category": "design-principles",
+    "tags": [
+      "isp",
+      "solid",
+      "interfaces"
+    ],
+    "answer": "## Interface Segregation Principle (ISP)\n\nISP recommends multiple small, focused interfaces rather than one large \"god interface\".\n\nBenefits:\n\n- Lower coupling.\n- Clearer contracts.\n- Fewer no-op or unsupported implementations.",
+    "examples": [
+      {
+        "title": "Split broad interface",
+        "language": "java",
+        "code": "interface Printer { void print(Document doc); }\ninterface Scanner { void scan(Document doc); }\nclass SimplePrinter implements Printer {\n  public void print(Document doc) {}\n}",
+        "explanation": "A simple printer should not be forced to implement scanning behavior."
+      }
+    ],
+    "tip": "Design interfaces around client use-cases, not around implementation convenience.",
+    "links": [
+      {
+        "label": "Interface segregation principle",
+        "href": "https://en.wikipedia.org/wiki/Interface_segregation_principle"
+      }
+    ]
+  },
+  {
+    "id": "java-100",
+    "question": "What is Single Responsibility Principle with Java example?",
+    "difficulty": "advanced",
+    "category": "design-principles",
+    "tags": [
+      "srp",
+      "solid",
+      "maintainability"
+    ],
+    "answer": "## Single Responsibility Principle (SRP)\n\nSRP means a module/class should focus on one responsibility. If it handles unrelated concerns, change frequency and bug risk increase.\n\nTypical separation:\n\n- Business logic service.\n- Persistence repository.\n- Notification/logging adapters.\n\nThis improves readability, testing, and change isolation.",
+    "examples": [
+      {
+        "title": "Separate concerns",
+        "language": "java",
+        "code": "class InvoiceCalculator {\n  BigDecimal total(Invoice invoice) { /* business logic */ return BigDecimal.ZERO; }\n}\nclass InvoiceRepository {\n  void save(Invoice invoice) { /* persistence */ }\n}",
+        "explanation": "Calculation and persistence evolve for different reasons, so they belong in separate classes."
+      }
+    ],
+    "tip": "If a class keeps changing for unrelated feature requests, it likely violates SRP.",
+    "links": [
+      {
+        "label": "Single responsibility principle",
+        "href": "https://en.wikipedia.org/wiki/Single-responsibility_principle"
+      }
+    ]
+  }
+]

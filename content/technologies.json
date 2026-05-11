@@ -30,12 +30,25 @@
     "icon": "java",
     "title": "Java",
     "description": "Prepare for backend interviews with OOP, JVM concepts, collections, concurrency, and API design.",
-    "questionCount": 132,
+    "questionCount": 100,
     "exerciseCount": 41,
     "difficultyBreakdown": {
-      "easy": 36,
-      "medium": 63,
-      "hard": 33
+      "easy": 37,
+      "medium": 50,
+      "hard": 13
+    }
+  },
+  {
+    "slug": "angular",
+    "icon": "angular",
+    "title": "Angular",
+    "description": "Learn Angular fundamentals, components, directives, services, and dependency injection.",
+    "questionCount": 283,
+    "exerciseCount": 30,
+    "difficultyBreakdown": {
+      "easy": 68,
+      "medium": 168,
+      "hard": 47
     }
   }
 ]

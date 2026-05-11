@@ -1,19 +1,22 @@
+import angularQuestionItems from '@/content/modules/angular/questions.json'
 import javascriptQuestionItems from '@/content/modules/javascript/questions.json'
 import reactQuestionItems from '@/content/modules/react/questions.json'
 import { QuestionItem } from './moduleData.types'
 import { QuestionModuleSection } from './QuestionModuleSection'
+import javaQuestionItems from '@/content/modules/java/questions.json'
 
 const interviewQuestions: Record<
-  'javascript' | 'react' | 'java',
+  'javascript' | 'react' | 'angular' | 'java',
   QuestionItem[]
 > = {
   javascript: javascriptQuestionItems,
   react: reactQuestionItems,
-  java: [],
+  angular: angularQuestionItems,
+  java: javaQuestionItems,
 }
 
 export const TechnologyQuestionItem = ({
   technologySlug,
 }: {
-  technologySlug: 'react' | 'javascript'
+  technologySlug: 'react' | 'javascript' | 'angular' | 'java'
 }) => <QuestionModuleSection items={interviewQuestions[technologySlug]} />

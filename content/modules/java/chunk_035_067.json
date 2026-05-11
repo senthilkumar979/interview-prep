@@ -1,0 +1,912 @@
+[
+  {
+    "id": "java-035",
+    "question": "What is the volatile keyword in Java?",
+    "difficulty": "medium",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "concurrency",
+      "volatile",
+      "memory-visibility"
+    ],
+    "answer": "The `volatile` keyword ensures that reads and writes to a variable go directly to main memory, so changes made by one thread are visible to other threads immediately. It prevents caching/reordering issues for that variable.\n\n`volatile` does not make compound operations atomic. For example, `count++` is still unsafe with only `volatile` because it is read-modify-write.",
+    "examples": [
+      {
+        "title": "Visibility flag between threads",
+        "language": "java",
+        "code": "class Worker {\n  private volatile boolean running = true;\n\n  void stop() { running = false; }\n\n  void run() {\n    while (running) {\n      // do work\n    }\n  }\n}",
+        "explanation": "When one thread calls `stop()`, the loop in another thread sees `running = false` quickly and exits."
+      }
+    ],
+    "tip": "Use `volatile` for simple state flags; use `synchronized` or `Atomic*` for atomic updates.",
+    "links": [
+      {
+        "label": "Java volatile tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/essential/concurrency/atomic.html"
+      }
+    ]
+  },
+  {
+    "id": "java-036",
+    "question": "What is the transient keyword in Java?",
+    "difficulty": "medium",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "serialization",
+      "transient"
+    ],
+    "answer": "`transient` marks a field to be skipped during Java object serialization. It is useful for sensitive data (passwords), derived values, or non-serializable fields.\n\nAfter deserialization, transient fields get default values (`null`, `0`, `false`) unless restored manually.",
+    "examples": [
+      {
+        "title": "Skipping sensitive field",
+        "language": "java",
+        "code": "class UserSession implements Serializable {\n  String username;\n  transient String authToken;\n}",
+        "explanation": "`authToken` is not written to serialized bytes, reducing accidental sensitive data persistence."
+      }
+    ],
+    "tip": "Mark secrets as `transient` and also avoid logging serialized objects containing credentials.",
+    "links": [
+      {
+        "label": "Serializable API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Serializable.html"
+      }
+    ]
+  },
+  {
+    "id": "java-037",
+    "question": "What is serialization and deserialization?",
+    "difficulty": "beginner",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "serialization",
+      "io"
+    ],
+    "answer": "Serialization converts an object into a byte stream for storage or transfer. Deserialization reconstructs the object from that byte stream.\n\nIn Java, this is often done with `ObjectOutputStream` and `ObjectInputStream`, but many modern systems prefer JSON/Protobuf for interoperability and security.",
+    "examples": [
+      {
+        "title": "Serialize and read object",
+        "language": "java",
+        "code": "try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(\"user.bin\"))) {\n  out.writeObject(user);\n}\n\ntry (ObjectInputStream in = new ObjectInputStream(new FileInputStream(\"user.bin\"))) {\n  User restored = (User) in.readObject();\n}",
+        "explanation": "The object is written to disk as bytes and later reconstructed."
+      }
+    ],
+    "tip": "If using Java serialization, define `serialVersionUID` for version compatibility.",
+    "links": [
+      {
+        "label": "Object serialization spec",
+        "href": "https://docs.oracle.com/javase/8/docs/platform/serialization/spec/serialTOC.html"
+      }
+    ]
+  },
+  {
+    "id": "java-038",
+    "question": "What are functional interfaces in Java?",
+    "difficulty": "beginner",
+    "category": "functional-programming",
+    "tags": [
+      "java",
+      "lambda",
+      "functional-interface"
+    ],
+    "answer": "A functional interface has exactly one abstract method. This allows it to be implemented using lambda expressions or method references.\n\nIt can still include default and static methods. Common examples are `Runnable`, `Comparator`, `Function`, and `Predicate`.",
+    "examples": [
+      {
+        "title": "Custom functional interface",
+        "language": "java",
+        "code": "@FunctionalInterface\ninterface Calculator {\n  int apply(int a, int b);\n}\n\nCalculator add = (a, b) -> a + b;",
+        "explanation": "The lambda provides implementation for the single abstract method `apply`."
+      }
+    ],
+    "tip": "Add `@FunctionalInterface` so the compiler catches accidental extra abstract methods.",
+    "links": [
+      {
+        "label": "FunctionalInterface annotation",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/FunctionalInterface.html"
+      }
+    ]
+  },
+  {
+    "id": "java-039",
+    "question": "What are lambda expressions in Java?",
+    "difficulty": "beginner",
+    "category": "functional-programming",
+    "tags": [
+      "java",
+      "lambda",
+      "streams"
+    ],
+    "answer": "Lambda expressions are concise anonymous functions introduced in Java 8. They provide behavior as data, mainly for functional interfaces.\n\nThey make code shorter and clearer for callbacks, stream operations, sorting, and asynchronous tasks.",
+    "examples": [
+      {
+        "title": "Sorting with lambda",
+        "language": "java",
+        "code": "List<String> names = new ArrayList<>(List.of(\"Bob\", \"Alice\"));\nnames.sort((a, b) -> a.compareToIgnoreCase(b));",
+        "explanation": "The lambda replaces a verbose anonymous `Comparator` class."
+      }
+    ],
+    "tip": "Prefer method references like `String::length` when they are clearer than lambdas.",
+    "links": [
+      {
+        "label": "Lambda expressions tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html"
+      }
+    ]
+  },
+  {
+    "id": "java-040",
+    "question": "What is Optional class in Java 8?",
+    "difficulty": "medium",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "optional",
+      "null-safety"
+    ],
+    "answer": "`Optional<T>` represents a value that may or may not be present. It helps model absence explicitly instead of returning `null`.\n\nIt is most useful in method return types. Avoid using it as a field type in entities/DTOs unless you have a strong reason.",
+    "examples": [
+      {
+        "title": "Safer lookup with Optional",
+        "language": "java",
+        "code": "Optional<User> user = repo.findByEmail(email);\nString name = user.map(User::getName)\n  .orElse(\"Guest\");",
+        "explanation": "The code handles missing user safely without direct null checks."
+      }
+    ],
+    "tip": "Prefer `orElseGet` over `orElse` when fallback creation is expensive.",
+    "links": [
+      {
+        "label": "Optional API docs",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Optional.html"
+      }
+    ]
+  },
+  {
+    "id": "java-041",
+    "question": "What is the difference between Collection and Collections?",
+    "difficulty": "beginner",
+    "category": "collections",
+    "tags": [
+      "java",
+      "collections-framework",
+      "api"
+    ],
+    "answer": "`Collection` is an interface that represents a group of objects (parent of `List`, `Set`, `Queue`). `Collections` is a utility class with static helper methods like sorting, reversing, and creating unmodifiable wrappers.\n\nA common confusion is trying to instantiate `Collection` directly or treating `Collections` as a data structure.",
+    "examples": [
+      {
+        "title": "Using Collections utility",
+        "language": "java",
+        "code": "List<Integer> nums = new ArrayList<>(List.of(3, 1, 2));\nCollections.sort(nums);",
+        "explanation": "`nums` is a `Collection` implementation; `Collections.sort` is a static utility method."
+      }
+    ],
+    "tip": "Remember: singular (`Collection`) is interface, plural (`Collections`) is helper class.",
+    "links": [
+      {
+        "label": "Collection interface",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Collection.html"
+      }
+    ]
+  },
+  {
+    "id": "java-042",
+    "question": "What is the difference between Set and List?",
+    "difficulty": "beginner",
+    "category": "collections",
+    "tags": [
+      "java",
+      "set",
+      "list"
+    ],
+    "answer": "`List` preserves insertion order and allows duplicates. `Set` stores unique elements and generally does not allow duplicates.\n\nChoose `List` for ordered sequences and indexed access; choose `Set` when uniqueness is the main requirement.",
+    "examples": [
+      {
+        "title": "Duplicates behavior",
+        "language": "java",
+        "code": "List<String> list = new ArrayList<>(List.of(\"A\", \"A\", \"B\"));\nSet<String> set = new HashSet<>(list);\nSystem.out.println(list.size()); // 3\nSystem.out.println(set.size());  // 2",
+        "explanation": "The set automatically removes duplicate values."
+      }
+    ],
+    "tip": "Use `LinkedHashSet` if you need both uniqueness and insertion order.",
+    "links": [
+      {
+        "label": "Set interface",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Set.html"
+      }
+    ]
+  },
+  {
+    "id": "java-043",
+    "question": "What is the difference between HashSet and TreeSet?",
+    "difficulty": "medium",
+    "category": "collections",
+    "tags": [
+      "java",
+      "hashset",
+      "treeset",
+      "sorting"
+    ],
+    "answer": "`HashSet` uses hashing, provides average O(1) add/remove/contains, and does not maintain sorted order. `TreeSet` uses a balanced tree, keeps elements sorted, and provides O(log n) operations.\n\nUse `TreeSet` when you need sorted traversal or range operations like `ceiling`/`floor`.",
+    "examples": [
+      {
+        "title": "Order difference",
+        "language": "java",
+        "code": "Set<Integer> a = new HashSet<>(List.of(3, 1, 2));\nSet<Integer> b = new TreeSet<>(List.of(3, 1, 2));\nSystem.out.println(a); // order not guaranteed\nSystem.out.println(b); // [1, 2, 3]",
+        "explanation": "TreeSet maintains sorted order; HashSet does not."
+      }
+    ],
+    "tip": "If sorting is not required, `HashSet` is usually faster.",
+    "links": [
+      {
+        "label": "TreeSet API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/TreeSet.html"
+      }
+    ]
+  },
+  {
+    "id": "java-044",
+    "question": "What is the diamond problem in Java?",
+    "difficulty": "medium",
+    "category": "oop",
+    "tags": [
+      "java",
+      "inheritance",
+      "interfaces",
+      "default-methods"
+    ],
+    "answer": "The diamond problem happens when a class inherits the same method from multiple parent paths, creating ambiguity. Java avoids this for classes by disallowing multiple class inheritance.\n\nWith interfaces (default methods), ambiguity can occur and must be resolved by overriding the method in the implementing class.",
+    "examples": [
+      {
+        "title": "Resolving default method conflict",
+        "language": "java",
+        "code": "interface A { default void show() { System.out.println(\"A\"); } }\ninterface B { default void show() { System.out.println(\"B\"); } }\nclass C implements A, B {\n  @Override public void show() { A.super.show(); }\n}",
+        "explanation": "Class `C` must explicitly choose which default implementation to use."
+      }
+    ],
+    "tip": "Mention that Java solves class-level diamond issues by design (single class inheritance).",
+    "links": [
+      {
+        "label": "Default methods tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html"
+      }
+    ]
+  },
+  {
+    "id": "java-045",
+    "question": "What is dependency injection?",
+    "difficulty": "medium",
+    "category": "design",
+    "tags": [
+      "java",
+      "design-patterns",
+      "dependency-injection",
+      "testability"
+    ],
+    "answer": "Dependency Injection (DI) is a design pattern where an object receives its dependencies from outside instead of creating them internally. This reduces coupling and improves testability.\n\nIn Java projects, DI is commonly done via constructors (preferred), setters, or frameworks like Spring.",
+    "examples": [
+      {
+        "title": "Constructor injection",
+        "language": "java",
+        "code": "interface EmailSender { void send(String msg); }\n\nclass NotificationService {\n  private final EmailSender emailSender;\n\n  NotificationService(EmailSender emailSender) {\n    this.emailSender = emailSender;\n  }\n}",
+        "explanation": "The service does not create `EmailSender`; it receives one from outside."
+      }
+    ],
+    "tip": "Prefer constructor injection for required dependencies and immutability.",
+    "links": [
+      {
+        "label": "DI pattern overview",
+        "href": "https://martinfowler.com/articles/injection.html"
+      }
+    ]
+  },
+  {
+    "id": "java-046",
+    "question": "What is the difference between shallow copy and deep copy?",
+    "difficulty": "medium",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "copy",
+      "object-reference"
+    ],
+    "answer": "A shallow copy copies primitive values and object references as-is, so nested objects are shared. A deep copy duplicates nested objects too, so the new object is fully independent.\n\nShallow copy is faster but risky when mutable nested state exists.",
+    "examples": [
+      {
+        "title": "Shared nested object in shallow copy",
+        "language": "java",
+        "code": "class Address { String city; }\nclass User { Address address; }\n\nUser u1 = new User();\nu1.address = new Address();\nUser u2 = u1; // shallow reference copy",
+        "explanation": "Changing `u2.address.city` also affects `u1` because both share the same nested object."
+      }
+    ],
+    "tip": "For deep copy, use explicit copy constructors or mapping logic instead of relying on `clone()`.",
+    "links": [
+      {
+        "label": "Object cloning discussion",
+        "href": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html#clone()"
+      }
+    ]
+  },
+  {
+    "id": "java-047",
+    "question": "What are design patterns in Java?",
+    "difficulty": "beginner",
+    "category": "design",
+    "tags": [
+      "java",
+      "design-patterns",
+      "oop"
+    ],
+    "answer": "Design patterns are proven, reusable solutions to common software design problems. They are not copy-paste code, but templates for structuring classes and interactions.\n\nExamples include Singleton, Factory, Builder, Strategy, Observer, and Decorator.",
+    "examples": [
+      {
+        "title": "Strategy pattern idea",
+        "language": "java",
+        "code": "interface PaymentStrategy { void pay(int amount); }\nclass CardPayment implements PaymentStrategy { public void pay(int amount) {} }\nclass UpiPayment implements PaymentStrategy { public void pay(int amount) {} }",
+        "explanation": "Different payment behaviors are interchangeable behind the same interface."
+      }
+    ],
+    "tip": "Use patterns to solve clear problems; avoid forcing patterns where simple code is enough.",
+    "links": [
+      {
+        "label": "GoF pattern overview",
+        "href": "https://refactoring.guru/design-patterns"
+      }
+    ]
+  },
+  {
+    "id": "java-048",
+    "question": "What is the factory design pattern?",
+    "difficulty": "medium",
+    "category": "design",
+    "tags": [
+      "java",
+      "design-patterns",
+      "factory"
+    ],
+    "answer": "Factory pattern centralizes object creation logic in a method/class instead of scattering `new` calls across the codebase. It hides creation details and returns a common interface type.\n\nThis improves maintainability when object creation becomes conditional or complex.",
+    "examples": [
+      {
+        "title": "Simple factory method",
+        "language": "java",
+        "code": "interface Notification { void send(String msg); }\nclass EmailNotification implements Notification { public void send(String msg) {} }\nclass SmsNotification implements Notification { public void send(String msg) {} }\n\nclass NotificationFactory {\n  static Notification create(String type) {\n    return \"sms\".equalsIgnoreCase(type) ? new SmsNotification() : new EmailNotification();\n  }\n}",
+        "explanation": "Client code asks factory for a `Notification` without knowing concrete creation details."
+      }
+    ],
+    "tip": "Factory is useful when constructors start needing many condition checks.",
+    "links": [
+      {
+        "label": "Factory method pattern",
+        "href": "https://refactoring.guru/design-patterns/factory-method"
+      }
+    ]
+  },
+  {
+    "id": "java-049",
+    "question": "What is the builder design pattern?",
+    "difficulty": "medium",
+    "category": "design",
+    "tags": [
+      "java",
+      "design-patterns",
+      "builder",
+      "immutability"
+    ],
+    "answer": "Builder pattern constructs complex objects step-by-step, especially when constructors would have many optional parameters. It improves readability and supports immutable object creation.\n\nIt avoids telescoping constructors and makes code self-documenting.",
+    "examples": [
+      {
+        "title": "Basic immutable builder",
+        "language": "java",
+        "code": "class User {\n  private final String name;\n  private final int age;\n\n  private User(Builder b) {\n    this.name = b.name;\n    this.age = b.age;\n  }\n\n  static class Builder {\n    private String name;\n    private int age;\n    Builder name(String name) { this.name = name; return this; }\n    Builder age(int age) { this.age = age; return this; }\n    User build() { return new User(this); }\n  }\n}",
+        "explanation": "Callers can build objects with clear chained methods and without long constructors."
+      }
+    ],
+    "tip": "Use builder when there are many optional fields or validation before object creation.",
+    "links": [
+      {
+        "label": "Builder pattern",
+        "href": "https://refactoring.guru/design-patterns/builder"
+      }
+    ]
+  },
+  {
+    "id": "java-050",
+    "question": "What is the difference between Heap and Stack memory?",
+    "difficulty": "beginner",
+    "category": "jvm",
+    "tags": [
+      "java",
+      "jvm",
+      "memory",
+      "heap",
+      "stack"
+    ],
+    "answer": "Heap stores objects and is shared across threads. Stack stores method call frames (local variables, references, return info) and is per-thread.\n\nHeap is managed by garbage collection; stack memory is automatically freed when method calls end.",
+    "examples": [
+      {
+        "title": "Stack local, heap object",
+        "language": "java",
+        "code": "void process() {\n  int x = 10;             // stack\n  String s = new String(\"hi\"); // object on heap, reference on stack\n}",
+        "explanation": "`x` exists in the method frame; the `String` object is allocated in heap."
+      }
+    ],
+    "tip": "A `StackOverflowError` is usually deep recursion; heap issues usually show as `OutOfMemoryError`.",
+    "links": [
+      {
+        "label": "JVM runtime areas",
+        "href": "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-2.html"
+      }
+    ]
+  },
+  {
+    "id": "java-051",
+    "question": "What is garbage collection in Java?",
+    "difficulty": "beginner",
+    "category": "jvm",
+    "tags": [
+      "java",
+      "garbage-collection",
+      "memory-management"
+    ],
+    "answer": "Garbage Collection (GC) automatically frees heap memory used by objects that are no longer reachable. This reduces manual memory management errors like dangling pointers.\n\nGC improves safety but can introduce pauses, so tuning and object-allocation patterns still matter in performance-critical applications.",
+    "examples": [
+      {
+        "title": "Object becomes collectible",
+        "language": "java",
+        "code": "void demo() {\n  String temp = new String(\"data\");\n  temp = null; // eligible for GC when no references remain\n}",
+        "explanation": "Once no live reference points to the object, GC can reclaim that memory later."
+      }
+    ],
+    "tip": "Do not rely on `System.gc()` in production behavior; JVM may ignore or delay it.",
+    "links": [
+      {
+        "label": "Garbage collector tuning guide",
+        "href": "https://docs.oracle.com/en/java/javase/21/gctuning/"
+      }
+    ]
+  },
+  {
+    "id": "java-052",
+    "question": "What are the different types of garbage collectors in Java?",
+    "difficulty": "medium",
+    "category": "jvm",
+    "tags": [
+      "java",
+      "gc",
+      "g1gc",
+      "zgc",
+      "shenandoah"
+    ],
+    "answer": "Common collectors include Serial GC, Parallel GC, G1 GC (default in modern JDKs), ZGC, and Shenandoah. Serial/Parallel focus on throughput, while ZGC and Shenandoah target low pause times for large heaps.\n\nThe best choice depends on workload goals: throughput, latency, heap size, and CPU budget.",
+    "examples": [
+      {
+        "title": "Choosing G1 explicitly",
+        "language": "bash",
+        "code": "java -XX:+UseG1GC -jar app.jar",
+        "explanation": "This runs the app with G1 GC, which balances throughput and pause-time goals."
+      }
+    ],
+    "tip": "Start with defaults, measure GC logs, then tune based on real latency/throughput targets.",
+    "links": [
+      {
+        "label": "Java GC tuning docs",
+        "href": "https://docs.oracle.com/en/java/javase/21/gctuning/available-collectors.html"
+      }
+    ]
+  },
+  {
+    "id": "java-053",
+    "question": "What is the difference between wait() and sleep() methods?",
+    "difficulty": "medium",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "concurrency",
+      "wait",
+      "sleep"
+    ],
+    "answer": "`sleep()` pauses the current thread for a time and does not release any monitor lock. `wait()` is used for inter-thread coordination, must be called inside synchronized context, and releases the monitor while waiting.\n\n`wait()` resumes on `notify/notifyAll` (or timeout/interruption), while `sleep()` resumes only after time/interrupt.",
+    "examples": [
+      {
+        "title": "wait inside synchronized block",
+        "language": "java",
+        "code": "synchronized (lock) {\n  while (!ready) {\n    lock.wait();\n  }\n}",
+        "explanation": "Thread releases `lock` while waiting, allowing another thread to change `ready` and notify."
+      }
+    ],
+    "tip": "Use `while` with `wait()` to handle spurious wakeups safely.",
+    "links": [
+      {
+        "label": "Thread.wait API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#wait()"
+      }
+    ]
+  },
+  {
+    "id": "java-054",
+    "question": "What is the difference between notify() and notifyAll()?",
+    "difficulty": "medium",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "concurrency",
+      "notify",
+      "notifyall"
+    ],
+    "answer": "`notify()` wakes one waiting thread on the monitor, chosen by JVM scheduling. `notifyAll()` wakes all waiting threads; they then compete to reacquire the lock.\n\n`notifyAll()` is safer when multiple conditions share the same monitor. `notify()` can miss the correct waiter and cause deadlock-like stalls.",
+    "examples": [
+      {
+        "title": "Producer waking consumers",
+        "language": "java",
+        "code": "synchronized (queue) {\n  queue.add(item);\n  queue.notifyAll();\n}",
+        "explanation": "All waiters re-check condition, and eligible ones continue."
+      }
+    ],
+    "tip": "Prefer higher-level concurrency utilities (`BlockingQueue`, `CountDownLatch`) over raw wait/notify when possible.",
+    "links": [
+      {
+        "label": "Object.notify API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#notifyAll()"
+      }
+    ]
+  },
+  {
+    "id": "java-055",
+    "question": "What is an immutable class and how to create one?",
+    "difficulty": "medium",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "immutability",
+      "thread-safety"
+    ],
+    "answer": "An immutable class is one whose state cannot change after construction. To create one: make class `final` (or prevent extension), make fields `private final`, initialize through constructor, provide no setters, and defensively copy mutable inputs/outputs.\n\nImmutable objects are thread-safe by design and easier to reason about.",
+    "examples": [
+      {
+        "title": "Immutable value object",
+        "language": "java",
+        "code": "public final class Money {\n  private final String currency;\n  private final long amount;\n\n  public Money(String currency, long amount) {\n    this.currency = currency;\n    this.amount = amount;\n  }\n\n  public String getCurrency() { return currency; }\n  public long getAmount() { return amount; }\n}",
+        "explanation": "No setters and final fields make object state fixed after creation."
+      }
+    ],
+    "tip": "Use records for simple immutable data carriers in modern Java.",
+    "links": [
+      {
+        "label": "Java records",
+        "href": "https://docs.oracle.com/en/java/javase/21/language/records.html"
+      }
+    ]
+  },
+  {
+    "id": "java-056",
+    "question": "What is the difference between String, StringBuilder, and StringBuffer?",
+    "difficulty": "beginner",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "string",
+      "stringbuilder",
+      "stringbuffer"
+    ],
+    "answer": "`String` is immutable; every change creates a new object. `StringBuilder` is mutable and not synchronized, so it is faster in single-threaded contexts. `StringBuffer` is mutable and synchronized, so it is thread-safe but usually slower.\n\nFor most string concatenation in loops, use `StringBuilder`.",
+    "examples": [
+      {
+        "title": "Efficient string building",
+        "language": "java",
+        "code": "StringBuilder sb = new StringBuilder();\nfor (int i = 0; i < 3; i++) {\n  sb.append(i).append('-');\n}\nString result = sb.toString();",
+        "explanation": "This avoids creating many temporary String objects."
+      }
+    ],
+    "tip": "Simple `\"a\" + b + c` in one expression is often optimized by compiler; loop concatenation is where builder matters.",
+    "links": [
+      {
+        "label": "StringBuilder API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuilder.html"
+      }
+    ]
+  },
+  {
+    "id": "java-057",
+    "question": "What is the difference between static and instance variables?",
+    "difficulty": "beginner",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "static",
+      "oop",
+      "class-members"
+    ],
+    "answer": "Static variables belong to the class itself and are shared by all objects. Instance variables belong to each object, so each instance has its own copy.\n\nUse static for class-level constants/counters and instance fields for object-specific state.",
+    "examples": [
+      {
+        "title": "Shared vs per-object state",
+        "language": "java",
+        "code": "class User {\n  static int totalUsers = 0;\n  String name;\n\n  User(String name) {\n    this.name = name;\n    totalUsers++;\n  }\n}",
+        "explanation": "`totalUsers` is shared across all `User` objects, while `name` differs per instance."
+      }
+    ],
+    "tip": "Avoid using mutable static fields for request-specific data in multi-threaded apps.",
+    "links": [
+      {
+        "label": "Class variables tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/javaOO/classvars.html"
+      }
+    ]
+  },
+  {
+    "id": "java-058",
+    "question": "What is the purpose of the super keyword?",
+    "difficulty": "beginner",
+    "category": "oop",
+    "tags": [
+      "java",
+      "inheritance",
+      "super"
+    ],
+    "answer": "`super` refers to the immediate parent class. It is used to call parent constructors (`super(...)`) and access parent methods/fields when they are hidden or overridden.\n\nIt helps reuse parent behavior explicitly in subclass implementations.",
+    "examples": [
+      {
+        "title": "Calling parent constructor and method",
+        "language": "java",
+        "code": "class Animal {\n  Animal(String name) {}\n  void sound() { System.out.println(\"animal\"); }\n}\nclass Dog extends Animal {\n  Dog() { super(\"dog\"); }\n  @Override void sound() {\n    super.sound();\n    System.out.println(\"bark\");\n  }\n}",
+        "explanation": "Subclass constructor calls parent constructor, and overridden method can still invoke parent logic."
+      }
+    ],
+    "tip": "If parent has no no-arg constructor, subclass must call `super(args)` explicitly.",
+    "links": [
+      {
+        "label": "super keyword tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/IandI/super.html"
+      }
+    ]
+  },
+  {
+    "id": "java-059",
+    "question": "What is the purpose of the this keyword?",
+    "difficulty": "beginner",
+    "category": "oop",
+    "tags": [
+      "java",
+      "this",
+      "oop"
+    ],
+    "answer": "`this` refers to the current object instance. It is used to access instance members, resolve naming conflicts, call another constructor in the same class (`this(...)`), or pass current object as argument.\n\nIt improves clarity when constructor parameters have same names as fields.",
+    "examples": [
+      {
+        "title": "Resolving field and parameter names",
+        "language": "java",
+        "code": "class User {\n  private final String name;\n\n  User(String name) {\n    this.name = name;\n  }\n}",
+        "explanation": "`this.name` clearly refers to the instance field, not the constructor parameter."
+      }
+    ],
+    "tip": "Use `this(...)` constructor chaining to centralize validation in one constructor.",
+    "links": [
+      {
+        "label": "this keyword tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/javaOO/thiskey.html"
+      }
+    ]
+  },
+  {
+    "id": "java-060",
+    "question": "What are generics in Java?",
+    "difficulty": "beginner",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "generics",
+      "type-safety"
+    ],
+    "answer": "Generics let classes, interfaces, and methods operate on parameterized types. They provide compile-time type safety and reduce explicit casting.\n\nThey make APIs clearer, for example `List<String>` communicates intent better than raw `List`.",
+    "examples": [
+      {
+        "title": "Generic method example",
+        "language": "java",
+        "code": "public static <T> T first(List<T> items) {\n  return items.get(0);\n}",
+        "explanation": "The method works with any list type while preserving type information at compile time."
+      }
+    ],
+    "tip": "Avoid raw types (`List`), because they bypass generics safety checks.",
+    "links": [
+      {
+        "label": "Java generics tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/generics/"
+      }
+    ]
+  },
+  {
+    "id": "java-061",
+    "question": "What is type erasure in Java generics?",
+    "difficulty": "hard",
+    "category": "core-java",
+    "tags": [
+      "java",
+      "generics",
+      "type-erasure"
+    ],
+    "answer": "Type erasure means generic type information is removed at runtime and replaced with bounds (or `Object`) during compilation. This keeps backward compatibility with older bytecode.\n\nBecause of erasure, you cannot do things like `new T()`, `T.class`, or `instanceof List<String>` directly.",
+    "examples": [
+      {
+        "title": "Runtime generic type is erased",
+        "language": "java",
+        "code": "List<String> a = new ArrayList<>();\nList<Integer> b = new ArrayList<>();\nSystem.out.println(a.getClass() == b.getClass()); // true",
+        "explanation": "Both have same runtime class due to erasure."
+      }
+    ],
+    "tip": "Use explicit `Class<T>` parameters when runtime type information is required.",
+    "links": [
+      {
+        "label": "Type erasure docs",
+        "href": "https://docs.oracle.com/javase/tutorial/java/generics/erasure.html"
+      }
+    ]
+  },
+  {
+    "id": "java-062",
+    "question": "Can you override a private or static method?",
+    "difficulty": "medium",
+    "category": "oop",
+    "tags": [
+      "java",
+      "overriding",
+      "static",
+      "private"
+    ],
+    "answer": "A private method cannot be overridden because it is not visible in subclasses. A static method is also not overridden; it is hidden (method hiding) based on reference type.\n\nOnly instance methods with proper visibility and signature participate in runtime overriding.",
+    "examples": [
+      {
+        "title": "Static method hiding",
+        "language": "java",
+        "code": "class Parent { static void show() { System.out.println(\"Parent\"); } }\nclass Child extends Parent { static void show() { System.out.println(\"Child\"); } }\n\nParent p = new Child();\np.show(); // Parent",
+        "explanation": "Call is resolved by reference type (`Parent`), showing static hiding not overriding."
+      }
+    ],
+    "tip": "Use `@Override`; compiler rejection quickly reveals non-overridable methods.",
+    "links": [
+      {
+        "label": "Method overriding rules",
+        "href": "https://docs.oracle.com/javase/tutorial/java/IandI/override.html"
+      }
+    ]
+  },
+  {
+    "id": "java-063",
+    "question": "What are common pitfalls with equals() and hashCode() methods?",
+    "difficulty": "hard",
+    "category": "collections",
+    "tags": [
+      "java",
+      "equals",
+      "hashcode",
+      "collections"
+    ],
+    "answer": "Common pitfalls: overriding `equals()` but not `hashCode()`, using mutable fields in hash code, wrong type checks, and violating symmetry/transitivity. These break hash-based collections and produce hard-to-debug behavior.\n\nRule: equal objects must have equal hash codes, and equality logic should be stable over object lifetime in hashed containers.",
+    "examples": [
+      {
+        "title": "Broken HashSet lookup symptom",
+        "language": "java",
+        "code": "Set<UserId> set = new HashSet<>();\nset.add(new UserId(\"u1\"));\nSystem.out.println(set.contains(new UserId(\"u1\"))); // may fail if equals/hashCode contract is broken",
+        "explanation": "If contract is wrong, logically equal keys may not be found in the expected bucket."
+      }
+    ],
+    "tip": "Use records or IDE-generated methods, then review fields included for correctness.",
+    "links": [
+      {
+        "label": "Object.equals contract",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)"
+      }
+    ]
+  },
+  {
+    "id": "java-064",
+    "question": "What is the difference between HashMap and ConcurrentHashMap?",
+    "difficulty": "hard",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "concurrency",
+      "hashmap",
+      "concurrenthashmap"
+    ],
+    "answer": "`HashMap` is not thread-safe for concurrent writes and can corrupt state under races. `ConcurrentHashMap` is thread-safe and designed for high concurrency with finer-grained locking/CAS.\n\nIt also provides atomic methods like `putIfAbsent` and `computeIfAbsent` that prevent race-prone check-then-act code.",
+    "examples": [
+      {
+        "title": "Thread-safe cache initialization",
+        "language": "java",
+        "code": "ConcurrentHashMap<String, Config> cache = new ConcurrentHashMap<>();\nConfig cfg = cache.computeIfAbsent(key, this::loadConfig);",
+        "explanation": "Only one thread computes value for a missing key atomically."
+      }
+    ],
+    "tip": "Do not assume iterator views are strongly consistent; they are weakly consistent by design.",
+    "links": [
+      {
+        "label": "ConcurrentHashMap API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html"
+      }
+    ]
+  },
+  {
+    "id": "java-065",
+    "question": "What is the difference between Runnable and Callable?",
+    "difficulty": "medium",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "concurrency",
+      "runnable",
+      "callable"
+    ],
+    "answer": "`Runnable` has `run()` with no return value and cannot throw checked exceptions in its signature. `Callable<V>` has `call()` that returns a value and can throw checked exceptions.\n\nUse `Callable` for tasks where result/error must be captured via `Future`.",
+    "examples": [
+      {
+        "title": "Callable submitted to executor",
+        "language": "java",
+        "code": "ExecutorService pool = Executors.newSingleThreadExecutor();\nFuture<Integer> answer = pool.submit(() -> 42);\nint value = answer.get();",
+        "explanation": "The task returns a result, which is available through `Future`."
+      }
+    ],
+    "tip": "Use `Runnable` for fire-and-forget side effects; use `Callable` for computations.",
+    "links": [
+      {
+        "label": "Callable interface",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/Callable.html"
+      }
+    ]
+  },
+  {
+    "id": "java-066",
+    "question": "What is ExecutorService in Java and why use it?",
+    "difficulty": "medium",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "executorservice",
+      "thread-pool",
+      "concurrency"
+    ],
+    "answer": "`ExecutorService` is an API for managing asynchronous task execution using thread pools. It decouples task submission from thread creation and lifecycle management.\n\nIt improves performance by reusing threads, limits unbounded thread growth, and supports controlled shutdown.",
+    "examples": [
+      {
+        "title": "Fixed thread pool usage",
+        "language": "java",
+        "code": "ExecutorService pool = Executors.newFixedThreadPool(4);\npool.submit(() -> processOrder());\npool.shutdown();",
+        "explanation": "Tasks run on pooled worker threads instead of creating a new thread each time."
+      }
+    ],
+    "tip": "Always call `shutdown()` (and possibly `awaitTermination`) to avoid thread leaks.",
+    "links": [
+      {
+        "label": "ExecutorService API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ExecutorService.html"
+      }
+    ]
+  },
+  {
+    "id": "java-067",
+    "question": "What is try-with-resources and why is it useful?",
+    "difficulty": "beginner",
+    "category": "exceptions",
+    "tags": [
+      "java",
+      "try-with-resources",
+      "io",
+      "exception-handling"
+    ],
+    "answer": "Try-with-resources automatically closes resources that implement `AutoCloseable` when the block finishes, even if an exception is thrown. It prevents resource leaks and reduces boilerplate cleanup code.\n\nIt also handles suppressed exceptions correctly, which is easy to get wrong with manual `finally` cleanup.",
+    "examples": [
+      {
+        "title": "Auto-closing file reader",
+        "language": "java",
+        "code": "try (BufferedReader reader = Files.newBufferedReader(Path.of(\"app.log\"))) {\n  System.out.println(reader.readLine());\n}",
+        "explanation": "Reader is closed automatically after the block."
+      }
+    ],
+    "tip": "Prefer one try-with-resources statement for all resources created together.",
+    "links": [
+      {
+        "label": "Try-with-resources tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html"
+      }
+    ]
+  }
+]

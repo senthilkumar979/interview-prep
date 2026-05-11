@@ -1,0 +1,2450 @@
+[
+  {
+    "id": "angular-201",
+    "question": "What is the difference between ngIf and hidden property?",
+    "difficulty": "beginner",
+    "category": "directives",
+    "tags": [
+      "angular",
+      "directives",
+      "difference",
+      "ngif",
+      "hidden",
+      "angular-201"
+    ],
+    "answer": "`*ngIf` adds/removes elements from the DOM, while `[hidden]` only toggles CSS visibility and keeps the element alive. Use `*ngIf` to avoid running child bindings when hidden. Use `[hidden]` when you must preserve local DOM state like scroll or input cursor.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<app-chart *ngIf=\"showChart\"></app-chart>\n<div [hidden]=\"!showChart\">Chart hidden, DOM kept</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Pick `*ngIf` for expensive components and `[hidden]` for quick toggles that must keep state.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-202",
+    "question": "What is slice pipe?",
+    "difficulty": "intermediate",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "slice",
+      "pipe",
+      "angular-202"
+    ],
+    "answer": "`slice` pipe returns a subset of an array or string in the template. It is useful for previews, like showing first 3 notifications. It behaves like JavaScript `slice(start, end)` including negative indexes.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<li *ngFor=\"let n of notifications | slice:0:3\">{{ n.title }}</li>\n<p>{{ username | slice:0:8 }}</p>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "For large lists, precompute slices in component code to avoid repeated work in templates.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-203",
+    "question": "What is index property in ngFor directive?",
+    "difficulty": "advanced",
+    "category": "directives",
+    "tags": [
+      "angular",
+      "directives",
+      "index",
+      "property",
+      "ngfor",
+      "angular-203"
+    ],
+    "answer": "`index` in `*ngFor` is the zero-based loop position. It is useful for row numbers, odd/even styling, and keyed labels. It is template metadata, not part of the original object.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<li *ngFor=\"let user of users; let i = index\">{{ i + 1 }}. {{ user.name }}</li>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Use stable IDs for identity logic; use `index` mainly for display.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-204",
+    "question": "What is the purpose of ngFor trackBy?",
+    "difficulty": "beginner",
+    "category": "directives",
+    "tags": [
+      "angular",
+      "directives",
+      "purpose",
+      "ngfor",
+      "trackby",
+      "angular-204"
+    ],
+    "answer": "`trackBy` gives Angular a stable identity for list items so it can reuse DOM nodes. Without it, Angular may re-render many rows when array references change. This is important for long or frequently updated lists.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "trackByUserId(_i: number, user: { id: string }) {\n  return user.id;\n}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always return a unique stable key (usually backend ID), not index.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-205",
+    "question": "What is the purpose of ngSwitch directive?",
+    "difficulty": "intermediate",
+    "category": "directives",
+    "tags": [
+      "angular",
+      "directives",
+      "purpose",
+      "ngswitch",
+      "directive",
+      "angular-205"
+    ],
+    "answer": "`ngSwitch` renders one matching block among multiple states. It keeps templates cleaner than several mutually exclusive `*ngIf` checks. Add `*ngSwitchDefault` as a fallback.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<section [ngSwitch]=\"status\">\n  <p *ngSwitchCase=\"'loading'\">Loading...</p>\n  <p *ngSwitchCase=\"'error'\">Try again</p>\n  <p *ngSwitchDefault>Ready</p>\n</section>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Use `ngSwitch` only for exclusive states; overlapping conditions should stay as separate `*ngIf`.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-206",
+    "question": "Is it possible to do aliasing for inputs and outputs?",
+    "difficulty": "advanced",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "possible",
+      "aliasing",
+      "inputs",
+      "angular-206"
+    ],
+    "answer": "Yes. You can alias public binding names using decorator arguments. This helps keep backward compatibility while renaming internal properties.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Input(\"userName\") name = \"\";\n@Output(\"saved\") saveEvent = new EventEmitter<void>();",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep alias names consistent with design-system naming to reduce confusion for consumers.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-207",
+    "question": "What is safe navigation operator?",
+    "difficulty": "beginner",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "safe",
+      "navigation",
+      "operator",
+      "angular-207"
+    ],
+    "answer": "Safe navigation (`?.`) prevents template errors when nested values are null/undefined. Angular stops evaluation at the first missing level. It is ideal for async data before API response arrives.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<span>{{ order?.customer?.address?.city }}</span>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Use `?.` for rendering safety, but still model nullability in TypeScript types.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-208",
+    "question": "Is any special configuration required for Angular9?",
+    "difficulty": "intermediate",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "any",
+      "special",
+      "configuration",
+      "angular-208"
+    ],
+    "answer": "For Angular 9, the main change was Ivy enabled by default after `ng update`. Most apps did not need special manual config, but older libraries sometimes required compatibility updates.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "shell",
+        "code": "ng update @angular/core @angular/cli",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "After upgrade, run unit tests and build once with production mode to catch compatibility issues early.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-209",
+    "question": "What are type safe TestBed API changes in Angular9?",
+    "difficulty": "advanced",
+    "category": "testing",
+    "tags": [
+      "angular",
+      "testing",
+      "type",
+      "safe",
+      "testbed",
+      "angular-209"
+    ],
+    "answer": "Angular 9 improved TestBed type safety; `TestBed.inject()` became the preferred typed API. It replaces looser patterns and gives better compile-time checks.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "const service = TestBed.inject(AuthService);\nexpect(service).toBeTruthy();",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Prefer typed tokens in tests to catch DI mistakes before runtime.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/testing/components-basics"
+      }
+    ]
+  },
+  {
+    "id": "angular-210",
+    "question": "Is mandatory to pass static flag for ViewChild?",
+    "difficulty": "beginner",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "mandatory",
+      "pass",
+      "static",
+      "angular-210"
+    ],
+    "answer": "`static` is no longer mandatory in modern Angular. Use `{ static: true }` only when you need the query before `ngAfterViewInit` (for example in `ngOnInit`). Otherwise default behavior is enough.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@ViewChild(\"search\") search!: ElementRef<HTMLInputElement>;\nngAfterViewInit() { this.search.nativeElement.focus(); }",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Set `static: true` only with a clear lifecycle need; avoid cargo-cult configuration.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/components/change-detection"
+      }
+    ]
+  },
+  {
+    "id": "angular-211",
+    "question": "What are the list of template expression operators?",
+    "difficulty": "intermediate",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "list",
+      "template",
+      "expression",
+      "angular-211"
+    ],
+    "answer": "Common template expression operators are `?.`, `|`, `?:`, `??`, and property access `.`. Angular templates support expressions, not full statements, so keep logic lightweight.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<p>{{ user?.name ?? \"Guest\" }}</p>\n<p>{{ isAdmin ? \"Admin\" : \"User\" | uppercase }}</p>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "If an expression gets long, move it to a computed value or getter for readability.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-212",
+    "question": "What is the precedence between pipe and ternary operators?",
+    "difficulty": "advanced",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "precedence",
+      "pipe",
+      "ternary",
+      "angular-212"
+    ],
+    "answer": "Pipe and ternary together can be ambiguous without parentheses. Wrap ternary branches before piping to make precedence explicit.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "{{ (isVip ? vipName : name) | titlecase }}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Whenever you mix `?:` and `|`, add parentheses for predictable output.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-213",
+    "question": "What is an entry component?",
+    "difficulty": "beginner",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "entry",
+      "component",
+      "angular-213"
+    ],
+    "answer": "Entry components were components created dynamically (not referenced by selector in template). Before Ivy, they had to be compiled via `entryComponents`; Ivy removed that need.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "// Pre-Ivy only\n@NgModule({ entryComponents: [DialogComponent] })\nexport class AppModule {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "In modern Angular, focus on dynamic creation APIs rather than `entryComponents`.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-214",
+    "question": "What is a bootstrapped component?",
+    "difficulty": "intermediate",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "bootstrapped",
+      "component",
+      "angular-214"
+    ],
+    "answer": "A bootstrapped component is the app root component loaded first. In module-based apps it is listed in `bootstrap`; in standalone apps it is passed to `bootstrapApplication`.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@NgModule({ bootstrap: [AppComponent] })\nexport class AppModule {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep root component minimal and delegate feature logic to child components.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-215",
+    "question": "How do you manually bootstrap an application?",
+    "difficulty": "advanced",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "manually",
+      "bootstrap",
+      "application",
+      "angular-215"
+    ],
+    "answer": "Manual bootstrap starts Angular programmatically from `main.ts`. It is useful for conditional startup or host integration scenarios.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "platformBrowserDynamic()\n  .bootstrapModule(AppModule)\n  .catch(err => console.error(err));",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep bootstrap errors logged, otherwise startup failures are hard to trace.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-216",
+    "question": "Is it necessary for bootstrapped component to be entry component?",
+    "difficulty": "beginner",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "necessary",
+      "bootstrapped",
+      "component",
+      "angular-216"
+    ],
+    "answer": "Entry components were components created dynamically (not referenced by selector in template). Before Ivy, they had to be compiled via `entryComponents`; Ivy removed that need.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "// Pre-Ivy only\n@NgModule({ entryComponents: [DialogComponent] })\nexport class AppModule {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "In modern Angular, focus on dynamic creation APIs rather than `entryComponents`.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-217",
+    "question": "What is a routed entry component?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "routed",
+      "entry",
+      "component",
+      "angular-217"
+    ],
+    "answer": "Entry components were components created dynamically (not referenced by selector in template). Before Ivy, they had to be compiled via `entryComponents`; Ivy removed that need.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "// Pre-Ivy only\n@NgModule({ entryComponents: [DialogComponent] })\nexport class AppModule {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "In modern Angular, focus on dynamic creation APIs rather than `entryComponents`.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-218",
+    "question": "Why is not necessary to use entryComponents array every time?",
+    "difficulty": "advanced",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "why",
+      "not",
+      "necessary",
+      "angular-218"
+    ],
+    "answer": "In Angular 9+ with Ivy, `entryComponents` is generally unnecessary because Angular can generate factories without explicit registration. Keep it only for legacy View Engine projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@NgModule({ declarations: [PopupComponent] })\nexport class SharedModule {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Removing obsolete metadata reduces noise and migration risk.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-219",
+    "question": "Do I still need to use entryComponents array in Angular9?",
+    "difficulty": "beginner",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "i",
+      "still",
+      "need",
+      "angular-219"
+    ],
+    "answer": "In Angular 9+ with Ivy, `entryComponents` is generally unnecessary because Angular can generate factories without explicit registration. Keep it only for legacy View Engine projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@NgModule({ declarations: [PopupComponent] })\nexport class SharedModule {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Removing obsolete metadata reduces noise and migration risk.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-220",
+    "question": "Is it all components generated in production build?",
+    "difficulty": "intermediate",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "all",
+      "components",
+      "generated",
+      "angular-220"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-221",
+    "question": "What is Angular compiler?",
+    "difficulty": "advanced",
+    "category": "performance",
+    "tags": [
+      "angular",
+      "performance",
+      "compiler",
+      "angular-221"
+    ],
+    "answer": "Angular compiler converts templates and decorators into efficient JavaScript instructions. With AOT, many template errors are caught at build time instead of runtime.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "shell",
+        "code": "ng build --configuration production",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Treat compiler errors as design feedback; fix template typing issues early.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/best-practices/runtime-performance"
+      }
+    ]
+  },
+  {
+    "id": "angular-222",
+    "question": "What is the role of ngModule metadata in compilation process?",
+    "difficulty": "beginner",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "role",
+      "ngmodule",
+      "metadata",
+      "angular-222"
+    ],
+    "answer": "`NgModule` metadata defines declarations, imports, exports, and providers. The compiler uses this to resolve template symbols and dependency scope. Wrong metadata causes unknown component/directive errors.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@NgModule({ declarations:[UserCardComponent], imports:[CommonModule], exports:[UserCardComponent] })\nexport class SharedModule {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "When templates fail, inspect module metadata first before changing component code.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-223",
+    "question": "How does angular finds components, directives and pipes?",
+    "difficulty": "intermediate",
+    "category": "directives",
+    "tags": [
+      "angular",
+      "directives",
+      "does",
+      "finds",
+      "angular-223"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-224",
+    "question": "Give few examples for NgModules?",
+    "difficulty": "advanced",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "give",
+      "few",
+      "examples",
+      "angular-224"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-225",
+    "question": "What are feature modules?",
+    "difficulty": "beginner",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "feature",
+      "angular-225"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-226",
+    "question": "What are the imported modules in CLI generated feature modules?",
+    "difficulty": "intermediate",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "imported",
+      "cli",
+      "angular-226"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-227",
+    "question": "What are the differences between ngmodule and javascript module?",
+    "difficulty": "advanced",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "differences",
+      "ngmodule",
+      "javascript",
+      "angular-227"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-228",
+    "question": "What are the possible errors with declarations?",
+    "difficulty": "beginner",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "possible",
+      "errors",
+      "declarations",
+      "angular-228"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-229",
+    "question": "What are the steps to use declaration elements?",
+    "difficulty": "intermediate",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "steps",
+      "use",
+      "declaration",
+      "angular-229"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-230",
+    "question": "What happens if browserModule used in feature module?",
+    "difficulty": "advanced",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "happens",
+      "if",
+      "browsermodule",
+      "angular-230"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-231",
+    "question": "What are the types of feature modules?",
+    "difficulty": "beginner",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "types",
+      "feature",
+      "angular-231"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-232",
+    "question": "What is a provider?",
+    "difficulty": "intermediate",
+    "category": "dependency-injection",
+    "tags": [
+      "angular",
+      "dependency-injection",
+      "provider",
+      "angular-232"
+    ],
+    "answer": "This topic is about Angular dependency injection scope and registration. Choose provider scope intentionally: root for app-wide singletons, route/component for isolated instances.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Injectable({ providedIn: \"root\" })\nexport class ApiService {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid registering the same service in many feature modules unless you need separate instances.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/di"
+      }
+    ]
+  },
+  {
+    "id": "angular-233",
+    "question": "What is the recommendation for provider scope?",
+    "difficulty": "advanced",
+    "category": "dependency-injection",
+    "tags": [
+      "angular",
+      "dependency-injection",
+      "recommendation",
+      "provider",
+      "scope",
+      "angular-233"
+    ],
+    "answer": "This topic is about Angular dependency injection scope and registration. Choose provider scope intentionally: root for app-wide singletons, route/component for isolated instances.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Injectable({ providedIn: \"root\" })\nexport class ApiService {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid registering the same service in many feature modules unless you need separate instances.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/di"
+      }
+    ]
+  },
+  {
+    "id": "angular-234",
+    "question": "How do you restrict provider scope to a module?",
+    "difficulty": "beginner",
+    "category": "dependency-injection",
+    "tags": [
+      "angular",
+      "dependency-injection",
+      "restrict",
+      "provider",
+      "scope",
+      "angular-234"
+    ],
+    "answer": "This topic is about Angular dependency injection scope and registration. Choose provider scope intentionally: root for app-wide singletons, route/component for isolated instances.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Injectable({ providedIn: \"root\" })\nexport class ApiService {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid registering the same service in many feature modules unless you need separate instances.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/di"
+      }
+    ]
+  },
+  {
+    "id": "angular-235",
+    "question": "How do you provide a singleton service?",
+    "difficulty": "intermediate",
+    "category": "dependency-injection",
+    "tags": [
+      "angular",
+      "dependency-injection",
+      "provide",
+      "singleton",
+      "service",
+      "angular-235"
+    ],
+    "answer": "This topic is about Angular dependency injection scope and registration. Choose provider scope intentionally: root for app-wide singletons, route/component for isolated instances.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Injectable({ providedIn: \"root\" })\nexport class ApiService {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid registering the same service in many feature modules unless you need separate instances.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/di"
+      }
+    ]
+  },
+  {
+    "id": "angular-236",
+    "question": "What are the different ways to remove duplicate service registration?",
+    "difficulty": "advanced",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "different",
+      "ways",
+      "remove",
+      "angular-236"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-237",
+    "question": "How does forRoot method helpful to avoid duplicate router instances?",
+    "difficulty": "beginner",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "does",
+      "forroot",
+      "method",
+      "angular-237"
+    ],
+    "answer": "This topic is about Angular dependency injection scope and registration. Choose provider scope intentionally: root for app-wide singletons, route/component for isolated instances.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Injectable({ providedIn: \"root\" })\nexport class ApiService {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid registering the same service in many feature modules unless you need separate instances.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-238",
+    "question": "What is a shared module?",
+    "difficulty": "intermediate",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "shared",
+      "module",
+      "angular-238"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-239",
+    "question": "Can I share services using modules?",
+    "difficulty": "advanced",
+    "category": "modules",
+    "tags": [
+      "angular",
+      "modules",
+      "i",
+      "share",
+      "services",
+      "angular-239"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/ngmodules/overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-240",
+    "question": "How do you get current direction for locales??",
+    "difficulty": "beginner",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "get",
+      "current",
+      "direction",
+      "angular-240"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-241",
+    "question": "What is ngcc?",
+    "difficulty": "intermediate",
+    "category": "performance",
+    "tags": [
+      "angular",
+      "performance",
+      "ngcc",
+      "angular-241"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/best-practices/runtime-performance"
+      }
+    ]
+  },
+  {
+    "id": "angular-242",
+    "question": "What classes should not be added to declarations?",
+    "difficulty": "advanced",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "classes",
+      "should",
+      "not",
+      "angular-242"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-243",
+    "question": "What is ngzone?",
+    "difficulty": "beginner",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "ngzone",
+      "angular-243"
+    ],
+    "answer": "This question targets change detection timing with Zone.js/NgZone. Angular updates views after tracked async tasks; `runOutsideAngular` reduces checks for noisy events.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "this.ngZone.runOutsideAngular(() => {\n  window.addEventListener(\"scroll\", this.onScroll);\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Re-enter Angular zone only when UI state actually changes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/components/change-detection"
+      }
+    ]
+  },
+  {
+    "id": "angular-244",
+    "question": "What is NoopZone?",
+    "difficulty": "intermediate",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "noopzone",
+      "angular-244"
+    ],
+    "answer": "This question targets change detection timing with Zone.js/NgZone. Angular updates views after tracked async tasks; `runOutsideAngular` reduces checks for noisy events.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "this.ngZone.runOutsideAngular(() => {\n  window.addEventListener(\"scroll\", this.onScroll);\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Re-enter Angular zone only when UI state actually changes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/components/change-detection"
+      }
+    ]
+  },
+  {
+    "id": "angular-245",
+    "question": "How do you create displayBlock components?",
+    "difficulty": "advanced",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "create",
+      "displayblock",
+      "components",
+      "angular-245"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-246",
+    "question": "What are the possible data change scenarios for change detection?",
+    "difficulty": "beginner",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "possible",
+      "data",
+      "change",
+      "angular-246"
+    ],
+    "answer": "This question targets change detection timing with Zone.js/NgZone. Angular updates views after tracked async tasks; `runOutsideAngular` reduces checks for noisy events.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "this.ngZone.runOutsideAngular(() => {\n  window.addEventListener(\"scroll\", this.onScroll);\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Re-enter Angular zone only when UI state actually changes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/components/change-detection"
+      }
+    ]
+  },
+  {
+    "id": "angular-247",
+    "question": "What is a zone context?",
+    "difficulty": "intermediate",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "zone",
+      "context",
+      "angular-247"
+    ],
+    "answer": "This question targets change detection timing with Zone.js/NgZone. Angular updates views after tracked async tasks; `runOutsideAngular` reduces checks for noisy events.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "this.ngZone.runOutsideAngular(() => {\n  window.addEventListener(\"scroll\", this.onScroll);\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Re-enter Angular zone only when UI state actually changes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/components/change-detection"
+      }
+    ]
+  },
+  {
+    "id": "angular-248",
+    "question": "What are the lifecycle hooks of a zone?",
+    "difficulty": "advanced",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "lifecycle",
+      "hooks",
+      "zone",
+      "angular-248"
+    ],
+    "answer": "This question targets change detection timing with Zone.js/NgZone. Angular updates views after tracked async tasks; `runOutsideAngular` reduces checks for noisy events.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "this.ngZone.runOutsideAngular(() => {\n  window.addEventListener(\"scroll\", this.onScroll);\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Re-enter Angular zone only when UI state actually changes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/components/change-detection"
+      }
+    ]
+  },
+  {
+    "id": "angular-249",
+    "question": "Which are the methods of NgZone used to control change detection?",
+    "difficulty": "beginner",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "which",
+      "methods",
+      "ngzone",
+      "angular-249"
+    ],
+    "answer": "This question targets change detection timing with Zone.js/NgZone. Angular updates views after tracked async tasks; `runOutsideAngular` reduces checks for noisy events.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "this.ngZone.runOutsideAngular(() => {\n  window.addEventListener(\"scroll\", this.onScroll);\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Re-enter Angular zone only when UI state actually changes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/components/change-detection"
+      }
+    ]
+  },
+  {
+    "id": "angular-250",
+    "question": "How do you change the settings of zonejs?",
+    "difficulty": "intermediate",
+    "category": "change-detection",
+    "tags": [
+      "angular",
+      "change-detection",
+      "change",
+      "settings",
+      "zonejs",
+      "angular-250"
+    ],
+    "answer": "This question targets change detection timing with Zone.js/NgZone. Angular updates views after tracked async tasks; `runOutsideAngular` reduces checks for noisy events.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "this.ngZone.runOutsideAngular(() => {\n  window.addEventListener(\"scroll\", this.onScroll);\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Re-enter Angular zone only when UI state actually changes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/components/change-detection"
+      }
+    ]
+  },
+  {
+    "id": "angular-251",
+    "question": "How do you trigger an animation?",
+    "difficulty": "advanced",
+    "category": "animations",
+    "tags": [
+      "angular",
+      "animations",
+      "trigger",
+      "animation",
+      "angular-251"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/animations"
+      }
+    ]
+  },
+  {
+    "id": "angular-252",
+    "question": "How do you configure injectors with providers at different levels?",
+    "difficulty": "beginner",
+    "category": "dependency-injection",
+    "tags": [
+      "angular",
+      "dependency-injection",
+      "configure",
+      "injectors",
+      "providers",
+      "angular-252"
+    ],
+    "answer": "This topic is about Angular dependency injection scope and registration. Choose provider scope intentionally: root for app-wide singletons, route/component for isolated instances.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Injectable({ providedIn: \"root\" })\nexport class ApiService {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid registering the same service in many feature modules unless you need separate instances.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/di"
+      }
+    ]
+  },
+  {
+    "id": "angular-253",
+    "question": "Is it mandatory to use injectable on every service class?",
+    "difficulty": "intermediate",
+    "category": "dependency-injection",
+    "tags": [
+      "angular",
+      "dependency-injection",
+      "mandatory",
+      "use",
+      "injectable",
+      "angular-253"
+    ],
+    "answer": "This topic is about Angular dependency injection scope and registration. Choose provider scope intentionally: root for app-wide singletons, route/component for isolated instances.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Injectable({ providedIn: \"root\" })\nexport class ApiService {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid registering the same service in many feature modules unless you need separate instances.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/di"
+      }
+    ]
+  },
+  {
+    "id": "angular-254",
+    "question": "What is an optional dependency?",
+    "difficulty": "advanced",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "optional",
+      "dependency",
+      "angular-254"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-255",
+    "question": "What are the types of injector hierarchies?",
+    "difficulty": "beginner",
+    "category": "dependency-injection",
+    "tags": [
+      "angular",
+      "dependency-injection",
+      "types",
+      "injector",
+      "hierarchies",
+      "angular-255"
+    ],
+    "answer": "This topic is about Angular dependency injection scope and registration. Choose provider scope intentionally: root for app-wide singletons, route/component for isolated instances.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Injectable({ providedIn: \"root\" })\nexport class ApiService {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid registering the same service in many feature modules unless you need separate instances.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/di"
+      }
+    ]
+  },
+  {
+    "id": "angular-256",
+    "question": "What are reactive forms?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "reactive",
+      "angular-256"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-257",
+    "question": "What are dynamic forms?",
+    "difficulty": "advanced",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "dynamic",
+      "angular-257"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-258",
+    "question": "What are template driven forms?",
+    "difficulty": "beginner",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "template",
+      "driven",
+      "angular-258"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-259",
+    "question": "What are the differences between reactive forms and template driven forms?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "differences",
+      "reactive",
+      "angular-259"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-260",
+    "question": "What are the different ways to group form controls?",
+    "difficulty": "advanced",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "different",
+      "ways",
+      "group",
+      "angular-260"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-261",
+    "question": "How do you update specific properties of a form model?",
+    "difficulty": "beginner",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "update",
+      "specific",
+      "properties",
+      "angular-261"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-262",
+    "question": "What is the purpose of FormBuilder?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "purpose",
+      "formbuilder",
+      "angular-262"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-263",
+    "question": "How do you verify the model changes in forms?",
+    "difficulty": "advanced",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "verify",
+      "model",
+      "changes",
+      "angular-263"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-264",
+    "question": "What are the state CSS classes provided by ngModel?",
+    "difficulty": "beginner",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "state",
+      "css",
+      "classes",
+      "angular-264"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-265",
+    "question": "How do you reset the form?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "reset",
+      "form",
+      "angular-265"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-266",
+    "question": "What are the types of validator functions?",
+    "difficulty": "advanced",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "types",
+      "validator",
+      "functions",
+      "angular-266"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-267",
+    "question": "Can you give an example of built-in validators?",
+    "difficulty": "beginner",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "give",
+      "example",
+      "built",
+      "angular-267"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-268",
+    "question": "How do you optimize the performance of async validators?",
+    "difficulty": "intermediate",
+    "category": "forms",
+    "tags": [
+      "angular",
+      "forms",
+      "optimize",
+      "performance",
+      "async",
+      "angular-268"
+    ],
+    "answer": "This is a forms modeling/validation topic. Reactive forms are explicit and testable; template-driven forms are quicker for simple forms. Use validators to keep invalid data from reaching APIs.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "form = new FormGroup({\n  email: new FormControl(\"\", [Validators.required, Validators.email])\n});",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Keep validation messages tied to control state (`touched`, `dirty`) to avoid noisy UX.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/forms-overview"
+      }
+    ]
+  },
+  {
+    "id": "angular-269",
+    "question": "How to set ngFor and ngIf on the same element?",
+    "difficulty": "advanced",
+    "category": "directives",
+    "tags": [
+      "angular",
+      "directives",
+      "set",
+      "ngfor",
+      "ngif",
+      "angular-269"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/directives"
+      }
+    ]
+  },
+  {
+    "id": "angular-270",
+    "question": "What is host property in css?",
+    "difficulty": "beginner",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "host",
+      "property",
+      "css",
+      "angular-270"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-271",
+    "question": "How do you get the current route?",
+    "difficulty": "intermediate",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "get",
+      "current",
+      "route",
+      "angular-271"
+    ],
+    "answer": "Routing maps URLs to components and carries optional state through parameters. Use path params for resource identity and query params for optional filters.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "const id = this.route.snapshot.paramMap.get(\"id\");\nconst tab = this.route.snapshot.queryParamMap.get(\"tab\");",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Subscribe to `paramMap` when route params can change without destroying the component.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-272",
+    "question": "What is Component Test Harnesses?",
+    "difficulty": "advanced",
+    "category": "testing",
+    "tags": [
+      "angular",
+      "testing",
+      "component",
+      "test",
+      "harnesses",
+      "angular-272"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/testing/components-basics"
+      }
+    ]
+  },
+  {
+    "id": "angular-273",
+    "question": "What is the benefit of Automatic Inlining of Fonts?",
+    "difficulty": "beginner",
+    "category": "performance",
+    "tags": [
+      "angular",
+      "performance",
+      "benefit",
+      "automatic",
+      "inlining",
+      "angular-273"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/best-practices/runtime-performance"
+      }
+    ]
+  },
+  {
+    "id": "angular-274",
+    "question": "What is content projection?",
+    "difficulty": "intermediate",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "content",
+      "projection",
+      "angular-274"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-275",
+    "question": "What is ng-content and its purpose?",
+    "difficulty": "advanced",
+    "category": "templates",
+    "tags": [
+      "angular",
+      "templates",
+      "ng",
+      "content",
+      "its",
+      "angular-275"
+    ],
+    "answer": "This concept appears in Angular architecture and is best answered with a definition, a real use case, and a tradeoff. Explain how it impacts template clarity, performance, or maintainability in real projects.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "html",
+        "code": "<div>{{ value }}</div>",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Always tie your answer to a production scenario you have implemented.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/templates"
+      }
+    ]
+  },
+  {
+    "id": "angular-276",
+    "question": "What is standalone component?",
+    "difficulty": "beginner",
+    "category": "standalone",
+    "tags": [
+      "angular",
+      "standalone",
+      "component",
+      "angular-276"
+    ],
+    "answer": "Standalone components remove NgModule dependency by declaring imports directly in the component. This simplifies composition and lazy loading in modern Angular apps.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Component({ standalone: true, imports: [CommonModule], template: `Hello` })\nexport class HelloComponent {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "For new features, default to standalone and migrate module-based code gradually.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/standalone-components"
+      }
+    ]
+  },
+  {
+    "id": "angular-277",
+    "question": "How to create a standalone component uing CLI command?",
+    "difficulty": "intermediate",
+    "category": "standalone",
+    "tags": [
+      "angular",
+      "standalone",
+      "create",
+      "component",
+      "angular-277"
+    ],
+    "answer": "Standalone components remove NgModule dependency by declaring imports directly in the component. This simplifies composition and lazy loading in modern Angular apps.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Component({ standalone: true, imports: [CommonModule], template: `Hello` })\nexport class HelloComponent {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "For new features, default to standalone and migrate module-based code gradually.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/standalone-components"
+      }
+    ]
+  },
+  {
+    "id": "angular-278",
+    "question": "How to create a standalone component manually?",
+    "difficulty": "advanced",
+    "category": "standalone",
+    "tags": [
+      "angular",
+      "standalone",
+      "create",
+      "component",
+      "angular-278"
+    ],
+    "answer": "Standalone components remove NgModule dependency by declaring imports directly in the component. This simplifies composition and lazy loading in modern Angular apps.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "@Component({ standalone: true, imports: [CommonModule], template: `Hello` })\nexport class HelloComponent {}",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "For new features, default to standalone and migrate module-based code gradually.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/standalone-components"
+      }
+    ]
+  },
+  {
+    "id": "angular-279",
+    "question": "What is hydration ?",
+    "difficulty": "beginner",
+    "category": "performance",
+    "tags": [
+      "angular",
+      "performance",
+      "hydration",
+      "angular-279"
+    ],
+    "answer": "Hydration attaches Angular behavior to server-rendered HTML instead of repainting from scratch. It improves startup speed in SSR apps when server and client markup match.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "bootstrapApplication(AppComponent, { providers: [provideClientHydration()] });",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Avoid non-deterministic template output (random IDs, dates) that can break hydration.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/best-practices/runtime-performance"
+      }
+    ]
+  },
+  {
+    "id": "angular-280",
+    "question": "What are Angular Signals?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "angular",
+      "state-management",
+      "signals",
+      "angular-280"
+    ],
+    "answer": "Signals provide fine-grained reactive state with `signal`, derived values with `computed`, and side effects with `effect`. They simplify many local-state cases compared to manual observable wiring.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "count = signal(0);\ndouble = computed(() => this.count() * 2);\nincrement(){ this.count.update(v => v + 1); }",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Use immutable updates in signals for clearer debugging and predictable UI refreshes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/signals"
+      }
+    ]
+  },
+  {
+    "id": "angular-281",
+    "question": "Explain Angular Signals with an example",
+    "difficulty": "advanced",
+    "category": "state-management",
+    "tags": [
+      "angular",
+      "state-management",
+      "explain",
+      "signals",
+      "angular-281"
+    ],
+    "answer": "Signals provide fine-grained reactive state with `signal`, derived values with `computed`, and side effects with `effect`. They simplify many local-state cases compared to manual observable wiring.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "count = signal(0);\ndouble = computed(() => this.count() * 2);\nincrement(){ this.count.update(v => v + 1); }",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Use immutable updates in signals for clearer debugging and predictable UI refreshes.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/signals"
+      }
+    ]
+  },
+  {
+    "id": "angular-282",
+    "question": "What are the Route Parameters? Could you explain each of them?",
+    "difficulty": "beginner",
+    "category": "routing",
+    "tags": [
+      "angular",
+      "routing",
+      "route",
+      "parameters",
+      "explain",
+      "angular-282"
+    ],
+    "answer": "Routing maps URLs to components and carries optional state through parameters. Use path params for resource identity and query params for optional filters.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "const id = this.route.snapshot.paramMap.get(\"id\");\nconst tab = this.route.snapshot.queryParamMap.get(\"tab\");",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Subscribe to `paramMap` when route params can change without destroying the component.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/routing"
+      }
+    ]
+  },
+  {
+    "id": "angular-283",
+    "question": "What is NgRx?",
+    "difficulty": "intermediate",
+    "category": "state-management",
+    "tags": [
+      "angular",
+      "state-management",
+      "ngrx",
+      "angular-283"
+    ],
+    "answer": "NgRx is Redux-style state management for Angular using store, actions, reducers, selectors, and effects. It is valuable for complex shared state and traceable state transitions.",
+    "examples": [
+      {
+        "title": "Practical example",
+        "language": "typescript",
+        "code": "export const increment = createAction(\"[Counter] Increment\");\nexport const reducer = createReducer(0, on(increment, s => s + 1));",
+        "explanation": "This snippet demonstrates the concept in a realistic Angular usage pattern."
+      }
+    ],
+    "tip": "Adopt NgRx when cross-feature state complexity is high; avoid it for simple local state.",
+    "links": [
+      {
+        "label": "Angular documentation",
+        "href": "https://angular.dev/guide/signals"
+      }
+    ]
+  }
+]

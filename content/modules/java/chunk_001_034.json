@@ -1,0 +1,949 @@
+[
+  {
+    "id": "java-001",
+    "question": "What are the differences between JVM, JRE and JDK?",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "java",
+      "jvm",
+      "jre",
+      "jdk"
+    ],
+    "answer": "JVM is the runtime engine that executes Java bytecode. JRE is JVM plus core libraries needed to run Java apps. JDK is JRE plus developer tools like `javac`, `javadoc`, and `jdb`.\n\nIf your machine only needs to run an already-built `.jar`, JRE-level capability is enough. If you need to compile or debug source code, you need JDK.",
+    "examples": [
+      {
+        "title": "Compile vs run commands",
+        "language": "bash",
+        "code": "javac Hello.java   # requires JDK\njava Hello         # uses JVM runtime",
+        "explanation": "`javac` comes from JDK. `java` starts the JVM to run compiled bytecode."
+      }
+    ],
+    "tip": "In interviews, map each layer to a real workflow: write code (JDK), package app (JDK), run app in prod (JRE/JVM).",
+    "links": [
+      {
+        "label": "Java SE overview",
+        "href": "https://docs.oracle.com/javase/tutorial/getStarted/intro/definition.html"
+      }
+    ]
+  },
+  {
+    "id": "java-002",
+    "question": "Why Java is platform-independent language",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "java",
+      "bytecode",
+      "portability"
+    ],
+    "answer": "Java source is compiled into bytecode (`.class`), not native OS machine code. That bytecode runs on any OS that has a compatible JVM. This is the core reason for 'write once, run anywhere'.\n\nPlatform independence is about runtime compatibility, not zero differences in file paths, encodings, or native integrations.",
+    "examples": [
+      {
+        "title": "Same bytecode on different OS",
+        "language": "java",
+        "code": "public class App {\n  public static void main(String[] args) {\n    System.out.println(System.getProperty(\"os.name\"));\n  }\n}",
+        "explanation": "The same compiled class runs on Windows, Linux, or macOS if a JVM is available."
+      }
+    ],
+    "tip": "Mention bytecode + JVM combo explicitly; that is stronger than only saying 'Java is cross-platform'.",
+    "links": [
+      {
+        "label": "Java Virtual Machine basics",
+        "href": "https://docs.oracle.com/javase/specs/jvms/se21/html/index.html"
+      }
+    ]
+  },
+  {
+    "id": "java-003",
+    "question": "How does JVM works",
+    "difficulty": "beginner",
+    "category": "jvm-memory",
+    "tags": [
+      "java",
+      "jvm",
+      "classloader",
+      "jit"
+    ],
+    "answer": "JVM loads `.class` files through class loaders, verifies bytecode for safety, then executes it through an interpreter and JIT compiler. Frequently executed code paths are optimized into native machine code by JIT.\n\nJVM also manages memory, garbage collection, thread scheduling support, and runtime security checks.",
+    "examples": [
+      {
+        "title": "JIT hotspot candidate",
+        "language": "java",
+        "code": "long sum = 0;\nfor (int i = 0; i < 1_000_000; i++) {\n  sum += i;\n}\nSystem.out.println(sum);",
+        "explanation": "Tight repeated loops are common spots where JVM JIT optimizations appear."
+      }
+    ],
+    "tip": "When explaining JVM internals, use a pipeline: load -> verify -> execute -> optimize -> collect garbage.",
+    "links": [
+      {
+        "label": "JVM specification",
+        "href": "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-2.html"
+      }
+    ]
+  },
+  {
+    "id": "java-004",
+    "question": "What are the main features of Java",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "java",
+      "features",
+      "oop"
+    ],
+    "answer": "Important Java features include object-oriented design, platform independence, automatic memory management, strong type checking, multithreading support, robust standard library, and security model (bytecode verification + sandboxing concepts).\n\nIn practice, teams value Java for readability, mature tooling, backward compatibility, and stable performance.",
+    "examples": [
+      {
+        "title": "Built-in multithreading support",
+        "language": "java",
+        "code": "Thread t = new Thread(() -> System.out.println(\"worker\"));\nt.start();",
+        "explanation": "Thread API is part of the standard platform, not an external framework requirement."
+      }
+    ],
+    "tip": "Avoid listing features only; add one sentence on why each matters in production systems.",
+    "links": [
+      {
+        "label": "Java language overview",
+        "href": "https://docs.oracle.com/javase/tutorial/getStarted/intro/index.html"
+      }
+    ]
+  },
+  {
+    "id": "java-005",
+    "question": "What is public static void main?",
+    "difficulty": "beginner",
+    "category": "syntax-basics",
+    "tags": [
+      "java",
+      "entrypoint",
+      "main-method"
+    ],
+    "answer": "`public static void main(String[] args)` is the default JVM entry point for launching a class directly.\n\n`public` allows JVM access, `static` lets JVM call it without creating an object, `void` means no return value, and `String[] args` receives command-line inputs.",
+    "examples": [
+      {
+        "title": "Main with arguments",
+        "language": "java",
+        "code": "public class Main {\n  public static void main(String[] args) {\n    System.out.println(args.length > 0 ? args[0] : \"no arg\");\n  }\n}",
+        "explanation": "Demonstrates startup argument handling through `String[] args`."
+      }
+    ],
+    "tip": "In interviews, call out that modern frameworks may hide main usage, but JVM startup still depends on an entry point.",
+    "links": [
+      {
+        "label": "Application entry point",
+        "href": "https://docs.oracle.com/javase/tutorial/getStarted/application/index.html"
+      }
+    ]
+  },
+  {
+    "id": "java-006",
+    "question": "What is string constant pool",
+    "difficulty": "beginner",
+    "category": "strings",
+    "tags": [
+      "java",
+      "string",
+      "memory"
+    ],
+    "answer": "String Constant Pool is a JVM memory area where string literals and interned strings are stored once and reused. This reduces duplicate objects and memory usage.\n\nLiterals like `\"java\"` usually point to pooled instances, while `new String(\"java\")` creates a new object unless interned.",
+    "examples": [
+      {
+        "title": "Literal pooling behavior",
+        "language": "java",
+        "code": "String a = \"java\";\nString b = \"java\";\nString c = new String(\"java\");\nSystem.out.println(a == b); // true\nSystem.out.println(a == c); // false",
+        "explanation": "Literals reuse pooled reference; explicit `new` allocates another object."
+      }
+    ],
+    "tip": "Use `equals()` for value checks; do not rely on pooled-reference behavior in business logic.",
+    "links": [
+      {
+        "label": "String API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html"
+      }
+    ]
+  },
+  {
+    "id": "java-007",
+    "question": "Why strings are immutable",
+    "difficulty": "beginner",
+    "category": "strings",
+    "tags": [
+      "java",
+      "string",
+      "immutability",
+      "security"
+    ],
+    "answer": "Strings are immutable so they are safe to share across threads, safe for security-sensitive values like class names and file paths, and stable for hash-based structures like `HashMap` keys.\n\nImmutability also enables internal JVM optimizations such as pooling and caching hash codes.",
+    "examples": [
+      {
+        "title": "Operations create new object",
+        "language": "java",
+        "code": "String s = \"cat\";\ns.concat(\"s\");\nSystem.out.println(s); // cat\ns = s.concat(\"s\");\nSystem.out.println(s); // cats",
+        "explanation": "Original string is unchanged unless you reassign to the new result."
+      }
+    ],
+    "tip": "Say 'thread safety + security + hash key stability' together; that sounds complete and practical.",
+    "links": [
+      {
+        "label": "String class details",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html"
+      }
+    ]
+  },
+  {
+    "id": "java-008",
+    "question": "What is the difference between StringBuffer and StringBuilder",
+    "difficulty": "beginner",
+    "category": "strings",
+    "tags": [
+      "java",
+      "stringbuffer",
+      "stringbuilder",
+      "threading"
+    ],
+    "answer": "Both represent mutable character sequences. `StringBuffer` is synchronized and thread-safe but slower in single-threaded contexts. `StringBuilder` is not synchronized and generally faster, so it is preferred in most local method logic.\n\nChoose `StringBuffer` only when multiple threads mutate the same builder instance.",
+    "examples": [
+      {
+        "title": "Preferred local concatenation",
+        "language": "java",
+        "code": "StringBuilder sb = new StringBuilder();\nsb.append(\"order-\").append(42);\nSystem.out.println(sb.toString());",
+        "explanation": "Single-threaded string assembly is a standard `StringBuilder` use case."
+      }
+    ],
+    "tip": "If a builder is method-local and not shared, default to `StringBuilder`.",
+    "links": [
+      {
+        "label": "StringBuilder API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/StringBuilder.html"
+      }
+    ]
+  },
+  {
+    "id": "java-009",
+    "question": "What is the importance of hashCode() and equals() methods",
+    "difficulty": "intermediate",
+    "category": "object-model",
+    "tags": [
+      "java",
+      "equals",
+      "hashcode",
+      "collections"
+    ],
+    "answer": "`equals()` defines logical equality between objects. `hashCode()` provides a bucket hint for hash-based collections. For classes used as keys in `HashMap` or members in `HashSet`, both must be consistent: equal objects must return the same hash code.\n\nIf this contract is broken, lookups and deduplication behave incorrectly.",
+    "examples": [
+      {
+        "title": "Value object with proper contract",
+        "language": "java",
+        "code": "record UserKey(String email) {}\nMap<UserKey, String> map = new HashMap<>();\nmap.put(new UserKey(\"a@x.com\"), \"A\");\nSystem.out.println(map.get(new UserKey(\"a@x.com\"))); // A",
+        "explanation": "Record auto-generates compatible `equals()` and `hashCode()`."
+      }
+    ],
+    "tip": "When you override one, override both; IDE generation helps avoid subtle bugs.",
+    "links": [
+      {
+        "label": "Object.equals and hashCode contract",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html"
+      }
+    ]
+  },
+  {
+    "id": "java-010",
+    "question": "What is the difference between checked and unchecked expceptions",
+    "difficulty": "intermediate",
+    "category": "exceptions",
+    "tags": [
+      "java",
+      "exceptions",
+      "checked",
+      "unchecked"
+    ],
+    "answer": "Checked exceptions are verified at compile time and must be handled or declared (`IOException`). Unchecked exceptions (`RuntimeException` and subclasses) are not enforced by compiler and usually indicate programming bugs or invalid assumptions.\n\nChecked exceptions are useful for recoverable external failures; unchecked exceptions are common for logic/precondition failures.",
+    "examples": [
+      {
+        "title": "Checked vs unchecked sample",
+        "language": "java",
+        "code": "void load(Path p) throws IOException { Files.readString(p); }\nint n = Integer.parseInt(\"x\"); // throws NumberFormatException",
+        "explanation": "`IOException` must be declared/handled; `NumberFormatException` is unchecked."
+      }
+    ],
+    "tip": "Use checked exceptions at API boundaries where caller can actually recover (retry, fallback, prompt user).",
+    "links": [
+      {
+        "label": "Exception hierarchy",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Exception.html"
+      }
+    ]
+  },
+  {
+    "id": "java-011",
+    "question": "What are wrapper classes",
+    "difficulty": "beginner",
+    "category": "syntax-basics",
+    "tags": [
+      "java",
+      "wrapper",
+      "autoboxing",
+      "primitives"
+    ],
+    "answer": "Wrapper classes are object representations of primitive types, for example `int` -> `Integer`, `double` -> `Double`. They enable primitives to be used in collections and generic APIs, and provide utility methods for parsing and conversions.\n\nJava performs autoboxing/unboxing automatically in many contexts.",
+    "examples": [
+      {
+        "title": "Autoboxing in collections",
+        "language": "java",
+        "code": "List<Integer> nums = new ArrayList<>();\nnums.add(10); // int autoboxed to Integer\nint x = nums.get(0); // Integer unboxed to int",
+        "explanation": "Generic collections require object types, so wrappers are necessary."
+      }
+    ],
+    "tip": "Avoid unnecessary boxing inside hot loops; prefer primitives for performance-critical calculations.",
+    "links": [
+      {
+        "label": "Integer API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html"
+      }
+    ]
+  },
+  {
+    "id": "java-012",
+    "question": "Why java is not pure object oriented language",
+    "difficulty": "beginner",
+    "category": "fundamentals",
+    "tags": [
+      "java",
+      "oop",
+      "primitives"
+    ],
+    "answer": "Java is object-oriented but not purely object-oriented because it supports primitive types (`int`, `boolean`, etc.) that are not objects. It also has static members that can be used without object instances.\n\nPure OOP languages model everything as objects, while Java balances OOP with runtime and performance considerations.",
+    "examples": [
+      {
+        "title": "Primitive and static usage",
+        "language": "java",
+        "code": "int count = 3; // primitive, not object\ndouble pi = Math.PI; // static access without instance",
+        "explanation": "Shows two common Java features that differ from strict pure-OOP rules."
+      }
+    ],
+    "tip": "State that Java is 'mostly object-oriented with practical compromises' for a balanced answer.",
+    "links": [
+      {
+        "label": "Java language basics",
+        "href": "https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html"
+      }
+    ]
+  },
+  {
+    "id": "java-013",
+    "question": "What is the difference between abstract class and interface",
+    "difficulty": "intermediate",
+    "category": "oop",
+    "tags": [
+      "java",
+      "abstract-class",
+      "interface",
+      "inheritance"
+    ],
+    "answer": "An abstract class models a base type with shared state/implementation and can have constructors and instance fields. An interface models a capability contract and supports multiple implementation inheritance.\n\nUse abstract class when subclasses share common behavior/state. Use interface to define behavior contracts across unrelated classes.",
+    "examples": [
+      {
+        "title": "Shared base + contract",
+        "language": "java",
+        "code": "abstract class Animal { abstract void speak(); }\ninterface Flyable { void fly(); }\nclass Bird extends Animal implements Flyable {\n  void speak() { System.out.println(\"chirp\"); }\n  public void fly() { System.out.println(\"flying\"); }\n}",
+        "explanation": "Bird reuses abstract base behavior and implements an independent capability interface."
+      }
+    ],
+    "tip": "If you need multiple behavior inheritance, interface is the only option in Java class hierarchy.",
+    "links": [
+      {
+        "label": "Interfaces and inheritance",
+        "href": "https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html"
+      }
+    ]
+  },
+  {
+    "id": "java-014",
+    "question": "What are marker interfaces",
+    "difficulty": "intermediate",
+    "category": "oop",
+    "tags": [
+      "java",
+      "marker-interface",
+      "serializable",
+      "cloneable"
+    ],
+    "answer": "Marker interfaces are empty interfaces used to signal metadata about a class to JVM/framework code. They do not declare methods. Examples include `Serializable` and `Cloneable`.\n\nThey act like type-level tags that can influence runtime behavior.",
+    "examples": [
+      {
+        "title": "Serializable marker usage",
+        "language": "java",
+        "code": "class UserSession implements java.io.Serializable {\n  private static final long serialVersionUID = 1L;\n  String token;\n}",
+        "explanation": "Implementing `Serializable` marks the class as eligible for Java object serialization."
+      }
+    ],
+    "tip": "Mention modern alternatives like annotations, but keep marker interfaces in legacy/API compatibility context.",
+    "links": [
+      {
+        "label": "Serializable interface",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Serializable.html"
+      }
+    ]
+  },
+  {
+    "id": "java-015",
+    "question": "What are collections in Java?",
+    "difficulty": "beginner",
+    "category": "collections",
+    "tags": [
+      "java",
+      "collections",
+      "list",
+      "set",
+      "map"
+    ],
+    "answer": "Java Collections Framework provides interfaces and implementations for storing and manipulating groups of objects efficiently. Core interfaces are `List`, `Set`, `Queue`, and `Map` (map is part of framework though not a `Collection`).\n\nChoosing the right structure depends on ordering, uniqueness, lookup speed, and mutation patterns.",
+    "examples": [
+      {
+        "title": "List vs Set behavior",
+        "language": "java",
+        "code": "List<String> list = new ArrayList<>(List.of(\"a\", \"a\"));\nSet<String> set = new HashSet<>(List.of(\"a\", \"a\"));\nSystem.out.println(list.size()); // 2\nSystem.out.println(set.size());  // 1",
+        "explanation": "List keeps duplicates; Set enforces uniqueness."
+      }
+    ],
+    "tip": "Answer with trade-offs (order, duplicates, complexity), not just interface names.",
+    "links": [
+      {
+        "label": "Collections framework",
+        "href": "https://docs.oracle.com/javase/tutorial/collections/intro/index.html"
+      }
+    ]
+  },
+  {
+    "id": "java-016",
+    "question": "What are the differences between arraylist and vector?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "java",
+      "arraylist",
+      "vector",
+      "thread-safety"
+    ],
+    "answer": "Both are resizable-array lists. `Vector` methods are synchronized (thread-safe by default), while `ArrayList` is not synchronized and usually faster in single-threaded usage.\n\n`Vector` is legacy; modern code generally uses `ArrayList` plus explicit synchronization when needed.",
+    "examples": [
+      {
+        "title": "Preferred modern usage",
+        "language": "java",
+        "code": "List<String> names = new ArrayList<>();\nnames.add(\"Nila\");\nList<String> safe = Collections.synchronizedList(names);",
+        "explanation": "Use `ArrayList` and wrap with synchronization only when concurrent access exists."
+      }
+    ],
+    "tip": "In system design interviews, mention `CopyOnWriteArrayList` or synchronized wrappers as clearer alternatives to `Vector`.",
+    "links": [
+      {
+        "label": "ArrayList API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html"
+      }
+    ]
+  },
+  {
+    "id": "java-017",
+    "question": "What is finalize method? How do you override it?",
+    "difficulty": "intermediate",
+    "category": "jvm-memory",
+    "tags": [
+      "java",
+      "finalize",
+      "gc",
+      "cleanup"
+    ],
+    "answer": "`finalize()` was a method called by GC before reclaiming an object, but it is deprecated and unreliable for resource cleanup. Execution timing is unpredictable, and it may never run before process exit.\n\nModern Java uses try-with-resources and `AutoCloseable` for deterministic cleanup.",
+    "examples": [
+      {
+        "title": "Preferred deterministic cleanup",
+        "language": "java",
+        "code": "try (BufferedReader br = Files.newBufferedReader(Path.of(\"a.txt\"))) {\n  System.out.println(br.readLine());\n}",
+        "explanation": "Resource closes immediately when block exits; no dependence on GC/finalization."
+      }
+    ],
+    "tip": "If asked about overriding finalize, mention the signature but emphasize it should be avoided in new code.",
+    "links": [
+      {
+        "label": "Object.finalize deprecation",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#finalize()"
+      }
+    ]
+  },
+  {
+    "id": "java-018",
+    "question": "What Is the Difference Between the Comparable and Comparator Interfaces",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "java",
+      "comparable",
+      "comparator",
+      "sorting"
+    ],
+    "answer": "`Comparable` defines a class's natural ordering using `compareTo` inside the class. `Comparator` defines external/custom ordering logic and can have multiple variants without modifying the class.\n\nUse `Comparable` for one obvious default order, and `Comparator` for context-specific sorting (by name, salary, date, etc.).",
+    "examples": [
+      {
+        "title": "Custom comparator",
+        "language": "java",
+        "code": "records.sort(Comparator.comparing(Employee::salary).reversed());",
+        "explanation": "Comparator allows one-off sorting rules without changing the `Employee` class."
+      }
+    ],
+    "tip": "Interview-safe phrasing: Comparable = internal default order, Comparator = external flexible order.",
+    "links": [
+      {
+        "label": "Comparator API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Comparator.html"
+      }
+    ]
+  },
+  {
+    "id": "java-019",
+    "question": "What Is an inner class",
+    "difficulty": "intermediate",
+    "category": "oop",
+    "tags": [
+      "java",
+      "inner-class",
+      "nested-class"
+    ],
+    "answer": "An inner class is a non-static class declared inside another class. It has access to outer instance members, including private fields. Java also supports static nested classes, local classes, and anonymous classes.\n\nInner classes are useful when helper logic is tightly coupled to the enclosing class instance.",
+    "examples": [
+      {
+        "title": "Member inner class",
+        "language": "java",
+        "code": "class Outer {\n  private int x = 10;\n  class Inner {\n    int read() { return x; }\n  }\n}",
+        "explanation": "`Inner` can access private field `x` of `Outer`."
+      }
+    ],
+    "tip": "Prefer static nested class when access to outer instance is not required; it avoids accidental memory retention.",
+    "links": [
+      {
+        "label": "Nested classes tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/java/javaOO/nested.html"
+      }
+    ]
+  },
+  {
+    "id": "java-020",
+    "question": "What is the difference between final, finally, and finalize() in Java?",
+    "difficulty": "intermediate",
+    "category": "exceptions",
+    "tags": [
+      "java",
+      "final",
+      "finally",
+      "finalize"
+    ],
+    "answer": "`final` is a keyword used for constants, non-overridable methods, and non-inheritable classes. `finally` is an exception-handling block that executes after `try/catch` (with rare JVM-abrupt exceptions). `finalize()` is deprecated GC callback and should not be used for resource management.\n\nThey are unrelated despite similar names.",
+    "examples": [
+      {
+        "title": "final and finally usage",
+        "language": "java",
+        "code": "final int maxRetries = 3;\ntry {\n  riskyCall();\n} finally {\n  audit(\"finished\");\n}",
+        "explanation": "`final` locks variable reassignment; `finally` ensures cleanup/audit step execution."
+      }
+    ],
+    "tip": "When answering quickly, say: keyword, block, deprecated method - in that order.",
+    "links": [
+      {
+        "label": "Java language keywords and exceptions",
+        "href": "https://docs.oracle.com/javase/tutorial/essential/exceptions/finally.html"
+      }
+    ]
+  },
+  {
+    "id": "java-021",
+    "question": "What is the difference between '==' and equals() method?",
+    "difficulty": "beginner",
+    "category": "object-model",
+    "tags": [
+      "java",
+      "equals",
+      "reference",
+      "comparison"
+    ],
+    "answer": "`==` checks reference identity for objects (same memory reference) and value equality for primitives. `equals()` checks logical/content equality as defined by class implementation.\n\nFor most domain objects and strings, use `equals()` for meaningful value comparison.",
+    "examples": [
+      {
+        "title": "Reference vs value equality",
+        "language": "java",
+        "code": "String a = new String(\"ok\");\nString b = new String(\"ok\");\nSystem.out.println(a == b);      // false\nSystem.out.println(a.equals(b)); // true",
+        "explanation": "Different object references, same string content."
+      }
+    ],
+    "tip": "Use `Objects.equals(a, b)` when null-safety is needed in comparisons.",
+    "links": [
+      {
+        "label": "Object.equals method",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)"
+      }
+    ]
+  },
+  {
+    "id": "java-022",
+    "question": "What is method overloading and method overriding?",
+    "difficulty": "beginner",
+    "category": "oop",
+    "tags": [
+      "java",
+      "overloading",
+      "overriding",
+      "polymorphism"
+    ],
+    "answer": "Method overloading means same method name with different parameter lists in the same class. Method overriding means subclass provides a new implementation for an inherited method with the same signature.\n\nOverloading is compile-time polymorphism; overriding is runtime polymorphism.",
+    "examples": [
+      {
+        "title": "Overload and override together",
+        "language": "java",
+        "code": "class A { void print(int x) {} void run() {} }\nclass B extends A {\n  void print(String s) {}     // overload in B context\n  @Override void run() {}     // override\n}",
+        "explanation": "Different parameter list creates overload; same signature in subclass creates override."
+      }
+    ],
+    "tip": "Mention `@Override` annotation as a compiler safety net to avoid signature mistakes.",
+    "links": [
+      {
+        "label": "Overriding and hiding methods",
+        "href": "https://docs.oracle.com/javase/tutorial/java/IandI/override.html"
+      }
+    ]
+  },
+  {
+    "id": "java-023",
+    "question": "What is the difference between HashMap and Hashtable?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "java",
+      "hashmap",
+      "hashtable",
+      "legacy"
+    ],
+    "answer": "`HashMap` is unsynchronized, allows one null key and multiple null values, and is preferred in modern code. `Hashtable` is synchronized legacy class and does not allow null keys/values.\n\nFor thread-safe maps today, `ConcurrentHashMap` is usually preferred over `Hashtable`.",
+    "examples": [
+      {
+        "title": "Null support difference",
+        "language": "java",
+        "code": "Map<String, Integer> m = new HashMap<>();\nm.put(null, 1); // valid in HashMap",
+        "explanation": "Equivalent insertion in `Hashtable` throws `NullPointerException`."
+      }
+    ],
+    "tip": "In concurrent code discussions, bring up `ConcurrentHashMap` to show modern API awareness.",
+    "links": [
+      {
+        "label": "HashMap API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/HashMap.html"
+      }
+    ]
+  },
+  {
+    "id": "java-024",
+    "question": "What is the difference between ArrayList and LinkedList?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "java",
+      "arraylist",
+      "linkedlist",
+      "complexity"
+    ],
+    "answer": "`ArrayList` uses dynamic arrays, offering fast random access (`get(index)`) and better cache locality. `LinkedList` uses node links, making index access slower but allowing efficient insert/remove at known node positions.\n\nIn real applications, `ArrayList` is more common and often faster overall.",
+    "examples": [
+      {
+        "title": "Random access preference",
+        "language": "java",
+        "code": "List<Integer> arr = new ArrayList<>(List.of(1,2,3));\nSystem.out.println(arr.get(2)); // O(1) access",
+        "explanation": "Indexed reads are a core strength of `ArrayList`."
+      }
+    ],
+    "tip": "Choose based on operation profile, not theoretical complexity alone; benchmark realistic workloads.",
+    "links": [
+      {
+        "label": "LinkedList API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/LinkedList.html"
+      }
+    ]
+  },
+  {
+    "id": "java-025",
+    "question": "What is Java Reflection API?",
+    "difficulty": "intermediate",
+    "category": "advanced-java",
+    "tags": [
+      "java",
+      "reflection",
+      "runtime",
+      "metadata"
+    ],
+    "answer": "Reflection API lets code inspect classes, methods, fields, constructors, and annotations at runtime, and invoke/access them dynamically. Frameworks like Spring, JUnit, and serializers use reflection heavily.\n\nReflection is powerful but slower and less type-safe than direct calls, so use it carefully.",
+    "examples": [
+      {
+        "title": "Inspect class methods at runtime",
+        "language": "java",
+        "code": "Class<?> c = Class.forName(\"java.util.ArrayList\");\nfor (Method m : c.getDeclaredMethods()) {\n  if (m.getName().equals(\"add\")) System.out.println(m);\n}",
+        "explanation": "Runtime metadata inspection without compile-time hardcoding."
+      }
+    ],
+    "tip": "Cache reflective lookups if used repeatedly; method/field discovery is expensive.",
+    "links": [
+      {
+        "label": "java.lang.reflect package",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/reflect/package-summary.html"
+      }
+    ]
+  },
+  {
+    "id": "java-026",
+    "question": "What are the different types of memory areas allocated by JVM?",
+    "difficulty": "intermediate",
+    "category": "jvm-memory",
+    "tags": [
+      "java",
+      "jvm",
+      "heap",
+      "stack",
+      "metaspace"
+    ],
+    "answer": "Major JVM runtime memory areas include Heap (objects), Stack per thread (frames, local variables), Metaspace (class metadata), PC register per thread, and Native Method Stack.\n\nUnderstanding these helps debug `OutOfMemoryError`, `StackOverflowError`, and class metadata issues.",
+    "examples": [
+      {
+        "title": "Stack overflow trigger",
+        "language": "java",
+        "code": "static void recurse() { recurse(); }\npublic static void main(String[] args) { recurse(); }",
+        "explanation": "Infinite recursion consumes stack frames and leads to `StackOverflowError`."
+      }
+    ],
+    "tip": "Differentiate heap errors from stack errors during troubleshooting; fixes are usually very different.",
+    "links": [
+      {
+        "label": "JVM runtime data areas",
+        "href": "https://docs.oracle.com/javase/specs/jvms/se21/html/jvms-2.html#jvms-2.5"
+      }
+    ]
+  },
+  {
+    "id": "java-027",
+    "question": "What is the difference between throw and throws?",
+    "difficulty": "beginner",
+    "category": "exceptions",
+    "tags": [
+      "java",
+      "throw",
+      "throws",
+      "exceptions"
+    ],
+    "answer": "`throw` is used inside a method body to actually raise an exception instance. `throws` is used in method signature to declare possible exceptions to callers.\n\n`throw` is execution-time action; `throws` is API contract declaration.",
+    "examples": [
+      {
+        "title": "Declare and raise",
+        "language": "java",
+        "code": "void save(String id) throws IOException {\n  if (id == null) throw new IllegalArgumentException(\"id\");\n  Files.writeString(Path.of(\"a.txt\"), id);\n}",
+        "explanation": "Method declares checked exception via `throws` and raises runtime exception via `throw`."
+      }
+    ],
+    "tip": "Keep `throws` list meaningful; avoid declaring broad `Exception` in clean APIs.",
+    "links": [
+      {
+        "label": "Exceptions tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/essential/exceptions/index.html"
+      }
+    ]
+  },
+  {
+    "id": "java-028",
+    "question": "What is a singleton class and how to create one?",
+    "difficulty": "intermediate",
+    "category": "design-patterns",
+    "tags": [
+      "java",
+      "singleton",
+      "design-patterns"
+    ],
+    "answer": "A singleton ensures only one instance of a class exists and provides global access to it. Common Java-safe implementations include enum singleton or static holder pattern.\n\nIt is useful for shared stateless services or config readers, but overuse can hide dependencies and hurt testability.",
+    "examples": [
+      {
+        "title": "Enum singleton",
+        "language": "java",
+        "code": "public enum ConfigService {\n  INSTANCE;\n  public String mode() { return \"prod\"; }\n}",
+        "explanation": "Enum singleton is concise, thread-safe, and resistant to serialization/reflection pitfalls."
+      }
+    ],
+    "tip": "Prefer dependency injection first; use singleton only when one-process shared instance is truly required.",
+    "links": [
+      {
+        "label": "Enum language guide",
+        "href": "https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html"
+      }
+    ]
+  },
+  {
+    "id": "java-029",
+    "question": "What are Java 8 Stream API features?",
+    "difficulty": "intermediate",
+    "category": "java-8-plus",
+    "tags": [
+      "java",
+      "streams",
+      "lambda",
+      "functional"
+    ],
+    "answer": "Java 8 Stream API supports functional-style collection processing: filter, map, sorted, distinct, reduce, collect, and parallel streams. Streams are lazy, composable pipelines that improve readability for data transformations.\n\nThey do not store data themselves; they operate on source data like collections or arrays.",
+    "examples": [
+      {
+        "title": "Filter and transform pipeline",
+        "language": "java",
+        "code": "List<String> out = users.stream()\n  .filter(u -> u.active())\n  .map(User::name)\n  .sorted()\n  .toList();",
+        "explanation": "Declarative pipeline for filtering and projection without manual loops."
+      }
+    ],
+    "tip": "Avoid side effects inside stream operations; pure transformations are easier to reason about and test.",
+    "links": [
+      {
+        "label": "Stream API",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/stream/package-summary.html"
+      }
+    ]
+  },
+  {
+    "id": "java-030",
+    "question": "What is the difference between fail-fast and fail-safe iterators?",
+    "difficulty": "intermediate",
+    "category": "collections",
+    "tags": [
+      "java",
+      "iterators",
+      "concurrency",
+      "collections"
+    ],
+    "answer": "Fail-fast iterators (e.g., most `ArrayList` iterators) throw `ConcurrentModificationException` when collection structure changes during iteration. Fail-safe style iterators iterate over a snapshot/copy and do not fail immediately (e.g., `CopyOnWriteArrayList`).\n\nFail-fast helps catch bugs early; fail-safe favors concurrent-read stability with trade-offs.",
+    "examples": [
+      {
+        "title": "Fail-fast scenario",
+        "language": "java",
+        "code": "List<Integer> list = new ArrayList<>(List.of(1, 2, 3));\nfor (Integer n : list) {\n  list.add(4); // ConcurrentModificationException\n}",
+        "explanation": "Structural modification during enhanced-for triggers fail-fast behavior."
+      }
+    ],
+    "tip": "For safe removal during iteration, use iterator's own `remove()` method instead of collection `remove()`.",
+    "links": [
+      {
+        "label": "ConcurrentModificationException",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ConcurrentModificationException.html"
+      }
+    ]
+  },
+  {
+    "id": "java-031",
+    "question": "What is the difference between process and thread?",
+    "difficulty": "intermediate",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "process",
+      "thread",
+      "os"
+    ],
+    "answer": "A process is an independent running program with its own memory space. A thread is a lightweight execution unit inside a process; threads share process memory.\n\nProcess communication is heavier (IPC), while thread communication is easier via shared objects but needs synchronization.",
+    "examples": [
+      {
+        "title": "Multiple threads in one process",
+        "language": "java",
+        "code": "Runnable r = () -> System.out.println(Thread.currentThread().getName());\nnew Thread(r, \"T1\").start();\nnew Thread(r, \"T2\").start();",
+        "explanation": "Both threads run inside the same JVM process and can share heap data."
+      }
+    ],
+    "tip": "When asked about performance, mention context-switch cost: threads are cheaper than processes.",
+    "links": [
+      {
+        "label": "Java concurrency tutorial",
+        "href": "https://docs.oracle.com/javase/tutorial/essential/concurrency/index.html"
+      }
+    ]
+  },
+  {
+    "id": "java-032",
+    "question": "What are the different ways to create a thread in Java?",
+    "difficulty": "beginner",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "thread",
+      "runnable",
+      "executorservice"
+    ],
+    "answer": "Common approaches are: extend `Thread`, implement `Runnable`, implement `Callable` with `Future`, and submit tasks to `ExecutorService` (recommended for production control and pooling).\n\nModern Java code typically prefers executors over manual thread creation for lifecycle management.",
+    "examples": [
+      {
+        "title": "ExecutorService approach",
+        "language": "java",
+        "code": "ExecutorService pool = Executors.newFixedThreadPool(2);\nFuture<Integer> f = pool.submit(() -> 42);\nSystem.out.println(f.get());\npool.shutdown();",
+        "explanation": "Thread pool and `Callable` provide structured execution and return values."
+      }
+    ],
+    "tip": "Prefer executors in backend services; direct `new Thread()` can become hard to control at scale.",
+    "links": [
+      {
+        "label": "Executor framework",
+        "href": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/ExecutorService.html"
+      }
+    ]
+  },
+  {
+    "id": "java-033",
+    "question": "What is synchronization in Java?",
+    "difficulty": "intermediate",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "synchronization",
+      "thread-safety",
+      "locks"
+    ],
+    "answer": "Synchronization controls concurrent access to shared mutable state so only one thread enters a critical section at a time (or coordinates visibility ordering). Java provides `synchronized` methods/blocks, explicit locks, and concurrent collections.\n\nIt prevents race conditions and visibility bugs but can reduce throughput if overused.",
+    "examples": [
+      {
+        "title": "Synchronized increment",
+        "language": "java",
+        "code": "class Counter {\n  private int count;\n  synchronized void inc() { count++; }\n  int get() { return count; }\n}",
+        "explanation": "`inc()` is protected so updates are atomic relative to other synchronized calls on same instance."
+      }
+    ],
+    "tip": "Synchronize the smallest critical section possible to balance correctness and performance.",
+    "links": [
+      {
+        "label": "Intrinsic locks and synchronization",
+        "href": "https://docs.oracle.com/javase/tutorial/essential/concurrency/locksync.html"
+      }
+    ]
+  },
+  {
+    "id": "java-034",
+    "question": "What is deadlock and how to avoid it?",
+    "difficulty": "intermediate",
+    "category": "concurrency",
+    "tags": [
+      "java",
+      "deadlock",
+      "locks",
+      "concurrency"
+    ],
+    "answer": "Deadlock happens when threads wait forever for locks held by each other, creating a circular dependency. Typical case: thread A holds lock1 and waits for lock2 while thread B holds lock2 and waits for lock1.\n\nAvoid deadlocks with consistent lock ordering, timed lock attempts, reducing nested locks, and using higher-level concurrent utilities.",
+    "examples": [
+      {
+        "title": "Consistent lock ordering",
+        "language": "java",
+        "code": "Object lockA = new Object();\nObject lockB = new Object();\n\nvoid safe() {\n  synchronized (lockA) {\n    synchronized (lockB) {\n      // always A then B\n    }\n  }\n}",
+        "explanation": "If all threads acquire locks in the same order, circular wait is prevented."
+      }
+    ],
+    "tip": "Document lock acquisition order in code comments for multi-threaded modules; it prevents future regressions.",
+    "links": [
+      {
+        "label": "Deadlock in Java tutorials",
+        "href": "https://docs.oracle.com/javase/tutorial/essential/concurrency/deadlock.html"
+      }
+    ]
+  }
+]

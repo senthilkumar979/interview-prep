@@ -1,9 +1,9 @@
 import angularQuestionItems from '@/content/modules/angular/questions.json'
+import javaQuestionItems from '@/content/modules/java/questions.json'
 import javascriptQuestionItems from '@/content/modules/javascript/questions.json'
 import reactQuestionItems from '@/content/modules/react/questions.json'
 import { QuestionItem } from './moduleData.types'
 import { QuestionModuleSection } from './QuestionModuleSection'
-import javaQuestionItems from '@/content/modules/java/questions.json'
 
 const interviewQuestions: Record<
   'javascript' | 'react' | 'angular' | 'java',

@@ -5,7 +5,7 @@ export interface DifficultyBreakdown {
 }
 
 export interface TechnologyCategory {
-  slug: "react" | "javascript" | "java";
+  slug: "react" | "javascript" | "java" | "angular";
   icon: string;
   title: string;
   description: string;

@@ -26,7 +26,7 @@ import { TechnologyQuestionItem } from './TechnologyQuestionItem'
 
 interface TechnologyModuleRendererProps {
   module: TechnologyModule
-  technologySlug: 'react' | 'javascript' | 'java'
+  technologySlug: 'react' | 'javascript' | 'java' | 'angular'
 }
 
 export const TechnologyModuleRenderer = ({
